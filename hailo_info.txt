@@ -1,6 +1,11 @@
 
 Extra Notes:
 
+With the modified config files from yolov5m, and using these for the yolov8m, the inference is working.
+No issues this time with the modified files, which had NMS , anchor details as well.
+/home/rubesh/Desktop/yolov8m_mod_trial_with_mod_config_files_from_yolov5m_working/
+
+
 The anchor points in the .json file are used during the training and the inference.
 Here it is pre-defined but they are first extracted using the k-means clustering.
 K-means clustering on the bounding boxes we get before the training phase and 
