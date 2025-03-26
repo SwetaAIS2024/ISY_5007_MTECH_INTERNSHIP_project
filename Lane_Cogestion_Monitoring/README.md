@@ -5,3 +5,14 @@
 Roboflow example already incorporates the ByteTrack for tracking the detected objects.
 
 - Source : https://blog.roboflow.com/estimate-speed-computer-vision/ 
+
+Three options :
+
+1. First vehicle OD -> Lane detection
+2. First lane detection -> then vehicle OD
+3. Parallelly do both 
+
+Need to evaluate which is better for Real Time traffic analysis.
+
+Model to choose from :
+1. yolov6n - 1251.78 FPS
