@@ -1,0 +1,26 @@
+Original Frame Dimensions:
+original_width = 3840
+original_height = 2160
+
+New Frame Dimensions:
+new_width = 640
+new_height = 640
+
+Aspect Ratio:
+aspect_ratio = 3840 / 2160 = 1.777
+
+Scaled Height:
+scaled_height = int(640 / 1.777) = 360
+
+Scaling Factors:
+scaling_x = 640 / 3840 = 1/6
+scaling_y = 360 / 2160 = 1/6
+
+Top Black Bar Offset:
+top_black_bar = (640 - 360) / 2 = 140
+
+Coordinate Adjustment:
+For a point (x, y) in the original frame:
+
+New x-coordinate: x * scaling_x
+New y-coordinate: y * scaling_y + top_black_bar

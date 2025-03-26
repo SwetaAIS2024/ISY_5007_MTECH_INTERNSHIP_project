@@ -14,5 +14,7 @@ Three options :
 
 Need to evaluate which is better for Real Time traffic analysis.
 
-Model to choose from :
-1. yolov6n - 1251.78 FPS
+Model to choose from (model inference throughput):
+1. yolov6n (single context) - 1251.78 FPS
+2. yolov5m (single context) - 
+3. 
