@@ -19,6 +19,7 @@ from utils import HailoAsyncInference
 from hailo_rpi_common import (
     get_default_parser,
     QUEUE,
+    get_video_fps_wh,
     get_caps_from_pad,
     get_numpy_from_buffer,
     get_video_dimensions,
@@ -69,9 +70,9 @@ class user_app_callback_class(app_callback_class):
         self.box_annotator = None
         self.label_annotator = None
         self.trace_annotator = None
-        self.resolution_wh = (3840, 2160)  # Adjust if needed
+        self.resolution_wh = (0,0)  # Adjust if needed
         # Assume a fixed FPS if not known. If your pipeline's FPS differs, adjust accordingly.
-        self.fps = 25  
+        self.fps = 0  # this should be dynamic and should be extracted from the video itself
         self.confidence_threshold = 0.4
         self.iou_threshold = 0.7
 
@@ -92,6 +93,9 @@ def app_callback(pad, info, user_data: user_app_callback_class):
     # Get caps to retrieve frame size and format
     format, width, height = get_caps_from_pad(pad)
 
+    #Get the video fps and resolution
+    user_data.fps, user_data.resolution_wh = get_video_fps_wh(args.video_source)
+
     # Get video frame (if enabled)
     frame = None
     if user_data.use_frame and format is not None and width is not None and height is not None:
@@ -109,7 +113,7 @@ def app_callback(pad, info, user_data: user_app_callback_class):
     # Convert hailo detections to supervision.Detections
     # hailo bbox format: let's assume it's xywh or xyxy as needed.
     # According to Hailo docs, bbox might be (x_min, y_min, width, height). We need xyxy:
-    xyxy = []
+    xyxy = [] # [[xmin, ymin, xmax, ymax], ...] distances are in pixels, diagonal distance
     confidences = []
     class_ids = []
     class_labels = []
@@ -418,7 +422,6 @@ class GStreamerDetectionApp(GStreamerApp):
 
 
 if __name__ == "__main__":
-    user_data = user_app_callback_class()
     parser = get_default_parser()
     parser.add_argument(
         "--network",
@@ -437,6 +440,7 @@ if __name__ == "__main__":
         help="Path to custom labels JSON file",
     )
     args = parser.parse_args()
+    user_data = user_app_callback_class()
     app = GStreamerDetectionApp(args, user_data)
     #start = time.time() 
     app.run()

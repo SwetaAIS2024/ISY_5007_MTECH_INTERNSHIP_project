@@ -1,1 +1,11 @@
 #Python dependencies
+loguru
+opencv-python
+#tqdm
+numpy
+#matplotlib
+#scipy
+#scikit-learn
+#pandas
+#tensorflow
+#keras

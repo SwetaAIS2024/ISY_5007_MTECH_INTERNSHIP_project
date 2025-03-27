@@ -50,6 +50,20 @@ class app_callback_class:
 # -----------------------------------------------------------------------------------------------
 # Common functions
 # -----------------------------------------------------------------------------------------------
+def get_video_fps_wh(video_path):
+    # This function will return the video FPS and the resolution
+    video_capture = cv2.VideoCapture(video_path)
+    fps = video_capture.get(cv2.CAP_PROP_FPS)
+    width = int(video_capture.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    video_capture.release()
+    
+    if (fps <= 0 or fps > 250)|(width <= 0 or height <= 0):
+        print("Invalid FPS value or Invalid video resolution, setting to def values")
+        return 25, 3840, 2160 # Default to 25 FPS
+    else:
+        return int(fps), int(width), int(height)
+
 def get_caps_from_pad(pad: Gst.Pad):
     caps = pad.get_current_caps()
     if caps:
