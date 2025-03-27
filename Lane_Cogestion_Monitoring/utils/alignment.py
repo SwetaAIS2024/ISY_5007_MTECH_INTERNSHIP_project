@@ -5,10 +5,19 @@
 # this code should be in the utils.
 
 
+#Od pipeline input is reframed to 640 x 640 - model input shape for example here for yolo models input size is 640x640
+# For the OD pipeline it is hardcoded to 640 x 640
+# need to change this - done - now dynamic input shape update is done in hailo_inference.get_input_shape()
+
+#Lane detection pipeline input is reframed to 1280 x 720 - 
+# model input shape , here the algo direcltly gets the info from hailo_inference.get_input_shape()
+
+
+
 import cv2
 
 
-def alignment_coord(frame_size, target_frame_size):
+def post_processing_alignment_coord(frame_size, target_frame_size):
     """
     Alignment of the coordinate system of the lanes and the objects detected can be
     become different if the resolution of the input in both the pipelines are different

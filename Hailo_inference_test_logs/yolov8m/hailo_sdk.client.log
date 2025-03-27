@@ -1,0 +1,18 @@
+2025-03-26 14:01:40,121 - INFO - parser.py:96 - Translation started on ONNX model yolov8m
+2025-03-26 14:01:40,379 - INFO - parser.py:124 - Restored ONNX model yolov8m (completion time: 00:00:00.26)
+2025-03-26 14:01:41,276 - INFO - parser.py:147 - Extracted ONNXRuntime meta-data for Hailo model (completion time: 00:00:01.15)
+2025-03-26 14:01:42,311 - INFO - onnx_translator.py:1802 - NMS structure of yolov8 (or equivalent architecture) was detected.
+2025-03-26 14:01:42,311 - INFO - onnx_translator.py:1804 - In order to use HailoRT post-processing capabilities, these end node names should be used: /model.22/cv2.0/cv2.0.2/Conv /model.22/cv3.0/cv3.0.2/Conv /model.22/cv2.1/cv2.1.2/Conv /model.22/cv3.1/cv3.1.2/Conv /model.22/cv2.2/cv2.2.2/Conv /model.22/cv3.2/cv3.2.2/Conv.
+2025-03-26 14:01:42,398 - INFO - parser.py:269 - Start nodes mapped from original model: 'images': 'yolov8m/input_layer1'.
+2025-03-26 14:01:42,398 - INFO - parser.py:270 - End nodes mapped from original model: '/model.22/cv2.0/cv2.0.2/Conv', '/model.22/cv3.0/cv3.0.2/Conv', '/model.22/cv2.1/cv2.1.2/Conv', '/model.22/cv3.1/cv3.1.2/Conv', '/model.22/cv2.2/cv2.2.2/Conv', '/model.22/cv3.2/cv3.2.2/Conv'.
+2025-03-26 14:01:42,459 - INFO - parser.py:217 - Translation completed on ONNX model yolov8m (completion time: 00:00:02.34)
+2025-03-26 14:01:43,867 - INFO - client_runner.py:1442 - Saved HAR to: /home/rubesh/Desktop/yolov8m_without_modification/yolov8m.har
+2025-03-26 14:03:47,461 - INFO - client_runner.py:386 - Loading model script commands to yolov8m from /home/rubesh/Desktop/dfc_3_27/hailo_model_zoo/hailo_model_zoo/cfg/alls/generic/yolov8m.alls
+2025-03-26 14:03:47,934 - INFO - nms_postprocess_command.py:574 - The layer yolov8m/conv57 was detected as reg_layer.
+2025-03-26 14:03:47,935 - INFO - nms_postprocess_command.py:574 - The layer yolov8m/conv70 was detected as reg_layer.
+2025-03-26 14:03:47,935 - INFO - nms_postprocess_command.py:574 - The layer yolov8m/conv82 was detected as reg_layer.
+2025-03-26 14:03:48,436 - IMPORTANT - sdk_backend.py:897 - Starting Model Optimization
+2025-03-26 17:33:50,725 - IMPORTANT - sdk_backend.py:915 - Model Optimization is done
+2025-03-26 17:33:51,942 - INFO - client_runner.py:1442 - Saved HAR to: /home/rubesh/Desktop/yolov8m_without_modification/yolov8m.har
+2025-03-26 17:36:17,710 - INFO - client_runner.py:386 - Loading model script commands to yolov8m from /home/rubesh/Desktop/dfc_3_27/hailo_model_zoo/hailo_model_zoo/cfg/alls/generic/yolov8m.alls
+2025-03-26 18:07:46,265 - INFO - client_runner.py:1442 - Saved HAR to: /home/rubesh/Desktop/yolov8m_without_modification/yolov8m.har

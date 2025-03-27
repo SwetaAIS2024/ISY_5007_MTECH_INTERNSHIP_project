@@ -24,3 +24,10 @@ For a point (x, y) in the original frame:
 
 New x-coordinate: x * scaling_x
 New y-coordinate: y * scaling_y + top_black_bar
+
+Note :
+
+Yes, if the models used in the two pipelines (lane detection and 
+object detection/tracking) are different, the output postprocessing 
+must ensure that the outputs from both models are aligned to the same 
+coordinate space. This is critical for tasks like mapping objects to lanes or performing congestion analysis.
