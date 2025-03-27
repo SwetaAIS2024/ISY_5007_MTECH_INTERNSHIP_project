@@ -102,7 +102,8 @@ def preprocess_input(video_path: str,
 
 def postprocess_output(output_queue: mp.Queue,
                        output_video_path: str,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                       ufld_processing: UFLDProcessing) -> None:
+                       ufld_processing: UFLDProcessing,
+                       lane_data_queue: mp.Queue) -> None:
     """
     Post-process inference results, draw lane detections, and write output to a video.
 
@@ -110,6 +111,7 @@ def postprocess_output(output_queue: mp.Queue,
         output_queue (mp.Queue): Queue for output results.
         output_video_path (str): Path to the output video file.
         ufld_processing (UFLDProcessing): Lane detection post-processing class.
+        lane_data_queue (mp.Queue): Queue to store the lane data.
     """
     # Import tqdm here to avoid issues with multiprocessing
     from tqdm import tqdm
@@ -131,11 +133,17 @@ def postprocess_output(output_queue: mp.Queue,
         original_frame, inference_output = result
         lanes = ufld_processing.get_coordinates(np.array([inference_output]))
 
+        # Store the lane data in the queue
+        lane_data_queue.put(lanes)
+
         for lane in lanes:
             for coord in lane:
                 cv2.circle(original_frame, coord, radius, (0, 255, 0), -1)
         output_video.write(original_frame.astype('uint8'))
         pbar.update(1)
+
+    # Signal the end of the lane queue processing
+    lane_data_queue.put(None)
 
     pbar.close()
     output_video.release()
@@ -145,8 +153,9 @@ def infer(
     net_path: str,
     batch_size: int,
     output_video_path: str,
-    ufld_processing: UFLDProcessing
-) -> None:
+    ufld_processing: UFLDProcessing,
+    lane_data_queue: list
+) -> list:
     """
     Run lane detection inference using HailoAsyncInference and manage the video processing pipeline.
 
@@ -160,6 +169,7 @@ def infer(
 
     input_queue = mp.Queue()
     output_queue = mp.Queue()
+    lane_data_queue = mp.Queue()
 
     output_dict = output_data_type2dict(net_path, "FLOAT32")
 
@@ -180,11 +190,13 @@ def infer(
     )
     postprocess = Process(
         target=postprocess_output,
-        args=(output_queue, output_video_path, ufld_processing)
+        args=(output_queue, output_video_path, ufld_processing, lane_data_queue)
     )
 
     preprocess.start()
     postprocess.start()
+    
+    lane_data = []
 
     try:
         hailo_inference.run()
@@ -193,6 +205,13 @@ def infer(
         # Signal to the postprocess to stop
         output_queue.put(None)
         postprocess.join()
+
+        # collect the data from the queue to the list 
+        while True:
+            lanes = lane_data_queue.get()
+            if lanes is None:
+                break
+            lane_data.append(lanes)
 
         check_process_errors(preprocess, postprocess)
         logger.info(f"Inference was successful! Results saved in {output_video_path}")
@@ -205,6 +224,7 @@ def infer(
         postprocess.terminate()
         os._exit(1)
 
+    return lane_data
 
 if __name__ == "__main__":
 
@@ -224,8 +244,9 @@ if __name__ == "__main__":
                                      original_frame_width = original_frame_width,
                                      original_frame_height = original_frame_height,
                                      total_frames = total_frames)
-
-    infer(
+    
+    # Run the inference pipeline and fetch the lane data to the list
+    lane_data = infer(
         args.input_video,
         args.net,
         batch_size=1,
