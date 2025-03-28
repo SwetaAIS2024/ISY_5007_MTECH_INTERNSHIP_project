@@ -253,3 +253,9 @@ if __name__ == "__main__":
         output_video_path=args.output_video,
         ufld_processing=ufld_processing
     )
+    # Save lane data to a log file    
+    lane_data_log_path = os.path.splitext(args.output_video)[0] + "_lane_data.log"
+    with open(lane_data_log_path, "w") as f:
+        for lanes in lane_data:
+            f.write(str(lanes) + "\n")
+    logger.info(f"Lane data saved in {lane_data_log_path}")
