@@ -103,7 +103,8 @@ def preprocess_input(video_path: str,
 def postprocess_output(output_queue: mp.Queue,
                        output_video_path: str,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
                        ufld_processing: UFLDProcessing,
-                       lane_data_queue: mp.Queue) -> None:
+                       lane_data_queue: mp.Queue,
+                       total_frames:int) -> None:
     """
     Post-process inference results, draw lane detections, and write output to a video.
 
@@ -178,6 +179,9 @@ def infer(
                                           output_type=output_dict,
                                           send_original_frame=True)
 
+    # Get video information
+    frame_width, frame_height, total_frames = get_video_info(video_path)
+    #logger.info(f"Video width: {frame_width}, height: {frame_height}, total frames: {total_frames}")
 
     preprocessed_frame_height, preprocessed_frame_width, _ = hailo_inference.get_input_shape()
     preprocess = Process(
@@ -226,36 +230,3 @@ def infer(
 
     return lane_data
 
-if __name__ == "__main__":
-
-    # Parse command-line arguments
-    args = parser_init().parse_args()
-    try:
-        original_frame_width,original_frame_height, total_frames= get_video_info(args.input_video)
-    except ValueError as e:
-        logger.error(e)
-
-    ufld_processing = UFLDProcessing(num_cell_row=100,
-                                     num_cell_col=100,
-                                     num_row=56,
-                                     num_col=41,
-                                     num_lanes=4,
-                                     crop_ratio=0.8,
-                                     original_frame_width = original_frame_width,
-                                     original_frame_height = original_frame_height,
-                                     total_frames = total_frames)
-    
-    # Run the inference pipeline and fetch the lane data to the list
-    lane_data = infer(
-        args.input_video,
-        args.net,
-        batch_size=1,
-        output_video_path=args.output_video,
-        ufld_processing=ufld_processing
-    )
-    # Save lane data to a log file    
-    lane_data_log_path = os.path.splitext(args.output_video)[0] + "_lane_data.log"
-    with open(lane_data_log_path, "w") as f:
-        for lanes in lane_data:
-            f.write(str(lanes) + "\n")
-    logger.info(f"Lane data saved in {lane_data_log_path}")

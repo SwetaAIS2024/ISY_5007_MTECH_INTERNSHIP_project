@@ -4,6 +4,7 @@ from functools import partial
 import queue
 from loguru import logger
 import numpy as np
+import cv2
 from hailo_platform import (HEF, VDevice,
                             FormatType, HailoSchedulingAlgorithm)
 IMAGE_EXTENSIONS: Tuple[str, ...] = ('.jpg', '.png', '.bmp', '.jpeg')
@@ -279,3 +280,81 @@ def divide_list_to_batches(
     """
     for i in range(0, len(images_list), batch_size):
         yield images_list[i: i + batch_size]
+
+
+def extrapolate_lane(lane, frame_height, target_height):
+    """
+    Extrapolate a lane to cover the target height (e.g., 100m view).
+
+    Args:
+        lane (list of tuples): Detected lane coordinates [(x1, y1), (x2, y2), ...].
+        frame_height (int): Height of the video frame.
+        target_height (int): Target height for extrapolation.
+
+    Returns:
+        list of tuples: Extrapolated lane coordinates.
+    """
+    # Convert lane points to numpy array
+    lane = np.array(lane)
+
+    # Fit a linear model (y = mx + c)
+    x = lane[:, 0]
+    y = lane[:, 1]
+    m, c = np.polyfit(y, x, 1)  # Fit line: x = m*y + c
+
+    # Extrapolate to the target height
+    y_start = 0  # Top of the frame
+    y_end = target_height  # Bottom of the 100m view
+    x_start = m * y_start + c
+    x_end = m * y_end + c
+
+    return [(x_start, y_start), (x_end, y_end)]
+
+def define_source_polygon(left_lane, right_lane, frame_height, target_height):
+    """
+    Define the SOURCE polygon based on extrapolated lanes.
+
+    Args:
+        left_lane (list of tuples): Extrapolated left lane coordinates.
+        right_lane (list of tuples): Extrapolated right lane coordinates.
+        frame_height (int): Height of the video frame.
+        target_height (int): Target height for extrapolation.
+
+    Returns:
+        np.ndarray: SOURCE polygon coordinates.
+    """
+    left_extrapolated = extrapolate_lane(left_lane, frame_height, target_height)
+    right_extrapolated = extrapolate_lane(right_lane, frame_height, target_height)
+
+    source_polygon = np.array([
+        left_extrapolated[0],  # Top-left
+        right_extrapolated[0],  # Top-right
+        right_extrapolated[1],  # Bottom-right
+        left_extrapolated[1],  # Bottom-left
+    ])
+
+    return source_polygon
+
+def get_video_info(video_path):
+    """
+    Extract video information such as width, height, and total frames.
+
+    Args:
+        video_path (str): Path to the input video file.
+
+    Returns:
+        tuple: (width, height, total_frames)
+
+    Raises:
+        ValueError: If the video file cannot be opened.
+    """
+    video_capture = cv2.VideoCapture(video_path)
+    if not video_capture.isOpened():
+        raise ValueError(f"Unable to open video file: {video_path}")
+
+    width = int(video_capture.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    total_frames = int(video_capture.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    video_capture.release()
+    return width, height, total_frames
