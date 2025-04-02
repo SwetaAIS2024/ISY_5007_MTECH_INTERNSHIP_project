@@ -1,0 +1,16 @@
+
+SOURCE = np.array([[1252, 1200], [2298, 1200], [5039, 2159], [-550, 2159]]) 
+#modified the box , and the speed tracker is failing for video2 and video3 - speeds in 100 to 200 kmph,
+#speed algo, depends on the polygon coordinates, so speed algo is giving wrong values if coord are changed 
+#works for video 1 - the speed no.s are close.
+
+
+#SOURCE = np.array([[1252, 400], [2298, 400], [5039, 2159], [-550, 2159]]) 
+# this one working for video3, the speed numbers are ok 
+# also for video2, the speed no are ok 
+# low nos for video 1
+
+
+#SOURCE = np.array([[1252, 787], [2298, 803], [5039, 2159], [-550, 2159]]) # this one is giving almost ok speed no for video 2 but failing for video 3
+# original box coord - prev hard coded values
+# Low no.s for video 1 as well 
