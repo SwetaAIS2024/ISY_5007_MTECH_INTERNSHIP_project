@@ -181,7 +181,7 @@ def infer(
 
     # Get video information
     frame_width, frame_height, total_frames = get_video_info(video_path)
-    #logger.info(f"Video width: {frame_width}, height: {frame_height}, total frames: {total_frames}")
+    logger.info(f"Video width: {frame_width}, height: {frame_height}, total frames: {total_frames}")
 
     preprocessed_frame_height, preprocessed_frame_width, _ = hailo_inference.get_input_shape()
     preprocess = Process(

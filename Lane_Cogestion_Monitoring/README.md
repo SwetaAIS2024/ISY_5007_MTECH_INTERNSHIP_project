@@ -17,4 +17,8 @@ Need to evaluate which is better for Real Time traffic analysis.
 Model to choose from (model inference throughput):
 1. yolov6n (single context) - 1251.78 FPS
 2. yolov5m (single context) - 
-3. 
+3. yolov8m (single context)
+
+congestion analysis is simple - # of vehicles in each lane 
+
+

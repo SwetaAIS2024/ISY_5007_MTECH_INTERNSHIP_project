@@ -1,0 +1,47 @@
+
+
+
+
+Log from the profiler after the above steps :
+
+┌──(dfc_3_27)(rubesh㉿kali)-[~/Desktop/yolo_v6_without_modification]
+└─$ hailo profiler --hef yolov6n.hef yolov6n_archived_after_compilation.har --out-path yolov6n_compiled_model_profiler_html_from_after_compile_har.html 
+[info] Current Time: 10:40:25, 03/26/25
+[info] CPU: Architecture: , Model: Intel(R) Core(TM) i9-9900K CPU @ 3.60GHz, Number Of Cores: 16, Utilization: 6.1%
+[info] Memory: Total: 31GB, Available: 25GB
+[info] System info: OS: Linux, Kernel: 6.12.13-amd64
+[info] Hailo DFC Version: 3.27.0
+[info] HailoRT Version: Not Installed
+[info] PCIe: No Hailo PCIe device was found
+[info] Running `hailo profiler --hef yolov6n.hef yolov6n_archived_after_compilation.har --out-path yolov6n_compiled_model_profiler_html_from_after_compile_har.html`
+[info] Running profile for yolov6n in state compiled_model
+[info] 
+Model Details
+--------------------------------  ----------
+Input Tensors Shapes              640x640x3
+Operations per Input Tensor       10.07 GOPs
+Operations per Input Tensor       5.05 GMACs
+Pure Operations per Input Tensor  11.12 GOPs
+Pure Operations per Input Tensor  5.57 GMACs
+Model Parameters                  4.16 M
+--------------------------------  ----------
+
+Profiler Input Settings
+-----------------  -----------------
+Optimization Goal  Reach Highest FPS
+Profiler Mode      Compiled
+-----------------  -----------------
+
+Performance Summary
+----------------------  --------------------
+Number of Devices       1
+Number of Contexts      1
+Throughput              1251.78 FPS
+Latency                 2.39 ms
+Operations per Second   12607.41 GOP/s
+MACs per Second         6317.41 GMAC/s
+Total Input Bandwidth   1.43 Gigabytes/sec
+Total Output Bandwidth  852.37 Megabytes/sec
+Context Switch Configs  N/A
+----------------------  --------------------
+[info] Saved Profiler HTML Report to: /home/rubesh/Desktop/yolo_v6_without_modification/yolov6n_compiled_model_profiler_html_from_after_compile_har.html

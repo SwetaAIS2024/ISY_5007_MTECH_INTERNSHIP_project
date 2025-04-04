@@ -3,6 +3,7 @@ loguru
 opencv-python
 #tqdm
 numpy
+supervision
 #matplotlib
 #scipy
 #scikit-learn

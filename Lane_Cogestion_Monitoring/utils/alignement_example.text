@@ -30,4 +30,6 @@ Note :
 Yes, if the models used in the two pipelines (lane detection and 
 object detection/tracking) are different, the output postprocessing 
 must ensure that the outputs from both models are aligned to the same 
-coordinate space. This is critical for tasks like mapping objects to lanes or performing congestion analysis.
+coordinate space. This is critical for tasks like mapping objects to
+lanes or performing congestion analysis.
+
