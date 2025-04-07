@@ -429,7 +429,7 @@ class GStreamerDetectionApp(GStreamerApp):
         print(pipeline_string)
         return pipeline_string
 
-
+# the main function to be shifted to the main.py file later 
 if __name__ == "__main__":
     parser = get_default_parser()
     parser.add_argument(
