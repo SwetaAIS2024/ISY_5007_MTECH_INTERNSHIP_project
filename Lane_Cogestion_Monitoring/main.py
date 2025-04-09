@@ -80,6 +80,9 @@ if __name__ == "__main__":
 
 
     user_data = user_app_callback_class()
+    user_data.SOURCE = SOURCE
+    user_data.TARGET = TARGET
+    user_data.lane_data = lane_data
     user_data.polygon_zone = sv.PolygonZone(polygon=SOURCE)
     user_data.view_transformer = ViewTransformer(source=SOURCE, target=TARGET)
 

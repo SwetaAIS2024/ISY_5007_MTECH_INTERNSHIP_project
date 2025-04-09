@@ -17,7 +17,6 @@ import supervision as sv
 from collections import defaultdict, deque
 from utils import HailoAsyncInference
 from hailo_rpi_common import (
-    get_default_parser,
     QUEUE,
     get_video_fps_wh,
     get_caps_from_pad,
@@ -26,12 +25,6 @@ from hailo_rpi_common import (
     GStreamerApp,
     app_callback_class,
 )
-
-from lane_detection.lane_detection import infer as lane_infer, UFLDProcessing
-from utils import define_source_polygon
-from utils import get_video_info
-
-
 
 
 # ---------------------- ADDITIONAL CODE FOR SPEED ESTIMATION ------------------------------------
@@ -84,6 +77,11 @@ class user_app_callback_class(app_callback_class):
         self.fps = 0  # this should be dynamic and should be extracted from the video itself
         self.confidence_threshold = 0.4
         self.iou_threshold = 0.7
+        self.binary_mask = None 
+        self.traffic_changed = True # To store the binary mask based on the ODs
+        self.SOURCE = None # To store the polygon points
+        self.TARGET = None # To store the target points
+        self.lane_data = None # To store the lane data
 
     def new_function(self):  # Just to keep original example
         return "The meaning of life is: "
@@ -91,7 +89,7 @@ class user_app_callback_class(app_callback_class):
 # -----------------------------------------------------------------------------------------------
 # User-defined callback function
 # -----------------------------------------------------------------------------------------------
-def app_callback(pad, info, user_data: user_app_callback_class):
+def app_callback(args, pad, info, user_data: user_app_callback_class):
     buffer = info.get_buffer()
     if buffer is None:
         return Gst.PadProbeReturn.OK
@@ -101,6 +99,10 @@ def app_callback(pad, info, user_data: user_app_callback_class):
 
     # Get caps to retrieve frame size and format
     format, width, height = get_caps_from_pad(pad)
+
+    #Get the buffer data for the SOURCE and the TARGET
+    SOURCE = user_data.SOURCE
+    TARGET = user_data.TARGET
 
     #Get the video fps and resolution
     user_data.fps, user_data.resolution_wh = get_video_fps_wh(args.video_source)
@@ -127,6 +129,9 @@ def app_callback(pad, info, user_data: user_app_callback_class):
     class_ids = []
     class_labels = []
 
+    # intialize the binary mask 
+    if user_data.traffic_changed: bmask = np.zeros((height, width), dtype=np.uint8) # here the dim are the frame dimension
+
     for d in hailo_detections:
         label = d.get_label()
         bbox = d.get_bbox()  # (x, y, w, h)
@@ -147,6 +152,11 @@ def app_callback(pad, info, user_data: user_app_callback_class):
         # If needed, map label to class_id. If no classes known, you can set class_id=0 or map from a label dictionary
         class_ids.append(0)  # or a mapping if you have multiple classes
         class_labels.append(label)
+        
+        # add the OD bbox to the binary mask-bmask, if the traffic condiitons have changed
+        if user_data.traffic_changed: bmask[int(ymin):int(ymax), int(xmin):int(xmax)] = 1 #setting the pixels inside the mask based on the OD bbox
+
+
 
     if len(xyxy) > 0:
         detections = sv.Detections(
@@ -226,7 +236,9 @@ def app_callback(pad, info, user_data: user_app_callback_class):
         
         # Push annotated frame to user_data frame queue
         user_data.set_frame(annotated_frame)
-
+        
+        # Push binary mask to user_data binary mask 
+        if user_data.traffic_changed: user_data.binary_mask = bmask
     return Gst.PadProbeReturn.OK
 
 # -----------------------------------------------------------------------------------------------
@@ -328,6 +340,10 @@ class GStreamerDetectionApp(GStreamerApp):
         user_data.fps = 25
         user_data.confidence_threshold = 0.4
         user_data.iou_threshold = 0.7
+        
+        # setting the source and the target points
+        SOURCE = user_data.SOURCE
+        TARGET = user_data.TARGET 
 
         # Polygon zone and view transformer
         user_data.polygon_zone = sv.PolygonZone(polygon=SOURCE)
@@ -428,74 +444,3 @@ class GStreamerDetectionApp(GStreamerApp):
         )
         print(pipeline_string)
         return pipeline_string
-
-# the main function to be shifted to the main.py file later 
-if __name__ == "__main__":
-    parser = get_default_parser()
-    parser.add_argument(
-        "--network",
-        default="yolov6n",
-        choices=['yolov6n', 'yolov8s', 'yolox_s_leaky'],
-        help="Which Network to use, default is yolov6n",
-    )
-    parser.add_argument(
-        "--hef-path",
-        default=None,
-        help="Path to HEF file",
-    )
-    parser.add_argument(
-        "--labels-json",
-        default=None,
-        help="Path to custom labels JSON file",
-    )
-    args = parser.parse_args()
-
-    # Lane detection 
-    try:
-        original_frame_width, original_frame_height, total_frames = get_video_info(args.input_video)
-    except ValueError as e:
-        print(e)
-        exit(1)
-    ufld_processing = UFLDProcessing(num_cell_row=100,
-                                      num_cell_col=100,
-                                      num_row=56,
-                                      num_col=41,
-                                      num_lanes=4,
-                                      crop_ratio=0.8,
-                                      original_frame_width=original_frame_width,
-                                      original_frame_height=original_frame_height,
-                                      total_frames=total_frames,
-                                      )
-    # Run the lane detection pipeline
-    lane_data = lane_infer(
-        video_path=args.input_video,
-        net_path=args.net,
-        batch_size=1,
-        output_video_path=args.output_video,
-        ufld_processing=ufld_processing,
-    )
-
-    # Dynamically compute the SOURCE polygon based on detected lanes
-    left_lane = lane_data[0][0]  # Example: First frame, first lane
-    right_lane = lane_data[0][-1]  # Example: First frame, last lane
-    TARGET_HEIGHT = 80 #250
-    TARGET_WIDTH = 22 #25
-    SOURCE = define_source_polygon(left_lane, right_lane, original_frame_height, TARGET_HEIGHT)
-    SOURCE = SOURCE.astype(float)
-
-    TARGET = np.array(
-        [
-            [0, 0],
-            [TARGET_WIDTH - 1, 0],
-            [TARGET_WIDTH - 1, TARGET_HEIGHT - 1],
-            [0, TARGET_HEIGHT - 1],
-        ]
-        )
-
-
-    user_data = user_app_callback_class()
-    user_data.polygon_zone = sv.PolygonZone(polygon=SOURCE)
-    user_data.view_transformer = ViewTransformer(source=SOURCE, target=TARGET)
-
-    app = GStreamerDetectionApp(args, user_data)
-    app.run()
