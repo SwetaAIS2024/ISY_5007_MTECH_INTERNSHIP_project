@@ -415,22 +415,50 @@ class GStreamerDetectionApp(GStreamerApp):
         source_element += "videoscale n-threads=2 ! "
         source_element += QUEUE("queue_src_convert")
         source_element += f"videoconvert n-threads=3 name=src_convert qos=false ! video/x-raw, format={self.network_format}, width={self.network_width}, height={self.network_height}, pixel-aspect-ratio=1/1 ! "
+        source_element += f"hailomuxer name=hmux "
+        source_element += f"tee name=t ! "
+        source_element += QUEUE("bypass_queue", max_size_buffers=20)
+        source_element += "hmux.sink_0 ! t. ! "
+        source_element += "videoconvert n-threads=3 ! "
 
-        pipeline_string = (
-            "hailomuxer name=hmux "
-            + source_element
-            + "tee name=t ! "
-            + QUEUE("bypass_queue", max_size_buffers=20)
-            + "hmux.sink_0 "
-            + "t. ! "
-            + QUEUE("queue_hailonet")
-            + "videoconvert n-threads=3 ! "
-            f"hailonet hef-path={self.hef_path} batch-size={self.batch_size} {self.thresholds_str} force-writable=true ! "
-            + QUEUE("queue_hailofilter")
-            + f"hailofilter so-path={self.default_postprocess_so} {self.labels_config} qos=false ! "
+        # parallel logic for the OD + LD
+        source_element += "tee name=splitter ! "
+
+        #OD Branch
+        #splitter. ! queue_hailonet_od ! hailonet (OD) ! queue_hailofilter_od ! hailofilter (OD) ! hmux_cascade.sink_0
+        #starting from the splitter 
+        pipeline_string_OD = ( 
+            f"splitter. !" 
+            + QUEUE("queue_hailonet_od")
+            + f"hailonet hef-path={self.od_hef_path} batch-size={self.batch_size} {self.thresholds_str} force-writable=true ! "
+            + QUEUE("queue_hailofilter_od")
+            + f"hailofilter od so-path={self.default_postprocess_so_od} {self.labels_config} qos=false ! "
+            + f"hmux_cascade.sink_0 " #sending the OD output to the muxer
+        )
+        
+        #LD Branch
+        #splitter. ! queue_hailonet_ld ! hailonet (LD) ! queue_hailofilter_ld ! hailofilter (LD) ! hmux_cascade.sink_1
+        #starting from the splitter 
+        pipeline_string_LD = (
+            f"splitter. !" 
+            + QUEUE("queue_hailonet_ld")
+            + f"hailonet hef-path={self.ld_hef_path} batch-size={self.batch_size} {self.thresholds_str} force-writable=true ! "
+            + QUEUE("queue_hailofilter_ld")
+            + f"hailofilter ld so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
+            + f"hmux_cascade.sink_1 " #sending the LD output to the muxer
+        )    
+
+        source_element += pipeline_string_OD
+        source_element += pipeline_string_LD
+        #parallel processing done
+        # mux - combines the two streams
+        source_element += "hailomuxer name=hmux_cascade ! "
+
+        pipeline_string_after_cascading = (
+            source_element
             + QUEUE("queue_hmuc")
-            + "hmux.sink_1 "
-            + "hmux. ! "
+            + f"hmux.sink_1 "
+            + f"hmux. ! "
             + QUEUE("queue_hailo_python")
             + QUEUE("queue_user_callback")
             + "identity name=identity_callback ! "
@@ -442,5 +470,5 @@ class GStreamerDetectionApp(GStreamerApp):
             + f"fpsdisplaysink video-sink={self.video_sink} name=hailo_display sync={self.sync} text-overlay={self.options_menu.show_fps} signal-fps-measurements=true "
             #+ "fakesink"
         )
-        print(pipeline_string)
-        return pipeline_string
+        print(pipeline_string_after_cascading)
+        return pipeline_string_after_cascading
