@@ -1,14 +1,13 @@
 import numpy as np
 import supervision as sv
 
-from Lane_Cogestion_Monitoring.func.hailo_functional import (
+from func.hailo_functional import (
     user_app_callback_class,
     ViewTransformer,
     GStreamerDetectionApp,
 )
 from func.hailo_rpi_common import get_default_parser
-from Lane_Cogestion_Monitoring.utils.hailo_utils import (
-    define_source_polygon, 
+from utils.hailo_utils import (
     get_video_info
 )
 
@@ -61,11 +60,11 @@ if __name__ == "__main__":
         default="yolov6n.hef",
         help="Path to HEF file for object detection",
     )
-
+    
     args = parser.parse_args()
 
     try:
-        original_frame_width, original_frame_height, total_frames = get_video_info(args.input_video)
+        original_frame_width, original_frame_height, total_frames = get_video_info(args.input)
     except ValueError as e:
         print(e)
         exit(1)

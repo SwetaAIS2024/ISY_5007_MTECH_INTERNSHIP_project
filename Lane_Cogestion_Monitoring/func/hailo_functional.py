@@ -15,8 +15,8 @@ import hailo
 # Add these imports for Supervision and ByteTrack
 import supervision as sv
 from collections import defaultdict, deque
-from utils import HailoAsyncInference
-from hailo_rpi_common import (
+# from utils import HailoAsyncInference
+from func.hailo_rpi_common import (
     QUEUE,
     get_video_fps_wh,
     get_caps_from_pad,
@@ -29,28 +29,43 @@ from hailo_rpi_common import (
 
 # ---------------------- ADDITIONAL CODE FOR SPEED ESTIMATION ------------------------------------
 
-import subprocess
-def initialize_hailo_vdevice(device_count=2):
+TARGET_HEIGHT = 80 #250
+TARGET_WIDTH = 22 #25
+SOURCE = np.array([[1252, 1200], [2298, 1200], [5039, 2159], [-550, 2159]]) 
+SOURCE = SOURCE.astype(float)
 
-    """
-    Initializes the Hailo virtual devices with the specified device count.
+TARGET = np.array(
+    [
+        [0, 0],
+        [TARGET_WIDTH - 1, 0],
+        [TARGET_WIDTH - 1, TARGET_HEIGHT - 1],
+        [0, TARGET_HEIGHT - 1],
+    ]
+    )
+
+
+import subprocess
+# def initialize_hailo_vdevice(device_count=2):
+
+#     """
+#     Initializes the Hailo virtual devices with the specified device count.
     
-    Args:
-        device_count (int): The number of virtual devices to allocate.
-    """
-    try:
-        # Run the hailo_vdevice command
-        subprocess.run(["hailo_vdevice", f"--device-count={device_count}"], check=True)
-        print(f"Successfully initialized {device_count} Hailo virtual devices.")
-    except subprocess.CalledProcessError as e:
-        print(f"Failed to initialize Hailo virtual devices: {e}")
-        exit(1)
-    except FileNotFoundError:
-        print("hailo_vdevice command not found. Ensure Hailo SDK is installed and in PATH.")
-        exit(1)
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-        exit(1)
+#     Args:
+#         device_count (int): The number of virtual devices to allocate.
+#     """
+#     try:
+#         # Run the hailo_vdevice command
+#         subprocess.run(["hailo_vdevice", f"--device-count={device_count}"], check=True)
+#         print(f"Successfully initialized {device_count} Hailo virtual devices.")
+#     except subprocess.CalledProcessError as e:
+#         print(f"Failed to initialize Hailo virtual devices: {e}")
+#         exit(1)
+#     except FileNotFoundError:
+#         print("hailo_vdevice command not found. Ensure Hailo SDK is installed and in PATH.")
+#         exit(1)
+#     except Exception as e:
+#         print(f"An unexpected error occurred: {e}")
+#         exit(1)
 
 class ViewTransformer:
     def __init__(self, source: np.ndarray, target: np.ndarray) -> None:
@@ -462,8 +477,8 @@ class GStreamerDetectionApp(GStreamerApp):
         super().__init__(args, user_data)
 
         # Initialize the no of virtual devices to 2 if the pipeline type is parallel
-        if args.pipeline_type == "parallel":
-            initialize_hailo_vdevice(device_count=2)
+        # if args.pipeline_type == "parallel":
+        #     initialize_hailo_vdevice(device_count=2)
 
         self.ld_hef_path = args.hef_path_ld
         self.od_hef_path = args.hef_path_od
@@ -471,20 +486,20 @@ class GStreamerDetectionApp(GStreamerApp):
         user_data.input_queue = multiprocessing.Queue()
         user_data.output_queue = multiprocessing.Queue()
 
-        hailo_inference = HailoAsyncInference(
-            hef_path=args.net,
-            input_queue=user_data.input_queue,
-            output_queue=user_data.output_queue,
-            )
+        #hailo_inference = HailoAsyncInference(
+        #    hef_path=args.net,
+        #    input_queue=user_data.input_queue,
+        #    output_queue=user_data.output_queue,
+        #    )
         
         # instead of hardcoding the values, we can get the values from the model itself 
         # so that we can use the same code for multiple models
-        self.network_height, self.network_width, _ = hailo_inference.get_input_shape()
+        # self.network_height, self.network_width, _ =  hailo_inference.get_input_shape()
 
         # Initialize parameters for your model and postprocessing if needed
         self.batch_size = 2
-        #self.network_width = 640
-        #self.network_height = 640
+        self.network_width = 640
+        self.network_height = 640
         self.network_format = "RGB"
         nms_score_threshold = 0.3
         nms_iou_threshold = 0.45
@@ -498,7 +513,7 @@ class GStreamerDetectionApp(GStreamerApp):
         SOURCE = SOURCE * [scaling_x, scaling_y]
         '''
         
-        video_path = args.video_source  # Path to the input video
+        video_path = args.input  # Path to the input video
         original_width, original_height = get_video_dimensions(video_path)
         #original_width, original_height = 3840, 2160 # this part also can be extracted from 
         # the input video itself 
@@ -562,8 +577,8 @@ class GStreamerDetectionApp(GStreamerApp):
         user_data.iou_threshold = 0.7
         
         # setting the source and the target points
-        SOURCE = user_data.SOURCE
-        TARGET = user_data.TARGET 
+        #SOURCE = user_data.SOURCE
+        #TARGET = user_data.TARGET 
 
         # Polygon zone and view transformer
         user_data.polygon_zone = sv.PolygonZone(polygon=SOURCE)
@@ -643,7 +658,7 @@ class GStreamerDetectionApp(GStreamerApp):
         source_element += "videoscale n-threads=2 ! "
         source_element += QUEUE("queue_src_convert")
         source_element += f"videoconvert n-threads=3 name=src_convert qos=false ! video/x-raw, format={self.network_format}, width={self.network_width}, height={self.network_height}, pixel-aspect-ratio=1/1 ! "
-        source_element += f"hailomuxer name=hmux "
+        source_element += f"hailomuxer name=hmux ! "
         source_element += f"tee name=t ! "
         source_element += QUEUE("bypass_queue", max_size_buffers=20)
         source_element += "hmux.sink_0 ! t. ! "
@@ -656,28 +671,28 @@ class GStreamerDetectionApp(GStreamerApp):
         #splitter. ! queue_hailonet_od ! hailonet (OD) ! queue_hailofilter_od ! hailofilter (OD) ! hmux_cascade.sink_0
         #starting from the splitter 
         pipeline_string_OD = ( 
-            f"splitter. !" 
+            f"splitter. ! " 
             + QUEUE("queue_hailonet_od")
             + f"hailonet hef-path={self.od_hef_path} is-active=true batch-size={self.batch_size} {self.thresholds_str} force-writable=true device-count=2 scheduling-algorithm=ROUND_ROBIN ! "
             + QUEUE("queue_hailofilter_od")
             + f"hailofilter od so-path={self.default_postprocess_so_od} {self.labels_config} qos=false ! "
             + QUEUE("queue_od_callback")
             + f"identity name=identity_od_callback ! "
-            + f"hmux_cascade.sink_0 " #sending the OD output to the muxer
+            + f"hmux_cascade.sink_0 ! " #sending the OD output to the muxer
         )
         
         #LD Branch
         #splitter. ! queue_hailonet_ld ! hailonet (LD) ! queue_hailofilter_ld ! hailofilter (LD) ! hmux_cascade.sink_1
         #starting from the splitter 
         pipeline_string_LD = (
-            f"splitter. !" 
+            f"splitter. ! " 
             + QUEUE("queue_hailonet_ld")
             + f"hailonet hef-path={self.ld_hef_path} is-active=true batch-size={self.batch_size} {self.thresholds_str} force-writable=true device-count=2 scheduling-algorithm=ROUND_ROBIN ! "
             + QUEUE("queue_hailofilter_ld")
             + f"hailofilter ld so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
             + QUEUE("queue_ld_callback")
             + f"identity name=identity_ld_callback ! "
-            + f"hmux_cascade.sink_1 " #sending the LD output to the muxer
+            + f"hmux_cascade.sink_1 ! " #sending the LD output to the muxer
         )    
 
         source_element += pipeline_string_OD
@@ -689,7 +704,7 @@ class GStreamerDetectionApp(GStreamerApp):
         pipeline_string_parallel = (
             source_element
             + QUEUE("queue_hmuc")
-            + f"hmux.sink_1 "
+            + f"hmux.sink_1 ! "
             + f"hmux. ! "
 # these are commented since not needed for the parallel pipeline
 #            + QUEUE("queue_hailo_python")
