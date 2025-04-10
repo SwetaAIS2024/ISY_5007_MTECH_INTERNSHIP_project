@@ -102,6 +102,15 @@ def get_default_parser():
         help="Disables display sink sync, will run as fast as possible. Relevant when using file source."
     )
     parser.add_argument("--dump-dot", action="store_true", help="Dump the pipeline graph to a dot file pipeline.dot")
+    
+    parser.add_argument(
+        "--pipeline-type", type=str, choices=["sequential", "parallel"], default="sequential",
+        help=
+        "Select  the pipeline type. " \
+        "'sequential' for sequential inference of the models," \
+        " 'parallel' for parallel inference of the models."
+    )
+
     return parser
 
 def QUEUE(name, max_size_buffers=5, max_size_bytes=0, max_size_time=0):
@@ -151,6 +160,13 @@ class GStreamerApp:
         self.source_type = get_source_type(self.video_source)
         self.user_data = user_data
         self.video_sink = "xvimagesink"
+
+        # For parallel inference, we need to set the HEF path for both lanes and objects
+        self.ld_hef_path = self.options_menu.hef_path_ld
+        self.od_hef_path = self.options_menu.hef_path_od
+        self.default_postprocess_so_od = os.path.join(self.postprocess_dir, "object_detection_postprocess.so")
+        self.default_postprocess_so_ld = os.path.join(self.postprocess_dir, "lane_detection_postprocess.so")
+        
         
         # Set Hailo parameters; these parameters should be set based on the model used
         self.batch_size = 1

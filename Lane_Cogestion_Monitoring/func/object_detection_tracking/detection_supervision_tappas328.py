@@ -45,6 +45,26 @@ from hailo_rpi_common import (
 #    ]
 #)
 
+import subprocess
+def initialize_hailo_vdevice(device_count=2):
+
+    """
+    Initializes the Hailo virtual devices with the specified device count.
+    
+    Args:
+        device_count (int): The number of virtual devices to allocate.
+    """
+    try:
+        # Run the hailo_vdevice command
+        subprocess.run(["hailo_vdevice", f"--device-count={device_count}"], check=True)
+        print(f"Successfully initialized {device_count} Hailo virtual devices.")
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to initialize Hailo virtual devices: {e}")
+        exit(1)
+    except FileNotFoundError:
+        print("hailo_vdevice command not found. Ensure Hailo SDK is installed and in PATH.")
+        exit(1)
+
 class ViewTransformer:
     def __init__(self, source: np.ndarray, target: np.ndarray) -> None:
         source = source.astype(np.float32)
@@ -248,6 +268,10 @@ class GStreamerDetectionApp(GStreamerApp):
     def __init__(self, args, user_data):
         super().__init__(args, user_data)
 
+        # Initialize the no of virtual devices to 2 if the pipeline type is parallel
+        if args.pipeline_type == "parallel":
+            initialize_hailo_vdevice(device_count=2)
+
         user_data.input_queue = multiprocessing.Queue()
         user_data.output_queue = multiprocessing.Queue()
 
@@ -391,6 +415,14 @@ class GStreamerDetectionApp(GStreamerApp):
         self.create_pipeline()
 
     def get_pipeline_string(self):
+        if self.options_menu.pipeline_type == "parallel":
+            return self.get_parallel_pipeline_string()
+        elif self.options_menu.pipeline_type == "sequential":
+            return self.get_sequential_pipeline_string()
+        else:
+            raise ValueError(f"Invalid pipeline type. {self.options_menu.pipeline_type} Choose 'parallel' or 'sequential'.")
+
+    def get_parallel_pipeline_string(self):
         if self.source_type == "rpi":
             source_element = (
                 "libcamerasrc name=src_0 auto-focus-mode=2 ! "
@@ -430,7 +462,7 @@ class GStreamerDetectionApp(GStreamerApp):
         pipeline_string_OD = ( 
             f"splitter. !" 
             + QUEUE("queue_hailonet_od")
-            + f"hailonet hef-path={self.od_hef_path} batch-size={self.batch_size} {self.thresholds_str} force-writable=true ! "
+            + f"hailonet hef-path={self.od_hef_path} is-active=true batch-size={self.batch_size} {self.thresholds_str} force-writable=true device-count=2 scheduling-algorithm=ROUND_ROBIN ! "
             + QUEUE("queue_hailofilter_od")
             + f"hailofilter od so-path={self.default_postprocess_so_od} {self.labels_config} qos=false ! "
             + f"hmux_cascade.sink_0 " #sending the OD output to the muxer
@@ -442,7 +474,7 @@ class GStreamerDetectionApp(GStreamerApp):
         pipeline_string_LD = (
             f"splitter. !" 
             + QUEUE("queue_hailonet_ld")
-            + f"hailonet hef-path={self.ld_hef_path} batch-size={self.batch_size} {self.thresholds_str} force-writable=true ! "
+            + f"hailonet hef-path={self.ld_hef_path} is-active=true batch-size={self.batch_size} {self.thresholds_str} force-writable=true device-count=2 scheduling-algorithm=ROUND_ROBIN ! "
             + QUEUE("queue_hailofilter_ld")
             + f"hailofilter ld so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
             + f"hmux_cascade.sink_1 " #sending the LD output to the muxer
@@ -454,7 +486,7 @@ class GStreamerDetectionApp(GStreamerApp):
         # mux - combines the two streams
         source_element += "hailomuxer name=hmux_cascade ! "
 
-        pipeline_string_after_cascading = (
+        pipeline_string_parallel = (
             source_element
             + QUEUE("queue_hmuc")
             + f"hmux.sink_1 "
@@ -470,5 +502,78 @@ class GStreamerDetectionApp(GStreamerApp):
             + f"fpsdisplaysink video-sink={self.video_sink} name=hailo_display sync={self.sync} text-overlay={self.options_menu.show_fps} signal-fps-measurements=true "
             #+ "fakesink"
         )
-        print(pipeline_string_after_cascading)
-        return pipeline_string_after_cascading
+        print(pipeline_string_parallel)
+        return pipeline_string_parallel
+    
+    def get_sequential_pipeline_string(self):
+        if self.source_type == "rpi":
+            source_element = (
+                "libcamerasrc name=src_0 auto-focus-mode=2 ! "
+                f"video/x-raw, format={self.network_format}, width=1536, height=864 ! "
+                + QUEUE("queue_src_scale")
+                + "videoscale ! "
+                f"video/x-raw, format={self.network_format}, width={self.network_width}, height={self.network_height}, framerate=30/1 ! "
+            )
+        elif self.source_type == "usb":
+            source_element = (
+                f"v4l2src device={self.video_source} name=src_0 ! "
+                "video/x-raw, width=640, height=480, framerate=30/1 ! "
+            )
+        else:
+            source_element = (
+                f"filesrc location={self.video_source} name=src_0 ! "
+                + QUEUE("queue_dec264")
+                + " qtdemux ! h264parse ! avdec_h264 max-threads=2 ! "
+                " video/x-raw, format=I420 ! "
+            )
+        source_element += QUEUE("queue_scale")
+        source_element += "videoscale n-threads=2 ! "
+        source_element += QUEUE("queue_src_convert")
+        source_element += f"videoconvert n-threads=3 name=src_convert qos=false ! video/x-raw, format={self.network_format}, width={self.network_width}, height={self.network_height}, pixel-aspect-ratio=1/1 ! "
+        source_element += f"hailomuxer name=hmux "
+        source_element += f"tee name=t ! "
+        source_element += QUEUE("bypass_queue", max_size_buffers=20)
+        source_element += "hmux.sink_0 ! t. ! "
+        source_element += "videoconvert n-threads=3 ! "
+
+        # sequential logic for the OD + LD
+
+        #OD Branch
+        #queue_hailonet_od ! hailonet (OD) ! queue_hailofilter_od ! hailofilter (OD) ! 
+        pipeline_string_OD = ( 
+             QUEUE("queue_hailonet_od")
+            + f"hailonet hef-path={self.od_hef_path} batch-size={self.batch_size} {self.thresholds_str} force-writable=true ! "
+            + QUEUE("queue_hailofilter_od")
+            + f"hailofilter od so-path={self.default_postprocess_so_od} {self.labels_config} qos=false ! "
+        )
+        
+        #LD Branch
+        #queue_hailonet_ld ! hailonet (LD) ! queue_hailofilter_ld ! hailofilter (LD) ! 
+        pipeline_string_LD = (   
+              QUEUE("queue_hailonet_ld")
+            + f"hailonet hef-path={self.ld_hef_path} batch-size={self.batch_size} {self.thresholds_str} force-writable=true ! "
+            + QUEUE("queue_hailofilter_ld")
+            + f"hailofilter ld so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
+        )    
+
+        pipeline_string_sequential = (
+              source_element
+            + pipeline_string_OD
+            + pipeline_string_LD
+            + QUEUE("queue_hmuc")
+            + f"hmux.sink_1 "
+            + f"hmux. ! "
+            + QUEUE("queue_hailo_python")
+            + QUEUE("queue_user_callback")
+            + "identity name=identity_callback ! "
+            + QUEUE("queue_hailooverlay")
+            + "hailooverlay ! "
+            + QUEUE("queue_videoconvert")
+            + "videoconvert n-threads=3 qos=false ! "
+            + QUEUE("queue_hailo_display")
+            + f"fpsdisplaysink video-sink={self.video_sink} name=hailo_display sync={self.sync} text-overlay={self.options_menu.show_fps} signal-fps-measurements=true "
+            #+ "fakesink"
+        )
+        print(pipeline_string_sequential)
+        return pipeline_string_sequential
+    
