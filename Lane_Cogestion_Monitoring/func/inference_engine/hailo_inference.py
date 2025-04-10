@@ -1,1 +1,0 @@
-#Hailo based inference pipeline
