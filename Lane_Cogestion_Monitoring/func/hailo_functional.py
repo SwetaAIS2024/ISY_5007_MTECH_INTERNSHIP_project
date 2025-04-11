@@ -18,10 +18,8 @@ from collections import defaultdict, deque
 # from utils import HailoAsyncInference
 from func.hailo_rpi_common import (
     QUEUE,
-    get_video_fps_wh,
     get_caps_from_pad,
     get_numpy_from_buffer,
-    get_video_dimensions,
     GStreamerApp,
     app_callback_class,
 )
@@ -42,30 +40,6 @@ TARGET = np.array(
         [0, TARGET_HEIGHT - 1],
     ]
     )
-
-
-import subprocess
-# def initialize_hailo_vdevice(device_count=2):
-
-#     """
-#     Initializes the Hailo virtual devices with the specified device count.
-    
-#     Args:
-#         device_count (int): The number of virtual devices to allocate.
-#     """
-#     try:
-#         # Run the hailo_vdevice command
-#         subprocess.run(["hailo_vdevice", f"--device-count={device_count}"], check=True)
-#         print(f"Successfully initialized {device_count} Hailo virtual devices.")
-#     except subprocess.CalledProcessError as e:
-#         print(f"Failed to initialize Hailo virtual devices: {e}")
-#         exit(1)
-#     except FileNotFoundError:
-#         print("hailo_vdevice command not found. Ensure Hailo SDK is installed and in PATH.")
-#         exit(1)
-#     except Exception as e:
-#         print(f"An unexpected error occurred: {e}")
-#         exit(1)
 
 class ViewTransformer:
     def __init__(self, source: np.ndarray, target: np.ndarray) -> None:
@@ -120,205 +94,19 @@ def od_callback(args, pad, info, user_data: user_app_callback_class):
     buffer = info.get_buffer()
     if buffer is None:
         return Gst.PadProbeReturn.OK
-        
-    # # Increment frame count
-    # user_data.increment()
-
-    # # Get caps to retrieve frame size and format
-    # format, width, height = get_caps_from_pad(pad)
-
-    # #Get the buffer data for the SOURCE and the TARGET
-    # SOURCE = user_data.SOURCE
-    # TARGET = user_data.TARGET
-
-    # #Get the video fps and resolution
-    # user_data.fps, user_data.resolution_wh = get_video_fps_wh(args.video_source)
-
-    # # Get video frame (if enabled)
-    # frame = None
-    # if user_data.use_frame and format is not None and width is not None and height is not None:
-    #     frame = get_numpy_from_buffer(buffer, format, width, height)
-    #     # Convert to BGR for annotation (supervision expects BGR)
-    #     if format == "RGB":
-    #         # Already in RGB, just convert to BGR
-    #         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-    #     # For NV12/YUYV, you'd need proper color conversion to BGR.
-
-    
-    # # Extract detections from hailo ROI
-    # roi = hailo.get_roi_from_buffer(buffer)
-    # hailo_detections = roi.get_objects_typed(hailo.HAILO_DETECTION)
-
-    # # Convert hailo detections to supervision.Detections
-    # # hailo bbox format: let's assume it's xywh or xyxy as needed.
-    # # According to Hailo docs, bbox might be (x_min, y_min, width, height). We need xyxy:
-    # xyxy = [] # [[xmin, ymin, xmax, ymax], ...] distances are in pixels, diagonal distance
-    # confidences = []
-    # class_ids = []
-    # class_labels = []
-
-
-    # for d in hailo_detections:
-    #     label = d.get_label()
-    #     bbox = d.get_bbox()  # (x, y, w, h)
-    #     confidence = d.get_confidence()
-
-    #     #x, y, w, h = bbox
-    #     #xmin = x
-    #     #ymin = y
-    #     #xmax = x + w
-    #     #ymax = y + h
-    #     xmin = bbox.xmin() * width
-    #     ymin = bbox.ymin() * height
-    #     xmax = bbox.xmax() * width
-    #     ymax = bbox.ymax() * height
-
-    #     xyxy.append([xmin, ymin, xmax, ymax])
-    #     confidences.append(confidence)
-    #     # If needed, map label to class_id. If no classes known, you can set class_id=0 or map from a label dictionary
-    #     class_ids.append(0)  # or a mapping if you have multiple classes
-    #     class_labels.append(label)
-
-    # if len(xyxy) > 0:
-    #     detections = sv.Detections(
-    #         xyxy=np.array(xyxy),
-    #         confidence=np.array(confidences),
-    #         class_id=np.array(class_ids)
-    #     )
-    # else:
-    #     detections = sv.Detections.empty()
-
-    # mask = detections.confidence > user_data.confidence_threshold
-    # detections = detections[mask]
-    # class_labels = [class_labels[i] for i in np.where(mask)[0]]
-
-    # # Filter by polygon zone
-    # if user_data.polygon_zone is not None:
-    #     if len(detections) > 0:
-    #         try:
-    #             inside_mask = user_data.polygon_zone.trigger(detections)
-    #             detections = detections[inside_mask]
-    #             class_labels = [class_labels[i] for i in np.where(inside_mask)[0]]
-    #         except:
-    #             pass
-
-    # # Run NMS
-    # detections = detections.with_nms(threshold=user_data.iou_threshold)
-
-    # # Track detections with ByteTrack
-    # detections = user_data.byte_track.update_with_detections(detections=detections)
-
-    # # Speed estimation
-    # # Transform points (anchor = bottom_center)
-    # if len(detections) > 0:
-    #     points = detections.get_anchors_coordinates(anchor=sv.Position.BOTTOM_CENTER)
-    #     points = user_data.view_transformer.transform_points(points=points).astype(int)
-
-    #     for tracker_id, [_, y] in zip(detections.tracker_id, points):
-    #         user_data.coordinates[tracker_id].append(y)
-
-    #     # Prepare labels with speed info
-    #     labels = []
-    #     for i, tracker_id in enumerate(detections.tracker_id):
-    #         current_class_label = class_labels[i]
-    #         if len(user_data.coordinates[tracker_id]) < user_data.fps / 2:
-    #             #labels.append(f"{tracker_id} {current_class_label}")
-    #             labels.append(f"{current_class_label}")
-    #         else:
-    #             coordinate_start = user_data.coordinates[tracker_id][-1]
-    #             coordinate_end = user_data.coordinates[tracker_id][0]
-    #             distance = abs(coordinate_start - coordinate_end)
-    #             time = len(user_data.coordinates[tracker_id]) / user_data.fps
-    #             speed = distance / time * 3.6
-    #             labels.append(f"{current_class_label} {int(speed)} km/h")
-    # else:
-    #     labels = []
-
-    # # Annotate frame
-    # if user_data.use_frame and frame is not None:
-    #     # Trace, boxes, labels
-    #     annotated_frame = frame.copy()
-    #     annotated_frame = user_data.trace_annotator.annotate(scene=annotated_frame, detections=detections)
-    #     annotated_frame = user_data.box_annotator.annotate(scene=annotated_frame, detections=detections)
-    #     annotated_frame = user_data.label_annotator.annotate(scene=annotated_frame, detections=detections, labels=labels)
-
-    #     # Show detection count or additional info if you wish
-    #     cv2.putText(annotated_frame, f"Detections: {len(detections)}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
-    #     polygon_points = SOURCE.astype(int)
-        
-    #     cv2.polylines(
-    #             annotated_frame,
-    #             [polygon_points], # polylines need a list of array of points
-    #             isClosed=True,
-    #             color=(0,0,255), # red color
-    #             thickness=1
-    #             )
-        
-    #     # Push annotated frame to user_data frame queue
-    #     user_data.set_frame(annotated_frame)
-
+    # placeholder
     return Gst.PadProbeReturn.OK
 
 def ld_callback(args, pad, info, user_data: user_app_callback_class):
     buffer = info.get_buffer()
     if buffer is None:
         return Gst.PadProbeReturn.OK
-    # Will add the code later, now verifying the pipeline 
-    # 
-    #    
-    # # Increment frame count
-    # user_data.increment()
-
-    # # Get caps to retrieve frame size and format
-    # format, width, height = get_caps_from_pad(pad)
-
-    # #Get the buffer data for the SOURCE and the TARGET
-    # SOURCE = user_data.SOURCE
-    # TARGET = user_data.TARGET
-
-    # #Get the video fps and resolution
-    # user_data.fps, user_data.resolution_wh = get_video_fps_wh(args.video_source)
-
-    # # Get video frame (if enabled)
-    # frame = None
-    # if user_data.use_frame and format is not None and width is not None and height is not None:
-    #     frame = get_numpy_from_buffer(buffer, format, width, height)
-    #     # Convert to BGR for annotation (supervision expects BGR)
-    #     if format == "RGB":
-    #         # Already in RGB, just convert to BGR
-    #         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-    #     # For NV12/YUYV, you'd need proper color conversion to BGR.
-
-    
-    # # Extract lane detections from hailo ROI
-    # roi = hailo.get_roi_from_buffer(buffer)
-    # hailo_lane_detections = roi.get_objects_typed(hailo.HAILO_LANE_DETECTION)
-
-    # lane_coord = []
-    # for l in hailo_lane_detections:
-    #     lane_points = l.get_points()  # (x, y)
-    #     lane_coord.append(lane_points)
-    
-    # user_data.lane_data = lane_coord
-
-    # #visualize the lane data
-    # if user_data.use_frame and frame is not None:
-    #     for lane in lane_coord:
-    #         for coord in lane:
-    #             cv2.circle(frame, (int(coord[0]), int(coord[1])), 3, (0, 255, 0), -1)
-        
-    #     #Annoate the frame
-    #     cv2.putText(frame, f"Lane Detections: {len(lane_coord)}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
-    #     # Push annotated frame to user_data frame queue
-    #     user_data.set_frame(frame)
-    
+    # placeholder
     return Gst.PadProbeReturn.OK
 
 # this one for the sequential pipeline
 
-def app_callback(args, pad, info, user_data: user_app_callback_class):
+def app_callback(pad, info, user_data: user_app_callback_class):
     buffer = info.get_buffer()
     if buffer is None:
         return Gst.PadProbeReturn.OK
@@ -328,13 +116,6 @@ def app_callback(args, pad, info, user_data: user_app_callback_class):
 
     # Get caps to retrieve frame size and format
     format, width, height = get_caps_from_pad(pad)
-
-    #Get the buffer data for the SOURCE and the TARGET
-    SOURCE = user_data.SOURCE
-    TARGET = user_data.TARGET
-
-    #Get the video fps and resolution
-    user_data.fps, user_data.resolution_wh = get_video_fps_wh(args.video_source)
 
     # Get video frame (if enabled)
     frame = None
@@ -359,9 +140,6 @@ def app_callback(args, pad, info, user_data: user_app_callback_class):
     class_ids = []
     class_labels = []
 
-    # intialize the binary mask 
-    if user_data.traffic_changed: bmask = np.zeros((height, width), dtype=np.uint8) # here the dim are the frame dimension
-
     for d in hailo_detections:
         label = d.get_label()
         bbox = d.get_bbox()  # (x, y, w, h)
@@ -382,10 +160,6 @@ def app_callback(args, pad, info, user_data: user_app_callback_class):
         # If needed, map label to class_id. If no classes known, you can set class_id=0 or map from a label dictionary
         class_ids.append(0)  # or a mapping if you have multiple classes
         class_labels.append(label)
-        
-        # add the OD bbox to the binary mask-bmask, if the traffic condiitons have changed
-        if user_data.traffic_changed: bmask[int(ymin):int(ymax), int(xmin):int(xmax)] = 1 #setting the pixels inside the mask based on the OD bbox
-
 
 
     if len(xyxy) > 0:
@@ -466,9 +240,7 @@ def app_callback(args, pad, info, user_data: user_app_callback_class):
         
         # Push annotated frame to user_data frame queue
         user_data.set_frame(annotated_frame)
-        
-        # Push binary mask to user_data binary mask 
-        if user_data.traffic_changed: user_data.binary_mask = bmask
+
     return Gst.PadProbeReturn.OK
 
 # -----------------------------------------------------------------------------------------------
@@ -478,21 +250,9 @@ class GStreamerDetectionApp(GStreamerApp):
     def __init__(self, args, user_data):
         super().__init__(args, user_data)
 
-        # Initialize the no of virtual devices to 2 if the pipeline type is parallel
-        # if args.pipeline_type == "parallel":
-        #     initialize_hailo_vdevice(device_count=2)
-
         self.ld_hef_path = args.hef_path_ld
         self.od_hef_path = args.hef_path_od
 
-        user_data.input_queue = multiprocessing.Queue()
-        user_data.output_queue = multiprocessing.Queue()
-
-        #hailo_inference = HailoAsyncInference(
-        #    hef_path=args.net,
-        #    input_queue=user_data.input_queue,
-        #    output_queue=user_data.output_queue,
-        #    )
         
         # instead of hardcoding the values, we can get the values from the model itself 
         # so that we can use the same code for multiple models
@@ -515,9 +275,7 @@ class GStreamerDetectionApp(GStreamerApp):
         SOURCE = SOURCE * [scaling_x, scaling_y]
         '''
         
-        video_path = args.input  # Path to the input video
-        original_width, original_height = get_video_dimensions(video_path)
-        #original_width, original_height = 3840, 2160 # this part also can be extracted from 
+        original_width, original_height = 3840, 2160 # this part also can be extracted from 
         # the input video itself 
         new_width, new_height = self.network_width, self.network_height
         aspect_ratio = original_width / original_height  # ~1.777... for 16:9
@@ -530,7 +288,6 @@ class GStreamerDetectionApp(GStreamerApp):
         # Calculate the top black bar offset
         top_black_bar = (new_height - scaled_height) / 2  # (640 - 360)/2 = 140 pixels
 
-        #SOURCE = SOURCE.astype(float)
         # Adjust SOURCE coordinates:
         SOURCE[:, 0] *= scaling_x
         SOURCE[:, 1] = SOURCE[:, 1] * scaling_y + top_black_bar
@@ -563,8 +320,8 @@ class GStreamerDetectionApp(GStreamerApp):
             self.default_postprocess_so = os.path.join(self.postprocess_dir, 'libyolo_hailortpp_post.so')
 
         self.app_callback = app_callback
-        self.app_callback_od = od_callback
-        self.app_callback_ld = ld_callback
+        #self.app_callback_od = od_callback
+        #self.app_callback_ld = ld_callback
 
         self.thresholds_str = (
             f"nms-score-threshold={nms_score_threshold} "
@@ -581,10 +338,6 @@ class GStreamerDetectionApp(GStreamerApp):
         user_data.confidence_threshold = 0.4
         user_data.iou_threshold = 0.7
         
-        # setting the source and the target points
-        #SOURCE = user_data.SOURCE
-        #TARGET = user_data.TARGET 
-
         # Polygon zone and view transformer
         user_data.polygon_zone = sv.PolygonZone(polygon=SOURCE)
         user_data.view_transformer = ViewTransformer(source=SOURCE, target=TARGET)
@@ -690,8 +443,8 @@ class GStreamerDetectionApp(GStreamerApp):
             + f"hailonet hef-path={self.od_hef_path} batch-size={self.batch_size} {self.thresholds_str} force-writable=true device-count=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
             + QUEUE("queue_hailofilter_od")
             + f"hailofilter so-path={self.default_postprocess_so_od} {self.labels_config} qos=false ! "
-            + QUEUE("queue_od_callback")
-            + f"identity name=identity_callback_od ! "
+#            + QUEUE("queue_od_callback")
+#            + f"identity name=identity_callback_od ! "
             + f"hmux_cascade.sink_0 " #sending the OD output to the muxer
         )
         
@@ -702,11 +455,11 @@ class GStreamerDetectionApp(GStreamerApp):
             f"splitter. ! " 
             + QUEUE("queue_hailonet_ld")
             + "videoconvert n-threads=3 ! "
-            + f"hailonet hef-path={self.ld_hef_path} batch-size={self.batch_size} {self.thresholds_str} force-writable=true device-count=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
-            + QUEUE("queue_hailofilter_ld")
-            + f"hailofilter so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
-            + QUEUE("queue_ld_callback")
-            + f"identity name=identity_callback_ld ! "
+#            + f"hailonet hef-path={self.ld_hef_path} batch-size={self.batch_size} {self.thresholds_str} force-writable=true device-count=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
+#            + QUEUE("queue_hailofilter_ld")
+#            + f"hailofilter so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
+#            + QUEUE("queue_ld_callback")
+#            + f"identity name=identity_callback_ld ! "
             + f"hmux_cascade.sink_1 " #sending the LD output to the muxer
         )    
 
@@ -727,6 +480,9 @@ class GStreamerDetectionApp(GStreamerApp):
         # now we need to send the output of the muxer to the hailooverlay
         pipeline_string_parallel = (
             source_element
+            + QUEUE("queue_hailo_python")
+            + QUEUE("queue_user_callback")
+            + "identity name=identity_callback ! "
             + QUEUE("queue_hailooverlay")
             + "hailooverlay ! "
             + QUEUE("queue_videoconvert")

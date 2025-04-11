@@ -3,34 +3,14 @@ import supervision as sv
 
 from func.hailo_functional import (
     user_app_callback_class,
-    ViewTransformer,
     GStreamerDetectionApp,
 )
+
 from func.hailo_rpi_common import get_default_parser
-from utils.hailo_utils import (
-    get_video_info
-)
 
 
-# Define the polygon in source perspective
-SOURCE = np.array([[1252, 787], [2298, 803], [5039, 2159], [-550, 2159]])
-TARGET_HEIGHT = 80 #250
-#SOURCE = define_source_polygon(left_lane, right_lane, frame_height, TARGET_HEIGHT)
-SOURCE = SOURCE.astype(float)
-TARGET_WIDTH = 22 #25
-
-TARGET = np.array(
-   [
-       [0, 0],
-       [TARGET_WIDTH - 1, 0],
-       [TARGET_WIDTH - 1, TARGET_HEIGHT - 1],
-       [0, TARGET_HEIGHT - 1],
-   ]
-)
-
-
-# the main function to be shifted to the main.py file later 
 if __name__ == "__main__":
+    user_data = user_app_callback_class()
     parser = get_default_parser()
     parser.add_argument(
         "--network",
@@ -63,16 +43,5 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
-    try:
-        original_frame_width, original_frame_height, total_frames = get_video_info(args.input)
-    except ValueError as e:
-        print(e)
-        exit(1)
-
-    user_data = user_app_callback_class()
-
-    user_data.polygon_zone = sv.PolygonZone(polygon=SOURCE)
-    user_data.view_transformer = ViewTransformer(source=SOURCE, target=TARGET)
-    user_data.options_menu = args
     app = GStreamerDetectionApp(args, user_data)
     app.run()

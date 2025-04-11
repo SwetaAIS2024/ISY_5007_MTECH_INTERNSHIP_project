@@ -176,8 +176,8 @@ class GStreamerApp:
         self.default_postprocess_so = None
         self.hef_path = None
         self.app_callback = None
-        self.app_callback_od = None
-        self.app_callback_ld = None
+        #self.app_callback_od = None
+        #self.app_callback_ld = None
 
         # Set user data parameters
         user_data.use_frame = self.options_menu.use_frame
@@ -242,40 +242,34 @@ class GStreamerApp:
         bus.add_signal_watch()
         bus.connect("message", self.bus_call, self.loop)
 
-        if self.user_data.options_menu.pipeline_type == "sequential":
+        #if self.user_data.options_menu.pipeline_type == "sequential":
 
-            # Connect pad probe to the identity element
-            identity = self.pipeline.get_by_name("identity_callback")
-            if identity is None:
-                print("Warning: identity_callback element not found, add <identity name=identity_callback> in your pipeline where you want the callback to be called.")
-            else:
-                identity_pad = identity.get_static_pad("src")
-                identity_pad.add_probe(Gst.PadProbeType.BUFFER, self.app_callback, self.user_data)
-        
-        elif self.user_data.options_menu.pipeline_type == "parallel":
+        # Connect pad probe to the identity element
+        identity = self.pipeline.get_by_name("identity_callback")
+        if identity is None:
+            print("Warning: identity_callback element not found, add <identity name=identity_callback> in your pipeline where you want the callback to be called.")
+        else:
+            identity_pad = identity.get_static_pad("src")
+            identity_pad.add_probe(Gst.PadProbeType.BUFFER, self.app_callback, self.user_data)
+    
+        # elif self.user_data.options_menu.pipeline_type == "parallel":
                 
-            # # Connect pad probe to the identity element for object detection
-            # identity_od = self.pipeline.get_by_name("identity_callback_od")
-            # if identity_od is None:
-            #     print("Warning: identity_callback_od element not found, add <identity name=identity_callback_od> in your pipeline where you want the callback to be called.")
-            # else:
-            #     identity_od_pad = identity_od.get_static_pad("src")
-            #     identity_od_pad.add_probe(Gst.PadProbeType.BUFFER, self.app_callback_od, self.user_data)
+        #     # Connect pad probe to the identity element for object detection
+        #     identity_od = self.pipeline.get_by_name("identity_callback_od")
+        #     if identity_od is None:
+        #         print("Warning: identity_callback_od element not found, add <identity name=identity_callback_od> in your pipeline where you want the callback to be called.")
+        #     else:
+        #         identity_od_pad = identity_od.get_static_pad("src")
+        #         identity_od_pad.add_probe(Gst.PadProbeType.BUFFER, self.app_callback_od, self.user_data)
             
-            # # Connect pad probe to the identity element for lane detection
-            # identity_ld = self.pipeline.get_by_name("identity_callback_ld")
-            # if identity_ld is None:
-            #     print("Warning: identity_callback_ld element not found, add <identity name=identity_callback_ld> in your pipeline where you want the callback to be called.")
-            # else:
-            #     identity_ld_pad = identity_ld.get_static_pad("src")
-            #     identity_ld_pad.add_probe(Gst.PadProbeType.BUFFER, self.app_callback_ld, self.user_data)
-            identity_od = self.pipeline.get_by_name("identity_callback_od")
-            identity_od_pad = identity_od.get_static_pad("src")
-            identity_od_pad.add_probe(Gst.PadProbeType.BUFFER, lambda *args: Gst.PadProbeReturn.OK)
-            identity_ld = self.pipeline.get_by_name("identity_callback_ld")
-            identity_ld_pad = identity_ld.get_static_pad("src")
-            identity_ld_pad.add_probe(Gst.PadProbeType.BUFFER, lambda *args: Gst.PadProbeReturn.OK)
-        
+        #     # Connect pad probe to the identity element for lane detection
+        #     identity_ld = self.pipeline.get_by_name("identity_callback_ld")
+        #     if identity_ld is None:
+        #         print("Warning: identity_callback_ld element not found, add <identity name=identity_callback_ld> in your pipeline where you want the callback to be called.")
+        #     else:
+        #         identity_ld_pad = identity_ld.get_static_pad("src")
+        #         identity_ld_pad.add_probe(Gst.PadProbeType.BUFFER, self.app_callback_ld, self.user_data)
+            
         # Get xvimagesink element and disable QoS
         # xvimagesink is instantiated by fpsdisplaysink
         hailo_display = self.pipeline.get_by_name("hailo_display")
