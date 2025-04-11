@@ -121,142 +121,142 @@ def od_callback(args, pad, info, user_data: user_app_callback_class):
     if buffer is None:
         return Gst.PadProbeReturn.OK
         
-    # Increment frame count
-    user_data.increment()
+    # # Increment frame count
+    # user_data.increment()
 
-    # Get caps to retrieve frame size and format
-    format, width, height = get_caps_from_pad(pad)
+    # # Get caps to retrieve frame size and format
+    # format, width, height = get_caps_from_pad(pad)
 
-    #Get the buffer data for the SOURCE and the TARGET
-    SOURCE = user_data.SOURCE
-    TARGET = user_data.TARGET
+    # #Get the buffer data for the SOURCE and the TARGET
+    # SOURCE = user_data.SOURCE
+    # TARGET = user_data.TARGET
 
-    #Get the video fps and resolution
-    user_data.fps, user_data.resolution_wh = get_video_fps_wh(args.video_source)
+    # #Get the video fps and resolution
+    # user_data.fps, user_data.resolution_wh = get_video_fps_wh(args.video_source)
 
-    # Get video frame (if enabled)
-    frame = None
-    if user_data.use_frame and format is not None and width is not None and height is not None:
-        frame = get_numpy_from_buffer(buffer, format, width, height)
-        # Convert to BGR for annotation (supervision expects BGR)
-        if format == "RGB":
-            # Already in RGB, just convert to BGR
-            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        # For NV12/YUYV, you'd need proper color conversion to BGR.
+    # # Get video frame (if enabled)
+    # frame = None
+    # if user_data.use_frame and format is not None and width is not None and height is not None:
+    #     frame = get_numpy_from_buffer(buffer, format, width, height)
+    #     # Convert to BGR for annotation (supervision expects BGR)
+    #     if format == "RGB":
+    #         # Already in RGB, just convert to BGR
+    #         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+    #     # For NV12/YUYV, you'd need proper color conversion to BGR.
 
     
-    # Extract detections from hailo ROI
-    roi = hailo.get_roi_from_buffer(buffer)
-    hailo_detections = roi.get_objects_typed(hailo.HAILO_DETECTION)
+    # # Extract detections from hailo ROI
+    # roi = hailo.get_roi_from_buffer(buffer)
+    # hailo_detections = roi.get_objects_typed(hailo.HAILO_DETECTION)
 
-    # Convert hailo detections to supervision.Detections
-    # hailo bbox format: let's assume it's xywh or xyxy as needed.
-    # According to Hailo docs, bbox might be (x_min, y_min, width, height). We need xyxy:
-    xyxy = [] # [[xmin, ymin, xmax, ymax], ...] distances are in pixels, diagonal distance
-    confidences = []
-    class_ids = []
-    class_labels = []
+    # # Convert hailo detections to supervision.Detections
+    # # hailo bbox format: let's assume it's xywh or xyxy as needed.
+    # # According to Hailo docs, bbox might be (x_min, y_min, width, height). We need xyxy:
+    # xyxy = [] # [[xmin, ymin, xmax, ymax], ...] distances are in pixels, diagonal distance
+    # confidences = []
+    # class_ids = []
+    # class_labels = []
 
 
-    for d in hailo_detections:
-        label = d.get_label()
-        bbox = d.get_bbox()  # (x, y, w, h)
-        confidence = d.get_confidence()
+    # for d in hailo_detections:
+    #     label = d.get_label()
+    #     bbox = d.get_bbox()  # (x, y, w, h)
+    #     confidence = d.get_confidence()
 
-        #x, y, w, h = bbox
-        #xmin = x
-        #ymin = y
-        #xmax = x + w
-        #ymax = y + h
-        xmin = bbox.xmin() * width
-        ymin = bbox.ymin() * height
-        xmax = bbox.xmax() * width
-        ymax = bbox.ymax() * height
+    #     #x, y, w, h = bbox
+    #     #xmin = x
+    #     #ymin = y
+    #     #xmax = x + w
+    #     #ymax = y + h
+    #     xmin = bbox.xmin() * width
+    #     ymin = bbox.ymin() * height
+    #     xmax = bbox.xmax() * width
+    #     ymax = bbox.ymax() * height
 
-        xyxy.append([xmin, ymin, xmax, ymax])
-        confidences.append(confidence)
-        # If needed, map label to class_id. If no classes known, you can set class_id=0 or map from a label dictionary
-        class_ids.append(0)  # or a mapping if you have multiple classes
-        class_labels.append(label)
+    #     xyxy.append([xmin, ymin, xmax, ymax])
+    #     confidences.append(confidence)
+    #     # If needed, map label to class_id. If no classes known, you can set class_id=0 or map from a label dictionary
+    #     class_ids.append(0)  # or a mapping if you have multiple classes
+    #     class_labels.append(label)
 
-    if len(xyxy) > 0:
-        detections = sv.Detections(
-            xyxy=np.array(xyxy),
-            confidence=np.array(confidences),
-            class_id=np.array(class_ids)
-        )
-    else:
-        detections = sv.Detections.empty()
+    # if len(xyxy) > 0:
+    #     detections = sv.Detections(
+    #         xyxy=np.array(xyxy),
+    #         confidence=np.array(confidences),
+    #         class_id=np.array(class_ids)
+    #     )
+    # else:
+    #     detections = sv.Detections.empty()
 
-    mask = detections.confidence > user_data.confidence_threshold
-    detections = detections[mask]
-    class_labels = [class_labels[i] for i in np.where(mask)[0]]
+    # mask = detections.confidence > user_data.confidence_threshold
+    # detections = detections[mask]
+    # class_labels = [class_labels[i] for i in np.where(mask)[0]]
 
-    # Filter by polygon zone
-    if user_data.polygon_zone is not None:
-        if len(detections) > 0:
-            try:
-                inside_mask = user_data.polygon_zone.trigger(detections)
-                detections = detections[inside_mask]
-                class_labels = [class_labels[i] for i in np.where(inside_mask)[0]]
-            except:
-                pass
+    # # Filter by polygon zone
+    # if user_data.polygon_zone is not None:
+    #     if len(detections) > 0:
+    #         try:
+    #             inside_mask = user_data.polygon_zone.trigger(detections)
+    #             detections = detections[inside_mask]
+    #             class_labels = [class_labels[i] for i in np.where(inside_mask)[0]]
+    #         except:
+    #             pass
 
-    # Run NMS
-    detections = detections.with_nms(threshold=user_data.iou_threshold)
+    # # Run NMS
+    # detections = detections.with_nms(threshold=user_data.iou_threshold)
 
-    # Track detections with ByteTrack
-    detections = user_data.byte_track.update_with_detections(detections=detections)
+    # # Track detections with ByteTrack
+    # detections = user_data.byte_track.update_with_detections(detections=detections)
 
-    # Speed estimation
-    # Transform points (anchor = bottom_center)
-    if len(detections) > 0:
-        points = detections.get_anchors_coordinates(anchor=sv.Position.BOTTOM_CENTER)
-        points = user_data.view_transformer.transform_points(points=points).astype(int)
+    # # Speed estimation
+    # # Transform points (anchor = bottom_center)
+    # if len(detections) > 0:
+    #     points = detections.get_anchors_coordinates(anchor=sv.Position.BOTTOM_CENTER)
+    #     points = user_data.view_transformer.transform_points(points=points).astype(int)
 
-        for tracker_id, [_, y] in zip(detections.tracker_id, points):
-            user_data.coordinates[tracker_id].append(y)
+    #     for tracker_id, [_, y] in zip(detections.tracker_id, points):
+    #         user_data.coordinates[tracker_id].append(y)
 
-        # Prepare labels with speed info
-        labels = []
-        for i, tracker_id in enumerate(detections.tracker_id):
-            current_class_label = class_labels[i]
-            if len(user_data.coordinates[tracker_id]) < user_data.fps / 2:
-                #labels.append(f"{tracker_id} {current_class_label}")
-                labels.append(f"{current_class_label}")
-            else:
-                coordinate_start = user_data.coordinates[tracker_id][-1]
-                coordinate_end = user_data.coordinates[tracker_id][0]
-                distance = abs(coordinate_start - coordinate_end)
-                time = len(user_data.coordinates[tracker_id]) / user_data.fps
-                speed = distance / time * 3.6
-                labels.append(f"{current_class_label} {int(speed)} km/h")
-    else:
-        labels = []
+    #     # Prepare labels with speed info
+    #     labels = []
+    #     for i, tracker_id in enumerate(detections.tracker_id):
+    #         current_class_label = class_labels[i]
+    #         if len(user_data.coordinates[tracker_id]) < user_data.fps / 2:
+    #             #labels.append(f"{tracker_id} {current_class_label}")
+    #             labels.append(f"{current_class_label}")
+    #         else:
+    #             coordinate_start = user_data.coordinates[tracker_id][-1]
+    #             coordinate_end = user_data.coordinates[tracker_id][0]
+    #             distance = abs(coordinate_start - coordinate_end)
+    #             time = len(user_data.coordinates[tracker_id]) / user_data.fps
+    #             speed = distance / time * 3.6
+    #             labels.append(f"{current_class_label} {int(speed)} km/h")
+    # else:
+    #     labels = []
 
-    # Annotate frame
-    if user_data.use_frame and frame is not None:
-        # Trace, boxes, labels
-        annotated_frame = frame.copy()
-        annotated_frame = user_data.trace_annotator.annotate(scene=annotated_frame, detections=detections)
-        annotated_frame = user_data.box_annotator.annotate(scene=annotated_frame, detections=detections)
-        annotated_frame = user_data.label_annotator.annotate(scene=annotated_frame, detections=detections, labels=labels)
+    # # Annotate frame
+    # if user_data.use_frame and frame is not None:
+    #     # Trace, boxes, labels
+    #     annotated_frame = frame.copy()
+    #     annotated_frame = user_data.trace_annotator.annotate(scene=annotated_frame, detections=detections)
+    #     annotated_frame = user_data.box_annotator.annotate(scene=annotated_frame, detections=detections)
+    #     annotated_frame = user_data.label_annotator.annotate(scene=annotated_frame, detections=detections, labels=labels)
 
-        # Show detection count or additional info if you wish
-        cv2.putText(annotated_frame, f"Detections: {len(detections)}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    #     # Show detection count or additional info if you wish
+    #     cv2.putText(annotated_frame, f"Detections: {len(detections)}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
-        polygon_points = SOURCE.astype(int)
+    #     polygon_points = SOURCE.astype(int)
         
-        cv2.polylines(
-                annotated_frame,
-                [polygon_points], # polylines need a list of array of points
-                isClosed=True,
-                color=(0,0,255), # red color
-                thickness=1
-                )
+    #     cv2.polylines(
+    #             annotated_frame,
+    #             [polygon_points], # polylines need a list of array of points
+    #             isClosed=True,
+    #             color=(0,0,255), # red color
+    #             thickness=1
+    #             )
         
-        # Push annotated frame to user_data frame queue
-        user_data.set_frame(annotated_frame)
+    #     # Push annotated frame to user_data frame queue
+    #     user_data.set_frame(annotated_frame)
 
     return Gst.PadProbeReturn.OK
 
@@ -264,53 +264,55 @@ def ld_callback(args, pad, info, user_data: user_app_callback_class):
     buffer = info.get_buffer()
     if buffer is None:
         return Gst.PadProbeReturn.OK
-        
-    # Increment frame count
-    user_data.increment()
+    # Will add the code later, now verifying the pipeline 
+    # 
+    #    
+    # # Increment frame count
+    # user_data.increment()
 
-    # Get caps to retrieve frame size and format
-    format, width, height = get_caps_from_pad(pad)
+    # # Get caps to retrieve frame size and format
+    # format, width, height = get_caps_from_pad(pad)
 
-    #Get the buffer data for the SOURCE and the TARGET
-    SOURCE = user_data.SOURCE
-    TARGET = user_data.TARGET
+    # #Get the buffer data for the SOURCE and the TARGET
+    # SOURCE = user_data.SOURCE
+    # TARGET = user_data.TARGET
 
-    #Get the video fps and resolution
-    user_data.fps, user_data.resolution_wh = get_video_fps_wh(args.video_source)
+    # #Get the video fps and resolution
+    # user_data.fps, user_data.resolution_wh = get_video_fps_wh(args.video_source)
 
-    # Get video frame (if enabled)
-    frame = None
-    if user_data.use_frame and format is not None and width is not None and height is not None:
-        frame = get_numpy_from_buffer(buffer, format, width, height)
-        # Convert to BGR for annotation (supervision expects BGR)
-        if format == "RGB":
-            # Already in RGB, just convert to BGR
-            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        # For NV12/YUYV, you'd need proper color conversion to BGR.
+    # # Get video frame (if enabled)
+    # frame = None
+    # if user_data.use_frame and format is not None and width is not None and height is not None:
+    #     frame = get_numpy_from_buffer(buffer, format, width, height)
+    #     # Convert to BGR for annotation (supervision expects BGR)
+    #     if format == "RGB":
+    #         # Already in RGB, just convert to BGR
+    #         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+    #     # For NV12/YUYV, you'd need proper color conversion to BGR.
 
     
-    # Extract lane detections from hailo ROI
-    roi = hailo.get_roi_from_buffer(buffer)
-    hailo_lane_detections = roi.get_objects_typed(hailo.HAILO_LANE_DETECTION)
+    # # Extract lane detections from hailo ROI
+    # roi = hailo.get_roi_from_buffer(buffer)
+    # hailo_lane_detections = roi.get_objects_typed(hailo.HAILO_LANE_DETECTION)
 
-    lane_coord = []
-    for l in hailo_lane_detections:
-        lane_points = l.get_points()  # (x, y)
-        lane_coord.append(lane_points)
+    # lane_coord = []
+    # for l in hailo_lane_detections:
+    #     lane_points = l.get_points()  # (x, y)
+    #     lane_coord.append(lane_points)
     
-    user_data.lane_data = lane_coord
+    # user_data.lane_data = lane_coord
 
-    #visualize the lane data
-    if user_data.use_frame and frame is not None:
-        for lane in lane_coord:
-            for coord in lane:
-                cv2.circle(frame, (int(coord[0]), int(coord[1])), 3, (0, 255, 0), -1)
+    # #visualize the lane data
+    # if user_data.use_frame and frame is not None:
+    #     for lane in lane_coord:
+    #         for coord in lane:
+    #             cv2.circle(frame, (int(coord[0]), int(coord[1])), 3, (0, 255, 0), -1)
         
-        #Annoate the frame
-        cv2.putText(frame, f"Lane Detections: {len(lane_coord)}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    #     #Annoate the frame
+    #     cv2.putText(frame, f"Lane Detections: {len(lane_coord)}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
-        # Push annotated frame to user_data frame queue
-        user_data.set_frame(frame)
+    #     # Push annotated frame to user_data frame queue
+    #     user_data.set_frame(frame)
     
     return Gst.PadProbeReturn.OK
 
@@ -561,6 +563,9 @@ class GStreamerDetectionApp(GStreamerApp):
             self.default_postprocess_so = os.path.join(self.postprocess_dir, 'libyolo_hailortpp_post.so')
 
         self.app_callback = app_callback
+        self.app_callback_od = od_callback
+        self.app_callback_ld = ld_callback
+
         self.thresholds_str = (
             f"nms-score-threshold={nms_score_threshold} "
             f"nms-iou-threshold={nms_iou_threshold} "
@@ -634,8 +639,10 @@ class GStreamerDetectionApp(GStreamerApp):
             raise ValueError(f"Invalid pipeline type. {self.options_menu.pipeline_type} Choose 'parallel' or 'sequential'.")
 
     def get_parallel_pipeline_string(self):
+        source_element = "hailomuxer name=hmux "
+        source_element += "hailomuxer name=hmux_cascade "
         if self.source_type == "rpi":
-            source_element = (
+            source_element += (
                 "libcamerasrc name=src_0 auto-focus-mode=2 ! "
                 f"video/x-raw, format={self.network_format}, width=1536, height=864 ! "
                 + QUEUE("queue_src_scale")
@@ -643,12 +650,12 @@ class GStreamerDetectionApp(GStreamerApp):
                 f"video/x-raw, format={self.network_format}, width={self.network_width}, height={self.network_height}, framerate=30/1 ! "
             )
         elif self.source_type == "usb":
-            source_element = (
+            source_element += (
                 f"v4l2src device={self.video_source} name=src_0 ! "
                 "video/x-raw, width=640, height=480, framerate=30/1 ! "
             )
         else:
-            source_element = (
+            source_element += (
                 f"filesrc location={self.video_source} name=src_0 ! "
                 + QUEUE("queue_dec264")
                 + " qtdemux ! h264parse ! avdec_h264 max-threads=2 ! "
@@ -658,46 +665,66 @@ class GStreamerDetectionApp(GStreamerApp):
         source_element += "videoscale n-threads=2 ! "
         source_element += QUEUE("queue_src_convert")
         source_element += f"videoconvert n-threads=3 name=src_convert qos=false ! video/x-raw, format={self.network_format}, width={self.network_width}, height={self.network_height}, pixel-aspect-ratio=1/1 ! "
-        source_element += QUEUE("queue_video_convert")
-        source_element += "videoconvert n-threads=3 ! "
 
+        # this is for the pipeline where thew raw video is passed to the output stream
+        # BRANCH 1 AND TO SINK 0
+        source_element += "tee name=t ! "
+        source_element += QUEUE("bypass_queue", max_size_buffers=20)
+        source_element += "hmux.sink_0 "
+
+        #BRANCH 2
+        source_element += "t. ! " # the other branch where LD + OD are processed in parallel
+
+
+        # STARTING PARALLEL PROCESSING
         # parallel logic for the OD + LD
-        source_element += "tee name=splitter ! "
-
-        #OD Branch
+        source_element += "tee name=splitter "
+        
+        #INSIDE BRANCH 2 - OD Branch
         #splitter. ! queue_hailonet_od ! hailonet (OD) ! queue_hailofilter_od ! hailofilter (OD) ! hmux_cascade.sink_0
         #starting from the splitter 
         pipeline_string_OD = ( 
             f"splitter. ! " 
             + QUEUE("queue_hailonet_od")
-            + f"hailonet hef-path={self.od_hef_path} is-active=true batch-size={self.batch_size} {self.thresholds_str} force-writable=true device-count=2 scheduling-algorithm=ROUND_ROBIN ! "
+            + "videoconvert n-threads=3 ! "
+            + f"hailonet hef-path={self.od_hef_path} batch-size={self.batch_size} {self.thresholds_str} force-writable=true device-count=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
             + QUEUE("queue_hailofilter_od")
-            + f"hailofilter od so-path={self.default_postprocess_so_od} {self.labels_config} qos=false ! "
+            + f"hailofilter so-path={self.default_postprocess_so_od} {self.labels_config} qos=false ! "
             + QUEUE("queue_od_callback")
-            + f"identity name=identity_od_callback ! "
+            + f"identity name=identity_callback_od ! "
             + f"hmux_cascade.sink_0 " #sending the OD output to the muxer
         )
         
-        #LD Branch
+        ##INSIDE BRANCH 2 - LD Branch
         #splitter. ! queue_hailonet_ld ! hailonet (LD) ! queue_hailofilter_ld ! hailofilter (LD) ! hmux_cascade.sink_1
         #starting from the splitter 
         pipeline_string_LD = (
             f"splitter. ! " 
             + QUEUE("queue_hailonet_ld")
-            + f"hailonet hef-path={self.ld_hef_path} is-active=true batch-size={self.batch_size} {self.thresholds_str} force-writable=true device-count=2 scheduling-algorithm=ROUND_ROBIN ! "
+            + "videoconvert n-threads=3 ! "
+            + f"hailonet hef-path={self.ld_hef_path} batch-size={self.batch_size} {self.thresholds_str} force-writable=true device-count=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
             + QUEUE("queue_hailofilter_ld")
-            + f"hailofilter ld so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
+            + f"hailofilter so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
             + QUEUE("queue_ld_callback")
-            + f"identity name=identity_ld_callback ! "
+            + f"identity name=identity_callback_ld ! "
             + f"hmux_cascade.sink_1 " #sending the LD output to the muxer
         )    
 
         source_element += pipeline_string_OD
         source_element += pipeline_string_LD
         #parallel processing done
-        # mux - combines the two streams
-        source_element += "hailomuxer name=hmux_cascade "
 
+        # BRANCH 2 - cascading OD + LD  
+        source_element += "hmux_cascade. ! "
+        
+        # END OF PARALLEL PROCESSING
+        # BRANCH 2 TO SINK 1
+        source_element += "hmux.sink_1 "
+
+        # cascading the raw video stream BRANCH 1 + the processed stream BRANCH 2  
+        source_element += "hmux. ! "
+
+        # now we need to send the output of the muxer to the hailooverlay
         pipeline_string_parallel = (
             source_element
             + QUEUE("queue_hailooverlay")
@@ -751,7 +778,7 @@ class GStreamerDetectionApp(GStreamerApp):
              QUEUE("queue_hailonet_od")
             + f"hailonet hef-path={self.od_hef_path} batch-size={self.batch_size} {self.thresholds_str} force-writable=true ! "
             + QUEUE("queue_hailofilter_od")
-            + f"hailofilter od so-path={self.default_postprocess_so_od} {self.labels_config} qos=false ! "
+            + f"hailofilter so-path={self.default_postprocess_so_od} {self.labels_config} qos=false ! "
         )
         
         #LD Branch
@@ -760,7 +787,7 @@ class GStreamerDetectionApp(GStreamerApp):
               QUEUE("queue_hailonet_ld")
             + f"hailonet hef-path={self.ld_hef_path} batch-size={self.batch_size} {self.thresholds_str} force-writable=true ! "
             + QUEUE("queue_hailofilter_ld")
-            + f"hailofilter ld so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
+            + f"hailofilter so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
         )    
 
         pipeline_string_sequential = (

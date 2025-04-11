@@ -13,20 +13,20 @@ from utils.hailo_utils import (
 
 
 # Define the polygon in source perspective
-#SOURCE = np.array([[1252, 787], [2298, 803], [5039, 2159], [-550, 2159]])
-#TARGET_HEIGHT = 80 #250
+SOURCE = np.array([[1252, 787], [2298, 803], [5039, 2159], [-550, 2159]])
+TARGET_HEIGHT = 80 #250
 #SOURCE = define_source_polygon(left_lane, right_lane, frame_height, TARGET_HEIGHT)
-#SOURCE = SOURCE.astype(float)
-#TARGET_WIDTH = 22 #25
+SOURCE = SOURCE.astype(float)
+TARGET_WIDTH = 22 #25
 
-#TARGET = np.array(
-#    [
-#        [0, 0],
-#        [TARGET_WIDTH - 1, 0],
-#        [TARGET_WIDTH - 1, TARGET_HEIGHT - 1],
-#        [0, TARGET_HEIGHT - 1],
-#    ]
-#)
+TARGET = np.array(
+   [
+       [0, 0],
+       [TARGET_WIDTH - 1, 0],
+       [TARGET_WIDTH - 1, TARGET_HEIGHT - 1],
+       [0, TARGET_HEIGHT - 1],
+   ]
+)
 
 
 # the main function to be shifted to the main.py file later 
@@ -68,27 +68,11 @@ if __name__ == "__main__":
     except ValueError as e:
         print(e)
         exit(1)
-    
-    TARGET_HEIGHT = 80 #250
-    TARGET_WIDTH = 22 #25
-    SOURCE = np.array([[1252, 1200], [2298, 1200], [5039, 2159], [-550, 2159]]) 
-    SOURCE = SOURCE.astype(float)
-
-    TARGET = np.array(
-        [
-            [0, 0],
-            [TARGET_WIDTH - 1, 0],
-            [TARGET_WIDTH - 1, TARGET_HEIGHT - 1],
-            [0, TARGET_HEIGHT - 1],
-        ]
-        )
 
     user_data = user_app_callback_class()
-    user_data.SOURCE = SOURCE
-    user_data.TARGET = TARGET
 
     user_data.polygon_zone = sv.PolygonZone(polygon=SOURCE)
     user_data.view_transformer = ViewTransformer(source=SOURCE, target=TARGET)
-
+    user_data.options_menu = args
     app = GStreamerDetectionApp(args, user_data)
     app.run()
