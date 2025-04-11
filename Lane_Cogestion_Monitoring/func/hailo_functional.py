@@ -658,10 +658,11 @@ class GStreamerDetectionApp(GStreamerApp):
         source_element += "videoscale n-threads=2 ! "
         source_element += QUEUE("queue_src_convert")
         source_element += f"videoconvert n-threads=3 name=src_convert qos=false ! video/x-raw, format={self.network_format}, width={self.network_width}, height={self.network_height}, pixel-aspect-ratio=1/1 ! "
-        source_element += f"hailomuxer name=hmux ! "
+        source_element += f"hailomuxer name=hmux "
         source_element += f"tee name=t ! "
         source_element += QUEUE("bypass_queue", max_size_buffers=20)
-        source_element += "hmux.sink_0 ! t. ! "
+        source_element += "hmux.sink_0 "
+        source_element += "t. ! "
         source_element += "videoconvert n-threads=3 ! "
 
         # parallel logic for the OD + LD
@@ -678,7 +679,7 @@ class GStreamerDetectionApp(GStreamerApp):
             + f"hailofilter od so-path={self.default_postprocess_so_od} {self.labels_config} qos=false ! "
             + QUEUE("queue_od_callback")
             + f"identity name=identity_od_callback ! "
-            + f"hmux_cascade.sink_0 ! " #sending the OD output to the muxer
+            + f"hmux_cascade.sink_0 " #sending the OD output to the muxer
         )
         
         #LD Branch
@@ -692,19 +693,19 @@ class GStreamerDetectionApp(GStreamerApp):
             + f"hailofilter ld so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
             + QUEUE("queue_ld_callback")
             + f"identity name=identity_ld_callback ! "
-            + f"hmux_cascade.sink_1 ! " #sending the LD output to the muxer
+            + f"hmux_cascade.sink_1 " #sending the LD output to the muxer
         )    
 
         source_element += pipeline_string_OD
         source_element += pipeline_string_LD
         #parallel processing done
         # mux - combines the two streams
-        source_element += "hailomuxer name=hmux_cascade ! "
+        source_element += "hailomuxer name=hmux_cascade "
 
         pipeline_string_parallel = (
             source_element
             + QUEUE("queue_hmuc")
-            + f"hmux.sink_1 ! "
+            + f"hmux.sink_1 "
             + f"hmux. ! "
 # these are commented since not needed for the parallel pipeline
 #            + QUEUE("queue_hailo_python")

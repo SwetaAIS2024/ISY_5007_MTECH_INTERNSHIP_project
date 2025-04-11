@@ -1,4 +1,52 @@
+
 filesrc location=/home/william-stengg/Desktop/hailo-rpi5-examples/resources/video3.mp4 name=src_0 ! 
-queue name=queue_dec264 max-size-buffers=5 max-size-bytes=0 max-size-time=0 !  qtdemux ! h264parse ! avdec_h264 max-threads=2 !  video/x-raw, format=I420 ! queue name=queue_scale max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! videoscale n-threads=2 ! queue name=queue_src_convert max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! videoconvert n-threads=3 name=src_convert qos=false ! video/x-raw, format=RGB, width=640, height=640, pixel-aspect-ratio=1/1 ! hailomuxer name=hmux ! tee name=t ! queue name=bypass_queue max-size-buffers=20 max-size-bytes=0 max-size-time=0 ! hmux.sink_0 ! t. ! videoconvert n-threads=3 ! tee name=splitter ! splitter. ! queue name=queue_hailonet_od max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! hailonet hef-path=/home/william-stengg/Desktop/yolov8m.hef is-active=true batch-size=2 nms-score-threshold=0.3 nms-iou-threshold=0.45 output-format-type=HAILO_FORMAT_TYPE_FLOAT32 force-writable=true device-count=2 scheduling-algorithm=ROUND_ROBIN ! queue name=queue_hailofilter_od max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! hailofilter od so-path=/usr/lib/aarch64-linux-gnu/hailo/tappas/post_processes/object_detection_postprocess.so  qos=false ! queue name=queue_od_callback max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! identity name=identity_od_callback ! hmux_cascade.sink_0 ! splitter. ! queue name=queue_hailonet_ld max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! hailonet hef-path=/home/william-stengg/Desktop/Hailo-Application-Code-Examples/runtime/python/lane_detection/ufld_v2.hef is-active=true batch-size=2 nms-score-threshold=0.3 nms-iou-threshold=0.45 output-format-type=HAILO_FORMAT_TYPE_FLOAT32 force-writable=true device-count=2 scheduling-algorithm=ROUND_ROBIN ! queue name=queue_hailofilter_ld max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! hailofilter ld so-path=/usr/lib/aarch64-linux-gnu/hailo/tappas/post_processes/lane_detection_postprocess.so  qos=false ! queue name=queue_ld_callback max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! identity name=identity_ld_callback ! hmux_cascade.sink_1 ! hailomuxer name=hmux_cascade ! queue name=queue_hmuc max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! hmux.sink_1 ! hmux. ! queue name=queue_hailooverlay max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! hailooverlay ! queue name=queue_videoconvert max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! videoconvert n-threads=3 qos=false ! queue name=queue_hailo_display max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! fpsdisplaysink video-sink=xvimagesink name=hailo_display sync=true text-overlay=False signal-fps-measurements=true 
+queue name=queue_dec264 max-size-buffers=5 max-size-bytes=0 max-size-time=0 !  
+qtdemux ! h264parse ! avdec_h264 max-threads=2 !  video/x-raw, format=I420 ! 
+queue name=queue_scale max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! videoscale n-threads=2 ! 
+queue name=queue_src_convert max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! 
+videoconvert n-threads=3 name=src_convert qos=false ! video/x-raw, format=RGB, width=640, height=640, pixel-aspect-ratio=1/1 ! 
+
+hailomuxer name=hmux ! tee name=t ! queue name=bypass_queue max-size-buffers=20 max-size-bytes=0 max-size-time=0 ! 
+hmux.sink_0 ! ->>>> ! - this one is not needed here 
+t. ! videoconvert n-threads=3 ! 
+
+tee name=splitter ! 
+
+splitter. ! 
+queue name=queue_hailonet_od max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! 
+hailonet hef-path=/home/william-stengg/Desktop/yolov8m.hef is-active=true batch-size=2 nms-score-threshold=0.3 nms-iou-threshold=0.45 output-format-type=HAILO_FORMAT_TYPE_FLOAT32 force-writable=true device-count=2 scheduling-algorithm=ROUND_ROBIN ! 
+queue name=queue_hailofilter_od max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! 
+hailofilter od so-path=/usr/lib/aarch64-linux-gnu/hailo/tappas/post_processes/object_detection_postprocess.so  qos=false ! 
+queue name=queue_od_callback max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! 
+identity name=identity_od_callback ! 
+hmux_cascade.sink_0 ! 
+
+splitter. ! 
+queue name=queue_hailonet_ld max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! 
+hailonet hef-path=/home/william-stengg/Desktop/Hailo-Application-Code-Examples/runtime/python/lane_detection/ufld_v2.hef is-active=true batch-size=2 nms-score-threshold=0.3 nms-iou-threshold=0.45 output-format-type=HAILO_FORMAT_TYPE_FLOAT32 force-writable=true device-count=2 scheduling-algorithm=ROUND_ROBIN ! 
+queue name=queue_hailofilter_ld max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! 
+hailofilter ld so-path=/usr/lib/aarch64-linux-gnu/hailo/tappas/post_processes/lane_detection_postprocess.so  qos=false ! 
+queue name=queue_ld_callback max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! 
+identity name=identity_ld_callback ! 
+hmux_cascade.sink_1 ! 
+
+
+hailomuxer name=hmux_cascade ! 
+queue name=queue_hmuc max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! 
+
+
+hmux.sink_1 ! 
+hmux. ! 
+queue name=queue_hailooverlay max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! 
+hailooverlay ! 
+queue name=queue_videoconvert max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! 
+videoconvert n-threads=3 qos=false ! 
+queue name=queue_hailo_display max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! 
+fpsdisplaysink video-sink=xvimagesink name=hailo_display sync=true text-overlay=False signal-fps-measurements=true 
+
+
+
+
+
 gst_parse_error: syntax error (0)
 filesrc location=/home/william-stengg/Desktop/hailo-rpi5-examples/resources/video3.mp4 name=src_0 ! queue name=queue_dec264 max-size-buffers=5 max-size-bytes=0 max-size-time=0 !  qtdemux ! h264parse ! avdec_h264 max-threads=2 !  video/x-raw, format=I420 ! queue name=queue_scale max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! videoscale n-threads=2 ! queue name=queue_src_convert max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! videoconvert n-threads=3 name=src_convert qos=false ! video/x-raw, format=RGB, width=640, height=640, pixel-aspect-ratio=1/1 ! hailomuxer name=hmux ! tee name=t ! queue name=bypass_queue max-size-buffers=20 max-size-bytes=0 max-size-time=0 ! hmux.sink_0 ! t. ! videoconvert n-threads=3 ! tee name=splitter ! splitter. ! queue name=queue_hailonet_od max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! hailonet hef-path=/home/william-stengg/Desktop/yolov8m.hef is-active=true batch-size=2 nms-score-threshold=0.3 nms-iou-threshold=0.45 output-format-type=HAILO_FORMAT_TYPE_FLOAT32 force-writable=true device-count=2 scheduling-algorithm=ROUND_ROBIN ! queue name=queue_hailofilter_od max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! hailofilter od so-path=/usr/lib/aarch64-linux-gnu/hailo/tappas/post_processes/object_detection_postprocess.so  qos=false ! queue name=queue_od_callback max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! identity name=identity_od_callback ! hmux_cascade.sink_0 ! splitter. ! queue name=queue_hailonet_ld max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! hailonet hef-path=/home/william-stengg/Desktop/Hailo-Application-Code-Examples/runtime/python/lane_detection/ufld_v2.hef is-active=true batch-size=2 nms-score-threshold=0.3 nms-iou-threshold=0.45 output-format-type=HAILO_FORMAT_TYPE_FLOAT32 force-writable=true device-count=2 scheduling-algorithm=ROUND_ROBIN ! queue name=queue_hailofilter_ld max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! hailofilter ld so-path=/usr/lib/aarch64-linux-gnu/hailo/tappas/post_processes/lane_detection_postprocess.so  qos=false ! queue name=queue_ld_callback max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! identity name=identity_ld_callback ! hmux_cascade.sink_1 ! hailomuxer name=hmux_cascade ! queue name=queue_hmuc max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! hmux.sink_1 ! hmux. ! queue name=queue_hailooverlay max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! hailooverlay ! queue name=queue_videoconvert max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! videoconvert n-threads=3 qos=false ! queue name=queue_hailo_display max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! fpsdisplaysink video-sink=xvimagesink name=hailo_display sync=true text-overlay=False signal-fps-measurements=true 
