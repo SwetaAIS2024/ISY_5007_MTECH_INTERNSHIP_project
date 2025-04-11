@@ -658,11 +658,7 @@ class GStreamerDetectionApp(GStreamerApp):
         source_element += "videoscale n-threads=2 ! "
         source_element += QUEUE("queue_src_convert")
         source_element += f"videoconvert n-threads=3 name=src_convert qos=false ! video/x-raw, format={self.network_format}, width={self.network_width}, height={self.network_height}, pixel-aspect-ratio=1/1 ! "
-        source_element += f"hailomuxer name=hmux "
-        source_element += f"tee name=t ! "
-        source_element += QUEUE("bypass_queue", max_size_buffers=20)
-        source_element += "hmux.sink_0 "
-        source_element += "t. ! "
+        source_element += QUEUE("queue_video_convert")
         source_element += "videoconvert n-threads=3 ! "
 
         # parallel logic for the OD + LD
@@ -704,13 +700,6 @@ class GStreamerDetectionApp(GStreamerApp):
 
         pipeline_string_parallel = (
             source_element
-            + QUEUE("queue_hmuc")
-            + f"hmux.sink_1 "
-            + f"hmux. ! "
-# these are commented since not needed for the parallel pipeline
-#            + QUEUE("queue_hailo_python")
-#            + QUEUE("queue_user_callback")
-#            + "identity name=identity_callback ! "
             + QUEUE("queue_hailooverlay")
             + "hailooverlay ! "
             + QUEUE("queue_videoconvert")
@@ -750,8 +739,9 @@ class GStreamerDetectionApp(GStreamerApp):
         source_element += f"hailomuxer name=hmux "
         source_element += f"tee name=t ! "
         source_element += QUEUE("bypass_queue", max_size_buffers=20)
-        source_element += "hmux.sink_0 ! t. ! "
-        source_element += "videoconvert n-threads=3 ! "
+        source_element += "hmux.sink_0 "
+        source_element += "t. ! "
+
 
         # sequential logic for the OD + LD
 
