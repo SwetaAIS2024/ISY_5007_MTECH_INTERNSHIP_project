@@ -1,0 +1,132 @@
+Factory Details:
+  Rank                     primary (256)
+  Long-name                hailonet element
+  Klass                    Hailo/Network
+  Description              Configure and Activate Hailo Network. Supports the "flush" signal which blocks until there are no buffers currently processesd in the element. When deactivating a hailonet during runtime (via set_property of "is-active" to False), make sure that no frames are being pushed into the hailonet, since this operation waits until there are no frames coming in.
+  Author                   Hailo Technologies Ltd. ("Hailo")
+
+Plugin Details:
+  Name                     hailo
+  Description              hailo gstreamer plugin
+  Filename                 /lib/aarch64-linux-gnu/gstreamer-1.0/libgsthailo.so
+  Version                  1.0
+  License                  unknown
+  Source module            hailo
+  Binary package           GStreamer
+  Origin URL               http://gstreamer.net/
+
+GObject
+ +----GInitiallyUnowned
+       +----GstObject
+             +----GstElement
+                   +----GstHailoNet
+
+Pad Templates:
+  SINK template: 'sink'
+    Availability: Always
+    Capabilities:
+      ANY
+  
+  SRC template: 'src'
+    Availability: Always
+    Capabilities:
+      ANY
+
+Element has no clocking capabilities.
+Element has no URI handling capabilities.
+
+Pads:
+  SINK: 'sink'
+    Pad Template: 'sink'
+  SRC: 'src'
+    Pad Template: 'src'
+
+Element Properties:
+  batch-size          : How many frame to send in one batch
+                        flags: readable, writable
+                        Unsigned Integer. Range: 0 - 16 Default: 0 
+  device-count        : Number of physical devices to use. Excludes device-id.
+                        flags: readable, writable
+                        Unsigned Integer. Range: 1 - 65535 Default: 0 
+  device-id           : Device ID ([<domain>]:<bus>:<device>.<func>, same as in lspci command). Excludes device-count.
+                        flags: readable, writable
+                        String. Default: ""
+  force-writable      : Controls whether the element will force the input buffer to be writable. We force the input to be writable with the function gst_buffer_make_writable, which in most cases will do a shallow copy of the buffer. But in some cases (when the buffer is marked as not shared - see gst_buffer_copy documentation), it will do a deep copy.By default, the hailonet element will not force the input buffer to be writable and will raise an error when the buffer is read-only.
+                        flags: readable, writable
+                        Boolean. Default: false
+  hef-path            : Location of the HEF file to read
+                        flags: readable, writable
+                        String. Default: ""
+  input-format-type   : Input format type(auto, float32, uint16, uint8). Default value is auto.Gets values from the enum GstHailoFormatType. 
+                        flags: readable, writable
+                        Enum "GstHailoFormatTypes" Default: 0, "HAILO_FORMAT_TYPE_AUTO"
+                           (0): HAILO_FORMAT_TYPE_AUTO - auto
+                           (1): HAILO_FORMAT_TYPE_UINT8 - uint8
+                           (2): HAILO_FORMAT_TYPE_UINT16 - uint16
+                           (3): HAILO_FORMAT_TYPE_FLOAT32 - float32
+  input-from-meta     : Take network input from metadata instead of video frame.
+                        flags: readable, writable
+                        Boolean. Default: false
+  is-active           : Controls whether this element should be active. By default, the hailonet element will not be active unless it is the only one. Setting this property in combination with 'scheduling-algorithm' different than HAILO_SCHEDULING_ALGORITHM_NONE is not supported.
+                        flags: readable, writable
+                        Boolean. Default: false
+  multi-process-service: Controls wether to run HailoRT over its service. To use this property, the service should be active and scheduling-algorithm should be set. Defaults to false.
+                        flags: readable, writable
+                        Boolean. Default: false
+  name                : The name of the object
+                        flags: readable, writable
+                        String. Default: "hailonet0"
+  nms-iou-threshold   : Intersection over union overlap Threshold, used in the NMS iterative elimination process where potential duplicates of detected items are suppressed.
+                        flags: readable, writable
+                        Float. Range:               0 -               1 Default:               0 
+  nms-max-proposals-per-class: Set a limit for the maximum number of boxes per class.
+                        flags: readable, writable
+                        Unsigned Integer. Range: 0 - 4294967295 Default: 0 
+  nms-max-proposals-total: Set a limit for the maximum number of boxes total.
+                        flags: readable, writable
+                        Unsigned Integer. Range: 0 - 4294967295 Default: 0 
+  nms-score-threshold : Threshold used for filtering out candidates. Any box with score<TH is suppressed.
+                        flags: readable, writable
+                        Float. Range:               0 -               1 Default:               0 
+  no-transform        : Format will remain the same as the HW format.
+                        flags: readable, writable
+                        Boolean. Default: false
+  output-format-type  : Output format type(auto, float32, uint16, uint8). Default value is auto.Gets values from the enum GstHailoFormatType. 
+                        flags: readable, writable
+                        Enum "GstHailoFormatTypes" Default: 0, "HAILO_FORMAT_TYPE_AUTO"
+                           (0): HAILO_FORMAT_TYPE_AUTO - auto
+                           (1): HAILO_FORMAT_TYPE_UINT8 - uint8
+                           (2): HAILO_FORMAT_TYPE_UINT16 - uint16
+                           (3): HAILO_FORMAT_TYPE_FLOAT32 - float32
+  outputs-max-pool-size: The maximum amount of buffers to allocate for each output layer or 0 for unlimited
+                        flags: readable, writable
+                        Unsigned Integer. Range: 0 - 4294967295 Default: 64 
+  outputs-min-pool-size: The minimum amount of buffers to allocate for each output layer
+                        flags: readable, writable
+                        Unsigned Integer. Range: 0 - 4294967295 Default: 16 
+  parent              : The parent of the object
+                        flags: readable, writable
+                        Object of type "GstObject"
+  pass-through        : Controls whether the element will perform inference or simply pass buffers through. By default, the hailonet element will not be pass-through. Setting this property to true disables inference, regardless of the scheduler settings.
+                        flags: readable, writable
+                        Boolean. Default: false
+  scheduler-priority  : When the scheduler will choose the next hailonet to run, higher priority will be prioritized in the selection. Bigger number represent higher priority
+                        flags: readable, writable
+                        Unsigned Integer. Range: 0 - 31 Default: 16 
+  scheduler-threshold : The minimum number of send requests required before the hailonet is considered ready to get run time from the scheduler.
+                        flags: readable, writable
+                        Unsigned Integer. Range: 0 - 4294967295 Default: 0 
+  scheduler-timeout-ms: The maximum time period that may pass before getting run time from the scheduler, as long as at least one send request has been sent.
+                        flags: readable, writable
+                        Unsigned Integer. Range: 0 - 4294967295 Default: 0 
+  scheduling-algorithm: Controls the Model Scheduler algorithm of HailoRT. Gets values from the enum GstHailoSchedulingAlgorithms. Using Model Scheduler algorithm different than HAILO_SCHEDULING_ALGORITHM_NONE, excludes the property 'is-active'. When using the same VDevice across multiple hailonets, all should have the same 'scheduling-algorithm'. 
+                        flags: readable, writable
+                        Enum "GstHailoSchedulingAlgorithms" Default: 1, "HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN"
+                           (0): HAILO_SCHEDULING_ALGORITHM_NONE - Scheduler is not active
+                           (1): HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN - Round robin
+  vdevice-group-id    : Used to share VDevices across different hailonet instances
+                        flags: readable, writable
+                        String. Default: ""
+
+Element Actions:
+  "flush" :  void user_function (GstElement* object);
