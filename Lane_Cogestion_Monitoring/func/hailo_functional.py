@@ -547,7 +547,7 @@ class GStreamerDetectionApp(GStreamerApp):
         #queue_hailonet_od ! hailonet (OD) ! queue_hailofilter_od ! hailofilter (OD) ! 
         pipeline_string_OD = ( 
              QUEUE("queue_hailonet_od")
-            + f"hailonet hef-path={self.od_hef_path} batch-size={self.batch_size} {self.od_thresholds_str} force-writable=true ! "
+            + f"hailonet hef-path={self.od_hef_path} batch-size={self.od_batch_size} {self.od_thresholds_str} force-writable=true ! "
             + QUEUE("queue_hailofilter_od")
             + f"hailofilter so-path={self.default_postprocess_so_od} {self.labels_config} qos=false ! "
         )
@@ -556,7 +556,7 @@ class GStreamerDetectionApp(GStreamerApp):
         #queue_hailonet_ld ! hailonet (LD) ! queue_hailofilter_ld ! hailofilter (LD) ! 
         pipeline_string_LD = (   
               QUEUE("queue_hailonet_ld")
-            + f"hailonet hef-path={self.ld_hef_path} batch-size={self.batch_size} {self.thresholds_str} force-writable=true ! "
+            + f"hailonet hef-path={self.ld_hef_path} batch-size={self.ld_batch_size} {self.ld_thresholds_str} force-writable=true ! "
             + QUEUE("queue_hailofilter_ld")
             + f"hailofilter so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
         )    
