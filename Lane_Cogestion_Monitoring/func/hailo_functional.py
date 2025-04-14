@@ -259,12 +259,21 @@ class GStreamerDetectionApp(GStreamerApp):
         # self.network_height, self.network_width, _ =  hailo_inference.get_input_shape()
 
         # Initialize parameters for your model and postprocessing if needed
-        self.batch_size = 2
-        self.network_width = 640
-        self.network_height = 640
-        self.network_format = "RGB"
-        nms_score_threshold = 0.3
-        nms_iou_threshold = 0.45
+        self.od_batch_size = 2
+        self.od_network_width = 640
+        self.od_network_height = 640
+        self.od_network_format = "RGB"
+        od_nms_score_threshold = 0.3
+        od_nms_iou_threshold = 0.45
+        
+        self.ld_batch_size = 2
+        self.ld_nms_score_threshold = 0.3 
+        self.od_network_width = 640
+        self.od_network_height = 640
+        self.od_network_format = "RGB"
+        ld_nms_score_threshold = 0.3
+        ld_nms_iou_threshold = 0.45
+        
 
         '''
         original_width, original_height = 3840, 2160
@@ -323,10 +332,16 @@ class GStreamerDetectionApp(GStreamerApp):
         #self.app_callback_od = od_callback
         #self.app_callback_ld = ld_callback
 
-        self.thresholds_str = (
-            f"nms-score-threshold={nms_score_threshold} "
-            f"nms-iou-threshold={nms_iou_threshold} "
-            f"output-format-type=HAILO_FORMAT_TYPE_FLOAT32"
+        self.od_thresholds_str = (
+            f"od nms-score-threshold={od_nms_score_threshold} "
+            f"od nms-iou-threshold={od_nms_iou_threshold} "
+            f"od output-format-type=HAILO_FORMAT_TYPE_FLOAT32"
+        )
+
+        self.ld_thresholds_str = (
+            f"ld nms-score-threshold={ld_nms_score_threshold} "
+            f"ld nms-iou-threshold={ld_nms_iou_threshold} "
+            f"ld output-format-type=HAILO_FORMAT_TYPE_FLOAT32"
         )
         
         setproctitle.setproctitle("Hailo Detection App")
@@ -440,7 +455,7 @@ class GStreamerDetectionApp(GStreamerApp):
             f"splitter. ! " 
             + QUEUE("queue_hailonet_od")
             + "videoconvert n-threads=3 ! "
-            + f"hailonet hef-path={self.od_hef_path} batch-size={self.batch_size} {self.thresholds_str} force-writable=true device-count=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
+            + f"hailonet hef-path={self.od_hef_path} batch-size={self.batch_size} {self.od_thresholds_str} force-writable=true device-count=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
             + QUEUE("queue_hailofilter_od")
             + f"hailofilter so-path={self.default_postprocess_so_od} {self.labels_config} qos=false ! "
 #            + QUEUE("queue_od_callback")
@@ -455,7 +470,7 @@ class GStreamerDetectionApp(GStreamerApp):
             f"splitter. ! " 
             + QUEUE("queue_hailonet_ld")
             + "videoconvert n-threads=3 ! "
-#            + f"hailonet hef-path={self.ld_hef_path} batch-size={self.batch_size} {self.thresholds_str} force-writable=true device-count=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
+           + f"hailonet hef-path={self.ld_hef_path} batch-size={self.ld_batch_size} {self.ld_thresholds_str} force-writable=true device-count=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
 #            + QUEUE("queue_hailofilter_ld")
 #            + f"hailofilter so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
 #            + QUEUE("queue_ld_callback")
@@ -532,7 +547,7 @@ class GStreamerDetectionApp(GStreamerApp):
         #queue_hailonet_od ! hailonet (OD) ! queue_hailofilter_od ! hailofilter (OD) ! 
         pipeline_string_OD = ( 
              QUEUE("queue_hailonet_od")
-            + f"hailonet hef-path={self.od_hef_path} batch-size={self.batch_size} {self.thresholds_str} force-writable=true ! "
+            + f"hailonet hef-path={self.od_hef_path} batch-size={self.batch_size} {self.od_thresholds_str} force-writable=true ! "
             + QUEUE("queue_hailofilter_od")
             + f"hailofilter so-path={self.default_postprocess_so_od} {self.labels_config} qos=false ! "
         )
