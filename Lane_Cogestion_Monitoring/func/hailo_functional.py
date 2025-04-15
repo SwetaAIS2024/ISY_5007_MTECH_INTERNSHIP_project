@@ -429,10 +429,10 @@ class GStreamerDetectionApp(GStreamerApp):
                 + " qtdemux ! h264parse ! avdec_h264 max-threads=2 ! "
                 " video/x-raw, format=I420 ! "
             )
-        source_element += QUEUE("queue_scale")
-        source_element += "videoscale n-threads=2 ! "
-        source_element += QUEUE("queue_src_convert")
-        source_element += f"videoconvert n-threads=3 name=src_convert qos=false ! video/x-raw, format={self.network_format}, width={self.network_width}, height={self.network_height}, pixel-aspect-ratio=1/1 ! "
+        # source_element += QUEUE("queue_scale")
+        # source_element += "videoscale n-threads=2 ! "
+        # source_element += QUEUE("queue_src_convert")
+        # source_element += f"videoconvert n-threads=3 name=src_convert qos=false ! video/x-raw, format={self.network_format}, width={self.network_width}, height={self.network_height}, pixel-aspect-ratio=1/1 ! "
 
         # this is for the pipeline where thew raw video is passed to the output stream
         # BRANCH 1 AND TO SINK 0
@@ -452,10 +452,14 @@ class GStreamerDetectionApp(GStreamerApp):
         #splitter. ! queue_hailonet_od ! hailonet (OD) ! queue_hailofilter_od ! hailofilter (OD) ! hmux_cascade.sink_0
         #starting from the splitter 
         pipeline_string_OD = ( 
-            f"splitter. ! identity name=identity_splitter_od ! " 
+            f"splitter. ! " 
+            + QUEUE("queue_scale")
+            + "videoscale n-threads=2 ! "
+            + QUEUE("queue_src_convert")
+            + f"videoconvert n-threads=3 name=src_convert qos=false ! video/x-raw, format={self.network_format_od}, width={self.network_width_od}, height={self.network_height_od}, pixel-aspect-ratio=1/1 ! "
             + QUEUE("queue_hailonet_od")
             + "videoconvert n-threads=3 ! "
-            + f"hailonet hef-path={self.od_hef_path} batch-size={self.od_batch_size} {self.od_thresholds_str} force-writable=true  vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
+            + f"hailonet hef-path={self.od_hef_path} batch-size={self.batch_size} {self.od_thresholds_str} force-writable=true vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
             + QUEUE("queue_hailofilter_od")
             + f"hailofilter so-path={self.default_postprocess_so_od} {self.labels_config} qos=false ! "
 #            + QUEUE("queue_od_callback")
@@ -467,12 +471,16 @@ class GStreamerDetectionApp(GStreamerApp):
         #splitter. ! queue_hailonet_ld ! hailonet (LD) ! queue_hailofilter_ld ! hailofilter (LD) ! hmux_cascade.sink_1
         #starting from the splitter 
         pipeline_string_LD = (
-            f"splitter. ! identity name=identity_splitter_ld ! " 
+            f"splitter. ! " 
+            + QUEUE("queue_scale")
+            + "videoscale n-threads=2 ! "
+            + QUEUE("queue_src_convert")
+            + f"videoconvert n-threads=3 name=src_convert qos=false ! video/x-raw, format={self.network_format_ld}, width={self.network_width_ld}, height={self.network_height_ld}, pixel-aspect-ratio=1/1 ! "
             + QUEUE("queue_hailonet_ld")
-            + "videoconvert n-threads=3 ! "
-            # videoconvert 1 is not able to link to hailonet0, so adding a capsfilter.
-            #+ "video/x-raw, format=RGB, width=640, height=640, pixel-aspect-ratio=1/1 ! "
-            + f"hailonet hef-path={self.ld_hef_path} batch-size={self.ld_batch_size} {self.ld_thresholds_str} force-writable=true  vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
+            + "videoconvert n-threads=3 ! " # after this line error are coming, videoconv could not link with hailonet 
+#            + f"hailonet hef-path={self.ld_hef_path} batch-size={self.ld_batch_size} {self.ld_thresholds_str} force-writable=true vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
+#            + QUEUE("queue_custom_hailopython")
+#            + f"hailopython module = {self.default_postprocess_so_ld} qos=false ! "
 #            + QUEUE("queue_hailofilter_ld")
 #            + f"hailofilter so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
 #            + QUEUE("queue_ld_callback")
@@ -498,8 +506,8 @@ class GStreamerDetectionApp(GStreamerApp):
         pipeline_string_parallel = (
             source_element
             + QUEUE("queue_hailo_python")
-#            + QUEUE("queue_user_callback")
-#            + "identity name=identity_callback ! "
+            + QUEUE("queue_user_callback")
+            + "identity name=identity_callback ! " # the callback fundtion, i think this needs to be common, this is like the processing part after the inference at frmae is done.
             + QUEUE("queue_hailooverlay")
             + "hailooverlay ! "
             + QUEUE("queue_videoconvert")
@@ -559,8 +567,10 @@ class GStreamerDetectionApp(GStreamerApp):
         pipeline_string_LD = (   
               QUEUE("queue_hailonet_ld")
             + f"hailonet hef-path={self.ld_hef_path} batch-size={self.ld_batch_size} {self.ld_thresholds_str} force-writable=true ! "
-            + QUEUE("queue_hailofilter_ld")
-            + f"hailofilter so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
+#            + QUEUE("queue_hailofilter_ld")
+#            + f"hailofilter so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
+            + QUEUE("queue_custom_hailopython")
+            + f"hailopython module = {self.default_postprocess_so_ld} qos=false ! "
         )    
 
         pipeline_string_sequential = (

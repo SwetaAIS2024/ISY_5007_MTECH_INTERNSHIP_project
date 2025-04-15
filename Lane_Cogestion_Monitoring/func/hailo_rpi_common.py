@@ -155,7 +155,8 @@ class GStreamerApp:
             print("TAPPAS_POST_PROC_DIR environment variable is not set. Please set it to by sourcing setup_env.sh")
             exit(1)
         self.current_path = os.path.dirname(os.path.abspath(__file__))
-        self.postprocess_dir = tappas_postprocess_dir
+        self.postprocess_dir_od = tappas_postprocess_dir
+        self.postprocess_dir_ld = tappas_postprocess_dir
         self.video_source = self.options_menu.input
         self.source_type = get_source_type(self.video_source)
         self.user_data = user_data
@@ -164,19 +165,29 @@ class GStreamerApp:
         # For parallel inference, we need to set the HEF path for both lanes and objects
         self.ld_hef_path = self.options_menu.hef_path_ld
         self.od_hef_path = self.options_menu.hef_path_od
+<<<<<<< HEAD
         self.default_postprocess_so_od = os.path.join(self.postprocess_dir, "libyolo_hailortpp_post.so")
         self.default_postprocess_so_ld = os.path.join(self.postprocess_dir, "libyolo_hailortpp_post.so") # will add the lane specific later, will need to write own so file 
         # usr/lib/aarch64-linux-gnu/hailo/tappas/post_processes
+=======
+        self.default_postprocess_so_od = os.path.join(self.postprocess_dir_od, "libyolo_hailortpp_post.so")
+        self.default_postprocess_so_ld = os.path.join(self.postprocess_dir_ld, "lane_postprocess.py") # will add the lane specific later, will need to write own so file 
+        
+>>>>>>> 006169ede2b9fc8cfa3817b96129e2943a26ecd1
         
         # Set Hailo parameters; these parameters should be set based on the model used
         self.batch_size = 1
-        self.network_width = 640
-        self.network_height = 640
-        self.network_format = "RGB"
+        self.network_width_od = 640
+        self.network_height_od = 640
+        self.network_format_od = "RGB"
         self.default_postprocess_so = None
         self.hef_path = None
         self.app_callback = None
         #self.app_callback_od = None
+
+        self.network_height_ld = 288
+        self.network_width_ld = 800
+        self.network_format_ld = "RGB"
         #self.app_callback_ld = None
 
         # Set user data parameters
