@@ -333,15 +333,15 @@ class GStreamerDetectionApp(GStreamerApp):
         #self.app_callback_ld = ld_callback
 
         self.od_thresholds_str = (
-            f"od nms-score-threshold={od_nms_score_threshold} "
-            f"od nms-iou-threshold={od_nms_iou_threshold} "
-            f"od output-format-type=HAILO_FORMAT_TYPE_FLOAT32"
+            f"nms-score-threshold={od_nms_score_threshold} "
+            f"nms-iou-threshold={od_nms_iou_threshold} "
+            f"output-format-type=HAILO_FORMAT_TYPE_FLOAT32"
         )
 
         self.ld_thresholds_str = (
-            f"ld nms-score-threshold={ld_nms_score_threshold} "
-            f"ld nms-iou-threshold={ld_nms_iou_threshold} "
-            f"ld output-format-type=HAILO_FORMAT_TYPE_FLOAT32"
+            f"nms-score-threshold={ld_nms_score_threshold} "
+            f"nms-iou-threshold={ld_nms_iou_threshold} "
+            f"output-format-type=HAILO_FORMAT_TYPE_FLOAT32"
         )
         
         setproctitle.setproctitle("Hailo Detection App")
@@ -452,10 +452,10 @@ class GStreamerDetectionApp(GStreamerApp):
         #splitter. ! queue_hailonet_od ! hailonet (OD) ! queue_hailofilter_od ! hailofilter (OD) ! hmux_cascade.sink_0
         #starting from the splitter 
         pipeline_string_OD = ( 
-            f"splitter. ! " 
+            f"splitter. ! identity name=identity_splitter_od ! " 
             + QUEUE("queue_hailonet_od")
             + "videoconvert n-threads=3 ! "
-            + f"hailonet hef-path={self.od_hef_path} batch-size={self.batch_size} {self.od_thresholds_str} force-writable=true device-count=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
+            + f"hailonet hef-path={self.od_hef_path} batch-size={self.od_batch_size} {self.od_thresholds_str} force-writable=true  vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
             + QUEUE("queue_hailofilter_od")
             + f"hailofilter so-path={self.default_postprocess_so_od} {self.labels_config} qos=false ! "
 #            + QUEUE("queue_od_callback")
@@ -467,11 +467,13 @@ class GStreamerDetectionApp(GStreamerApp):
         #splitter. ! queue_hailonet_ld ! hailonet (LD) ! queue_hailofilter_ld ! hailofilter (LD) ! hmux_cascade.sink_1
         #starting from the splitter 
         pipeline_string_LD = (
-            f"splitter. ! " 
+            f"splitter. ! identity name=identity_splitter_ld ! " 
             + QUEUE("queue_hailonet_ld")
             + "videoconvert n-threads=3 ! "
-           + f"hailonet hef-path={self.ld_hef_path} batch-size={self.ld_batch_size} {self.ld_thresholds_str} force-writable=true device-count=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
-#            + QUEUE("queue_hailofilter_ld")
+            # videoconvert 1 is not able to link to hailonet0, so adding a capsfilter.
+            #+ "video/x-raw, format=RGB, width=640, height=640, pixel-aspect-ratio=1/1 ! "
+            + f"hailonet hef-path={self.ld_hef_path} batch-size={self.ld_batch_size} {self.ld_thresholds_str} force-writable=true  vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
+            + QUEUE("queue_hailofilter_ld")
 #            + f"hailofilter so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
 #            + QUEUE("queue_ld_callback")
 #            + f"identity name=identity_callback_ld ! "
@@ -496,8 +498,8 @@ class GStreamerDetectionApp(GStreamerApp):
         pipeline_string_parallel = (
             source_element
             + QUEUE("queue_hailo_python")
-            + QUEUE("queue_user_callback")
-            + "identity name=identity_callback ! "
+#            + QUEUE("queue_user_callback")
+#            + "identity name=identity_callback ! "
             + QUEUE("queue_hailooverlay")
             + "hailooverlay ! "
             + QUEUE("queue_videoconvert")

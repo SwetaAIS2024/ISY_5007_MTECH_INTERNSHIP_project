@@ -48,3 +48,32 @@ queue name=queue_hailo_display max-size-buffers=5 max-size-bytes=0 max-size-time
 
 
 fpsdisplaysink video-sink=xvimagesink name=hailo_display sync=true text-overlay=False signal-fps-measurements=true
+
+
+error - FOR THE ufld hef file only - 0:00:01.140527650  8300     0x13019390 ERROR           GST_PIPELINE gst/parse/grammar.y:1086:gst_parse_perform_link: could not link videoconvert1 to hailonet0
+gst_parse_error: could not link videoconvert1 to hailonet0 (3)
+
+
+not for the yolov8m or yolov7m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

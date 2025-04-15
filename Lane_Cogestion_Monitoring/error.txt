@@ -1,0 +1,7 @@
+Error logs :
+
+15th April - 
+0:00:01.295656814  5911      0x6526690 ERROR           GST_PIPELINE gst/parse/grammar.y:1086:gst_parse_perform_link: could not link videoconvert1 to hailonet1
+gst_parse_error: could not link videoconvert1 to hailonet1 (3)
+
+not able to use the ufld.v2 with this pipeline config

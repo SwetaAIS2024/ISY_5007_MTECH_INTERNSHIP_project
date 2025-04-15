@@ -166,7 +166,7 @@ class GStreamerApp:
         self.od_hef_path = self.options_menu.hef_path_od
         self.default_postprocess_so_od = os.path.join(self.postprocess_dir, "libyolo_hailortpp_post.so")
         self.default_postprocess_so_ld = os.path.join(self.postprocess_dir, "libyolo_hailortpp_post.so") # will add the lane specific later, will need to write own so file 
-        
+        # usr/lib/aarch64-linux-gnu/hailo/tappas/post_processes
         
         # Set Hailo parameters; these parameters should be set based on the model used
         self.batch_size = 1
