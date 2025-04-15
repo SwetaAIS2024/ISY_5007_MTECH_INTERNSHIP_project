@@ -480,7 +480,9 @@ class GStreamerDetectionApp(GStreamerApp):
             + QUEUE("queue_src_convert_ld")
             + f"videoconvert n-threads=3 name=src_convert_ld qos=false ! video/x-raw, format={self.network_format_ld}, width={self.network_width_ld}, height={self.network_height_ld}, pixel-aspect-ratio=1/1 ! "
             + QUEUE("queue_hailonet_ld")
-            + f"hailonet hef-path={self.ld_hef_path} batch-size={self.ld_batch_size} {self.ld_thresholds_str} force-writable=true vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
+            + f"hailonet hef-path={self.ld_hef_path} batch-size={self.ld_batch_size} force-writable=true vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
+            + QUEUE("queue_hailofilter_ld")
+            #+ f"hailopython module = {self.default_postprocess_so_ld} function=post_process_lane_detections qos=false ! "
             + f"hmux_cascade.sink_1 " #sending the LD output to the muxer
         )    
 
