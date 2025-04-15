@@ -1,0 +1,90 @@
+SupervisionWarnings: BoundingBoxAnnotator is deprecated: `BoundingBoxAnnotator` is deprecated and has been renamed to `BoxAnnotator`. `BoundingBoxAnnotator` will be removed in supervision-0.26.0.
+hailomuxer name=hmux hailomuxer name=hmux_cascade filesrc location=/home/william-stengg/Desktop/hailo-rpi5-examples/resources/video3.mp4 name=src_0 ! queue name=queue_dec264 max-size-buffers=5 max-size-bytes=0 max-size-time=0 !  qtdemux ! h264parse ! avdec_h264 max-threads=2 !  video/x-raw, format=I420 ! tee name=t ! queue name=bypass_queue max-size-buffers=20 max-size-bytes=0 max-size-time=0 ! queue name=queue_scale_bypass max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! videoscale n-threads=2 ! queue name=queue_src_convert_bypass max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! videoconvert n-threads=3 name=src_convert_bypass qos=false ! video/x-raw, format=RGB, width=640, height=640, pixel-aspect-ratio=1/1 ! hmux.sink_0 t. ! tee name=splitter splitter. ! queue name=queue_scale_od max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! videoscale n-threads=2 ! queue name=queue_src_convert_od max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! videoconvert n-threads=3 name=src_convert_od qos=false ! video/x-raw, format=RGB, width=640, height=640, pixel-aspect-ratio=1/1 ! queue name=queue_hailonet_od max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! hailonet hef-path=/home/william-stengg/Desktop/yolov8m.hef batch-size=1 nms-score-threshold=0.3 nms-iou-threshold=0.45 output-format-type=HAILO_FORMAT_TYPE_FLOAT32 force-writable=true vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! queue name=queue_hailofilter_od max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! hailofilter so-path=/usr/lib/aarch64-linux-gnu/hailo/tappas/post_processes/libyolo_hailortpp_post.so  qos=false ! hmux_cascade.sink_0 splitter. ! queue name=queue_scale_ld max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! videoscale n-threads=2 ! queue name=queue_src_convert_ld max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! videoconvert n-threads=3 name=src_convert_ld qos=false ! video/x-raw, format=RGB, width=800, height=320, pixel-aspect-ratio=1/1 ! queue name=queue_hailonet_ld max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! hailonet hef-path=/home/william-stengg/Desktop/Hailo-Application-Code-Examples/runtime/python/lane_detection/ufld_v2.hef batch-size=2 nms-score-threshold=0.3 nms-iou-threshold=0.45 output-format-type=HAILO_FORMAT_TYPE_FLOAT32 force-writable=true vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! hmux_cascade.sink_1 hmux_cascade. ! hmux.sink_1 hmux. ! queue name=queue_hailo_python max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! queue name=queue_user_callback max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! identity name=identity_callback ! queue name=queue_hailooverlay max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! hailooverlay ! queue name=queue_videoconvert max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! videoconvert n-threads=3 qos=false ! queue name=queue_hailo_display max-size-buffers=5 max-size-bytes=0 max-size-time=0 ! fpsdisplaysink video-sink=xvimagesink name=hailo_display sync=true text-overlay=False signal-fps-measurements=true 
+0:00:00.630251742 [32m13051[00m     0x43b86460 [33;01mWARN   [00m [00m             qtdemux qtdemux_types.c:264:qtdemux_type_get:[00m unknown QuickTime node type gsst
+0:00:00.630397933 [32m13051[00m     0x43b86460 [33;01mWARN   [00m [00m             qtdemux qtdemux_types.c:264:qtdemux_type_get:[00m unknown QuickTime node type gstd
+0:00:00.630500252 [32m13051[00m     0x43b86460 [33;01mWARN   [00m [00m             qtdemux qtdemux.c:3238:qtdemux_parse_trex:<qtdemux0>[00m failed to find fragment defaults for stream 1
+0:00:00.630645444 [32m13051[00m     0x43b86460 [33;01mWARN   [00m [00m             qtdemux qtdemux.c:3238:qtdemux_parse_trex:<qtdemux0>[00m failed to find fragment defaults for stream 2
+NMS score threshold is set, but there is no NMS output in this model.
+CHECK_SUCCESS failed with status=6
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.870: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.878: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.883: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.890: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.890: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.900: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.902: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.908: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.908: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.910: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.912: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.916: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.918: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.919: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.926: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.926: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.927: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.928: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.955: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.964: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.964: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.969: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.971: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.975: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:45.976: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:46.000: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:46.037: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:46.074: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:46.111: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:46.150: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:46.187: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:46.222: gst_queue_array_push_tail: assertion 'array != NULL' failed
+
+(Hailo Detection App:13051): GStreamer-Base-CRITICAL **: 17:01:46.259: gst_queue_array_push_tail: assertion 'array != NULL' failed
+[HailoRT] [warning] Failed to acquire buffer because the buffer pool is empty. This could be caused by uneven reading and writing speeds, with a short user-defined timeout. (timeout=10000ms)
+[HailoRT] [error] Non-recoverable Async Infer Pipeline error. status error code: HAILO_TIMEOUT(4)
+[HailoRT] [error] Shutting down the pipeline with status HAILO_TIMEOUT(4)
+Process Process-1:
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/lib/python3.11/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/william-stengg/Desktop/sweta_LCM/Lane_Cogestion_Monitoring/func/hailo_rpi_common.py", line 87, in display_user_data_frame
+    cv2.waitKey(1)
+KeyboardInterrupt
+[HailoRT] [error] CHECK_SUCCESS failed with status=HAILO_TIMEOUT(4) - Can't handle inference request since pipeline status is HAILO_TIMEOUT(4).
+[HailoRT] [error] CHECK_SUCCESS failed with status=HAILO_TIMEOUT(4)
+CHECK_EXPECTED failed with status=4
+CHECK_SUCCESS failed with status=4

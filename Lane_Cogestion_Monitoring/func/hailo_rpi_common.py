@@ -165,15 +165,9 @@ class GStreamerApp:
         # For parallel inference, we need to set the HEF path for both lanes and objects
         self.ld_hef_path = self.options_menu.hef_path_ld
         self.od_hef_path = self.options_menu.hef_path_od
-<<<<<<< HEAD
-        self.default_postprocess_so_od = os.path.join(self.postprocess_dir, "libyolo_hailortpp_post.so")
-        self.default_postprocess_so_ld = os.path.join(self.postprocess_dir, "libyolo_hailortpp_post.so") # will add the lane specific later, will need to write own so file 
-        # usr/lib/aarch64-linux-gnu/hailo/tappas/post_processes
-=======
+
         self.default_postprocess_so_od = os.path.join(self.postprocess_dir_od, "libyolo_hailortpp_post.so")
-        self.default_postprocess_so_ld = os.path.join(self.postprocess_dir_ld, "lane_postprocess.py") # will add the lane specific later, will need to write own so file 
-        
->>>>>>> 006169ede2b9fc8cfa3817b96129e2943a26ecd1
+        self.default_postprocess_so_ld = os.path.join(self.postprocess_dir_ld, "lane_postprocess.py") # will add the lane specific later, will need to write own so file
         
         # Set Hailo parameters; these parameters should be set based on the model used
         self.batch_size = 1
@@ -185,7 +179,7 @@ class GStreamerApp:
         self.app_callback = None
         #self.app_callback_od = None
 
-        self.network_height_ld = 288
+        self.network_height_ld = 320 # got the info from the ufled_v2 hef parse result - hailo parse-hef <path>
         self.network_width_ld = 800
         self.network_format_ld = "RGB"
         #self.app_callback_ld = None

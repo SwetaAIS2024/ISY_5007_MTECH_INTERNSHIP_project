@@ -1,2 +1,5 @@
 2025-04-15 12:22:03,049 - INFO - base_utils.py:54 - (hailo) Running command 'parse-hef' with 'hailortcli'
 2025-04-15 12:24:57,842 - INFO - base_utils.py:54 - (hailo) Running command 'parse-hef' with 'hailortcli'
+2025-04-15 15:51:53,859 - INFO - base_utils.py:54 - (hailo) Running command 'parse-hef' with 'hailortcli'
+2025-04-15 15:52:14,903 - INFO - base_utils.py:54 - (hailo) Running command 'parse-hef' with 'hailortcli'
+2025-04-15 15:59:01,199 - INFO - base_utils.py:54 - (hailo) Running command 'parse-hef' with 'hailortcli'

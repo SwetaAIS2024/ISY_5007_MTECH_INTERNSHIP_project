@@ -260,6 +260,8 @@ class GStreamerDetectionApp(GStreamerApp):
 
         # Initialize parameters for your model and postprocessing if needed
         self.od_batch_size = 2
+        self.network_width = 640
+        self.network_height = 640
         self.od_network_width = 640
         self.od_network_height = 640
         self.od_network_format = "RGB"
@@ -268,9 +270,9 @@ class GStreamerDetectionApp(GStreamerApp):
         
         self.ld_batch_size = 2
         self.ld_nms_score_threshold = 0.3 
-        self.od_network_width = 640
-        self.od_network_height = 640
-        self.od_network_format = "RGB"
+        self.ld_network_width = 640
+        self.ld_network_height = 288
+        self.ld_network_format = "RGB"
         ld_nms_score_threshold = 0.3
         ld_nms_iou_threshold = 0.45
         
@@ -286,7 +288,7 @@ class GStreamerDetectionApp(GStreamerApp):
         
         original_width, original_height = 3840, 2160 # this part also can be extracted from 
         # the input video itself 
-        new_width, new_height = self.network_width, self.network_height
+        new_width, new_height = self.network_width_od, self.network_height_od
         aspect_ratio = original_width / original_height  # ~1.777... for 16:9
 
         # Compute the scaled height that maintains the aspect ratio at new_width
@@ -326,7 +328,7 @@ class GStreamerDetectionApp(GStreamerApp):
         else:
             self.labels_config = ''
             # Default postprocess
-            self.default_postprocess_so = os.path.join(self.postprocess_dir, 'libyolo_hailortpp_post.so')
+            self.default_postprocess_so = os.path.join(self.postprocess_dir_od, 'libyolo_hailortpp_post.so')
 
         self.app_callback = app_callback
         #self.app_callback_od = od_callback
@@ -432,12 +434,16 @@ class GStreamerDetectionApp(GStreamerApp):
         # source_element += QUEUE("queue_scale")
         # source_element += "videoscale n-threads=2 ! "
         # source_element += QUEUE("queue_src_convert")
-        # source_element += f"videoconvert n-threads=3 name=src_convert qos=false ! video/x-raw, format={self.network_format}, width={self.network_width}, height={self.network_height}, pixel-aspect-ratio=1/1 ! "
+        # source_element += f"videoconvert n-threads=3 name=src_convert qos=false ! video/x-raw, format={self.network_format_od}, width={self.network_width_od}, height={self.network_height_od}, pixel-aspect-ratio=1/1 ! "
 
         # this is for the pipeline where thew raw video is passed to the output stream
         # BRANCH 1 AND TO SINK 0
         source_element += "tee name=t ! "
         source_element += QUEUE("bypass_queue", max_size_buffers=20)
+        source_element += QUEUE("queue_scale_bypass")
+        source_element += "videoscale n-threads=2 ! "
+        source_element += QUEUE("queue_src_convert_bypass")
+        source_element += f"videoconvert n-threads=3 name=src_convert_bypass qos=false ! video/x-raw, format={self.network_format_od}, width={self.network_width_od}, height={self.network_height_od}, pixel-aspect-ratio=1/1 ! "
         source_element += "hmux.sink_0 "
 
         #BRANCH 2
@@ -452,18 +458,15 @@ class GStreamerDetectionApp(GStreamerApp):
         #splitter. ! queue_hailonet_od ! hailonet (OD) ! queue_hailofilter_od ! hailofilter (OD) ! hmux_cascade.sink_0
         #starting from the splitter 
         pipeline_string_OD = ( 
-            f"splitter. ! " 
-            + QUEUE("queue_scale")
+             f"splitter. ! " 
+            + QUEUE("queue_scale_od")
             + "videoscale n-threads=2 ! "
-            + QUEUE("queue_src_convert")
-            + f"videoconvert n-threads=3 name=src_convert qos=false ! video/x-raw, format={self.network_format_od}, width={self.network_width_od}, height={self.network_height_od}, pixel-aspect-ratio=1/1 ! "
+            + QUEUE("queue_src_convert_od")
+            + f"videoconvert n-threads=3 name=src_convert_od qos=false ! video/x-raw, format={self.network_format_od}, width={self.network_width_od}, height={self.network_height_od}, pixel-aspect-ratio=1/1 ! "
             + QUEUE("queue_hailonet_od")
-            + "videoconvert n-threads=3 ! "
             + f"hailonet hef-path={self.od_hef_path} batch-size={self.batch_size} {self.od_thresholds_str} force-writable=true vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
             + QUEUE("queue_hailofilter_od")
             + f"hailofilter so-path={self.default_postprocess_so_od} {self.labels_config} qos=false ! "
-#            + QUEUE("queue_od_callback")
-#            + f"identity name=identity_callback_od ! "
             + f"hmux_cascade.sink_0 " #sending the OD output to the muxer
         )
         
@@ -471,20 +474,13 @@ class GStreamerDetectionApp(GStreamerApp):
         #splitter. ! queue_hailonet_ld ! hailonet (LD) ! queue_hailofilter_ld ! hailofilter (LD) ! hmux_cascade.sink_1
         #starting from the splitter 
         pipeline_string_LD = (
-            f"splitter. ! " 
-            + QUEUE("queue_scale")
-            + "videoscale n-threads=2 ! "
-            + QUEUE("queue_src_convert")
-            + f"videoconvert n-threads=3 name=src_convert qos=false ! video/x-raw, format={self.network_format_ld}, width={self.network_width_ld}, height={self.network_height_ld}, pixel-aspect-ratio=1/1 ! "
+            f"splitter. ! "
+            + QUEUE("queue_scale_ld")
+            + "videoscale n-threads=2 ! " 
+            + QUEUE("queue_src_convert_ld")
+            + f"videoconvert n-threads=3 name=src_convert_ld qos=false ! video/x-raw, format={self.network_format_ld}, width={self.network_width_ld}, height={self.network_height_ld}, pixel-aspect-ratio=1/1 ! "
             + QUEUE("queue_hailonet_ld")
-            + "videoconvert n-threads=3 ! " # after this line error are coming, videoconv could not link with hailonet 
-#            + f"hailonet hef-path={self.ld_hef_path} batch-size={self.ld_batch_size} {self.ld_thresholds_str} force-writable=true vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
-#            + QUEUE("queue_custom_hailopython")
-#            + f"hailopython module = {self.default_postprocess_so_ld} qos=false ! "
-#            + QUEUE("queue_hailofilter_ld")
-#            + f"hailofilter so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
-#            + QUEUE("queue_ld_callback")
-#            + f"identity name=identity_callback_ld ! "
+            + f"hailonet hef-path={self.ld_hef_path} batch-size={self.ld_batch_size} {self.ld_thresholds_str} force-writable=true vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
             + f"hmux_cascade.sink_1 " #sending the LD output to the muxer
         )    
 
@@ -517,6 +513,7 @@ class GStreamerDetectionApp(GStreamerApp):
             #+ "fakesink"
         )
         print(pipeline_string_parallel)
+        
         return pipeline_string_parallel
     
     def get_sequential_pipeline_string(self):
