@@ -473,7 +473,7 @@ class GStreamerDetectionApp(GStreamerApp):
             # videoconvert 1 is not able to link to hailonet0, so adding a capsfilter.
             #+ "video/x-raw, format=RGB, width=640, height=640, pixel-aspect-ratio=1/1 ! "
             + f"hailonet hef-path={self.ld_hef_path} batch-size={self.ld_batch_size} {self.ld_thresholds_str} force-writable=true  vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
-            + QUEUE("queue_hailofilter_ld")
+#            + QUEUE("queue_hailofilter_ld")
 #            + f"hailofilter so-path={self.default_postprocess_so_ld} {self.labels_config} qos=false ! "
 #            + QUEUE("queue_ld_callback")
 #            + f"identity name=identity_callback_ld ! "
