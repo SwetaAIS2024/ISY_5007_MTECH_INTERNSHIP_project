@@ -1,0 +1,85 @@
+from pathlib import Path
+current_path = os.path.dirname(os.path.abspath(__file__))
+# Define a common group_id
+group_id = "1"
+# Optionally set environment variables
+os.environ["HAILORT_GROUP_ID"] = group_id
+os.environ["HAILORT_MULTI_PROCESS_SERVICE"] = "1"
+os.environ["HAILORT_LOGGER_PATH"] = f"{Path(current_path).resolve()}/hailo_log.log"
+os.environ["HAILORT_CONSOLE_LOGGER_LEVEL"] = "info"
+# os.environ["GST_DEBUG"] = "input-selector:5,hailonet:5,hailofilter:5"
+
+
+config = {
+    "hef_path": "../resources/yolov8s_pose_h8l.hef",
+    "post_process_so": "../resources/libyolov8pose_postprocess.so",
+    "post_process_function": "filter"
+}
+
+
+hef_path = Path(os.path.join(current_path, config.get("hef_path", "")))
+post_process_so = Path(os.path.join(current_path, config.get("post_process_so", "")))
+post_process_function = Path(config.get("post_process_function",""))
+
+
+nms_score_threshold = 0.3
+nms_iou_threshold = 0.45
+
+thresholds = {
+    "nms-score-threshold" : nms_score_threshold,
+    "nms-iou-threshold": nms_iou_threshold,
+    "output-format-type": "HAILO_FORMAT_TYPE_FLOAT32"
+}
+        
+
+object_detection_config = {
+    "hef_path": "../resources/yolov8s_h8l.hef",
+    "post_process_so": "../resources/libyolo_hailortpp_postprocess.so",
+    "post_process_function": "filter",
+    "additional_params": thresholds
+}
+
+hef_path1 = Path(os.path.join(current_path, object_detection_config.get("hef_path", "")))
+post_process_so1 = Path(os.path.join(current_path, object_detection_config.get("post_process_so", "")))
+post_process_function1 = Path(object_detection_config.get("post_process_function",""))
+
+add_param = " ".join([f"{k}={v}" for k,v in thresholds.items()])
+
+
+pipeline_str = (
+"libcamerasrc name=source "
+"! capsfilter name=capsfilter caps=\"video/x-raw,format=RGB,width=640,height=480,framerate=30/1\" "
+"! queue name=queue_source max-size-buffers=4 leaky=upstream "
+"! tee name=t "
+
+"t. ! queue name=stream_branch_queue max-size-buffers=4 leaky=upstream "
+"! videoconvert name=stream_videoconvert "
+"! capsfilter name=stream_capsfilter caps=\"video/x-raw,format=RGB\" "
+"! identity name=stream_identity "
+"! input-selector name=selector sync-streams=false "
+"! appsink name=appsink emit-signals=true sync=false drop=true max-buffers=1 "
+
+"t. ! queue name=pose_estimation_scale_q max-size-buffers=4 leaky=upstream "
+"! videoscale name=pose_estimation_videoscale n-threads=2 qos=false "
+"! queue name=pose_estimation_convert_q max-size-buffers=4 leaky=upstream "
+"! capsfilter name=pose_estimation_caps caps=\"video/x-raw,pixel-aspect-ratio=1/1\" "
+"! videoconvert name=pose_estimation_videoconvert n-threads=2 "
+"! queue name=pose_estimation_hailonet_q max-size-buffers=4 leaky=upstream "
+f"! hailonet name=pose_estimation_hailonet hef-path=\"{hef_path.resolve()}\" batch-size=2 force-writable=true multi-process-service=true vdevice-group-id={group_id} scheduling-algorithm=1 scheduler-threshold=2 "
+"! queue name=pose_estimation_hailofilter_q max-size-buffers=4 leaky=upstream "
+f"! hailofilter name=pose_estimation_hailofilter so-path=\"{post_process_so.resolve()}\" qos=false "
+"! selector.sink_1 "
+
+"t. ! queue name=detection_scale_q max-size-buffers=4 leaky=upstream "
+"! videoscale name=detection_videoscale n-threads=2 qos=false "
+"! queue name=detection_convert_q max-size-buffers=4 leaky=upstream "
+"! capsfilter name=detection_caps caps=\"video/x-raw,pixel-aspect-ratio=1/1\" "
+"! videoconvert name=detection_videoconvert n-threads=2 "
+"! queue name=detection_hailonet_q max-size-buffers=4 leaky=upstream "
+f"! hailonet name=detection_hailonet hef-path=\"{hef_path1.resolve()}\" batch-size=2 force-writable=true {add_param} multi-process-service=true vdevice-group-id={group_id} scheduling-algorithm=1 scheduler-threshold=2 "
+"! queue name=detection_hailofilter_q max-size-buffers=4 leaky=upstream "
+f"! hailofilter name=detection_hailofilter so-path=\"{post_process_so1.resolve()}\" qos=false "
+"! selector.sink_2 "
+)```
+
+Now it's time to clean up the code and make it modular.

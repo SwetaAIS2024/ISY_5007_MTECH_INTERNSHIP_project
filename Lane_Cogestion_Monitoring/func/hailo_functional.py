@@ -410,7 +410,6 @@ class GStreamerDetectionApp(GStreamerApp):
 
     def get_parallel_pipeline_string(self):
         source_element = "hailomuxer name=hmux "
-        source_element += "hailomuxer name=hmux_cascade "
         if self.source_type == "rpi":
             source_element += (
                 "libcamerasrc name=src_0 auto-focus-mode=2 ! "
@@ -429,90 +428,56 @@ class GStreamerDetectionApp(GStreamerApp):
                 f"filesrc location={self.video_source} name=src_0 ! "
                 + QUEUE("queue_dec264")
                 + " qtdemux ! h264parse ! avdec_h264 max-threads=2 ! "
-                " video/x-raw, format=I420 ! "
+                + " video/x-raw, format=I420 ! "
             )
-        # source_element += QUEUE("queue_scale")
-        # source_element += "videoscale n-threads=2 ! "
-        # source_element += QUEUE("queue_src_convert")
-        # source_element += f"videoconvert n-threads=3 name=src_convert qos=false ! video/x-raw, format={self.network_format_od}, width={self.network_width_od}, height={self.network_height_od}, pixel-aspect-ratio=1/1 ! "
 
-        # this is for the pipeline where thew raw video is passed to the output stream
-        # BRANCH 1 AND TO SINK 0
-        source_element += "tee name=t ! "
-        source_element += QUEUE("bypass_queue", max_size_buffers=20)
-        source_element += QUEUE("queue_scale_bypass", leaky="upstream")
-        source_element += "videoscale n-threads=2 ! "
-        source_element += QUEUE("queue_src_convert_bypass", leaky="upstream")
-        source_element += f"videoconvert n-threads=3 name=src_convert_bypass qos=false ! video/x-raw, format={self.network_format_od}, width={self.network_width_od}, height={self.network_height_od}, pixel-aspect-ratio=1/1 ! "
-        source_element += "hmux.sink_0 "
+        source_element += "tee name=t "
 
-        #BRANCH 2
-        source_element += "t. ! " # the other branch where LD + OD are processed in parallel
-
-
-        # STARTING PARALLEL PROCESSING
-        # parallel logic for the OD + LD
-        source_element += "tee name=splitter "
-        
-        #INSIDE BRANCH 2 - OD Branch
-        #splitter. ! queue_hailonet_od ! hailonet (OD) ! queue_hailofilter_od ! hailofilter (OD) ! hmux_cascade.sink_0
-        #starting from the splitter 
         pipeline_string_OD = ( 
-             f"splitter. ! " 
-            + QUEUE("queue_od", max_size_buffers=20)
-            + QUEUE("queue_scale_od", leaky="upstream")
+              f"t. !"
+            + QUEUE("queue_od", max_size_buffers=3, leaky="no")
+            + QUEUE("queue_scale_od", max_size_buffers=3, leaky="no")
             + "videoscale n-threads=2 ! "
-            + QUEUE("queue_src_convert_od", leaky="upstream")
+            + QUEUE("queue_src_convert_od", max_size_buffers=3, leaky="no")
             + f"videoconvert n-threads=3 name=src_convert_od qos=false ! video/x-raw, format={self.network_format_od}, width={self.network_width_od}, height={self.network_height_od}, pixel-aspect-ratio=1/1 ! "
-            + QUEUE("queue_hailonet_od")
-            + f"hailonet hef-path={self.od_hef_path} batch-size={self.batch_size} {self.od_thresholds_str} force-writable=true vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
-            + QUEUE("queue_hailofilter_od")
+            + QUEUE("queue_hailonet_od", max_size_buffers=3, leaky="no")
+            + f"hailonet hef-path={self.od_hef_path} batch-size={self.od_batch_size} {self.od_thresholds_str} force-writable=true vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
+            + QUEUE("queue_hailofilter_od", max_size_buffers=3, leaky="no")
             + f"hailofilter so-path={self.default_postprocess_so_od} {self.labels_config} qos=false ! "
-            + f"hmux_cascade.sink_0 " #sending the OD output to the muxer
+            + f"hmux.sink_0 "
         )
         
-        ##INSIDE BRANCH 2 - LD Branch
-        #splitter. ! queue_hailonet_ld ! hailonet (LD) ! queue_hailofilter_ld ! hailofilter (LD) ! hmux_cascade.sink_1
-        #starting from the splitter 
         pipeline_string_LD = (
-            f"splitter. ! "
-            + QUEUE("queue_ld", max_size_buffers=20)
-            + QUEUE("queue_scale_ld", leaky="upstream")
+              f"t. !"
+            + QUEUE("queue_ld", max_size_buffers=3, leaky="no")
+            + QUEUE("queue_scale_ld", max_size_buffers=3, leaky="no")
             + "videoscale n-threads=2 ! " 
-            + QUEUE("queue_src_convert_ld", leaky="upstream")
+            + QUEUE("queue_src_convert_ld", max_size_buffers=3, leaky="no")
             + f"videoconvert n-threads=3 name=src_convert_ld qos=false ! video/x-raw, format={self.network_format_ld}, width={self.network_width_ld}, height={self.network_height_ld}, pixel-aspect-ratio=1/1 ! "
-            + QUEUE("queue_hailonet_ld")
+            + QUEUE("queue_hailonet_ld", max_size_buffers=3, leaky="no")
             + f"hailonet hef-path={self.ld_hef_path} batch-size={self.ld_batch_size} force-writable=true vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
-            + QUEUE("queue_hailofilter_ld")
+            + QUEUE("queue_hailofilter_ld", max_size_buffers=3,leaky="no")
             #+ f"hailopython module = {self.default_postprocess_so_ld} function=post_process_lane_detections qos=false ! "
-            + f"hmux_cascade.sink_1 " #sending the LD output to the muxer
+            + f"hmux.sink_1 "
         )    
 
         source_element += pipeline_string_OD
         source_element += pipeline_string_LD
-        #parallel processing done
 
-        # BRANCH 2 - cascading OD + LD  
-        source_element += "hmux_cascade. ! "
-        
-        # END OF PARALLEL PROCESSING
-        # BRANCH 2 TO SINK 1
-        source_element += "hmux.sink_1 "
-
-        # cascading the raw video stream BRANCH 1 + the processed stream BRANCH 2  
+        # BRANCH 1 + BRANCH 2  
         source_element += "hmux. ! "
 
         # now we need to send the output of the muxer to the hailooverlay
         pipeline_string_parallel = (
             source_element
-            + QUEUE("queue_hailo_python")
-            + QUEUE("queue_user_callback")
+            + QUEUE("queue_hailo_python", leaky="no")
+            + QUEUE("queue_user_callback", leaky="no")
             + "identity name=identity_callback ! " # the callback fundtion, i think this needs to be common, this is like the processing part after the inference at frmae is done.
-            + QUEUE("queue_hailooverlay")
+            + QUEUE("queue_hailooverlay", leaky="no")
             + "hailooverlay ! "
-            + QUEUE("queue_videoconvert")
+            + QUEUE("queue_videoconvert", leaky="no")
             + "videoconvert n-threads=3 qos=false ! "
-            + QUEUE("queue_hailo_display")
+            + QUEUE("queue_hailo_display", leaky="no")
             + f"fpsdisplaysink video-sink={self.video_sink} name=hailo_display sync={self.sync} text-overlay={self.options_menu.show_fps} signal-fps-measurements=true "
             #+ "fakesink"
         )

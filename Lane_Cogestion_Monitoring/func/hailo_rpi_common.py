@@ -113,8 +113,8 @@ def get_default_parser():
 
     return parser
 
-def QUEUE(name, leaky, max_size_buffers=5, max_size_bytes=0, max_size_time=0):
-    return f"queue name={name} leaky={leaky} max-size-buffers={max_size_buffers} max-size-bytes={max_size_bytes} max-size-time={max_size_time} ! "
+def QUEUE(name, max_size_buffers=5, max_size_bytes=0, max_size_time=0, leaky="no"):
+    return f"queue name={name} max-size-buffers={max_size_buffers} max-size-bytes={max_size_bytes} max-size-time={max_size_time} leaky={leaky} ! "
 
 def get_source_type(input_source):
     # This function will return the source type based on the input source
@@ -203,6 +203,7 @@ class GStreamerApp:
         pipeline_string = self.get_pipeline_string()
         try:
             self.pipeline = Gst.parse_launch(pipeline_string)
+            
         except Exception as e:
             print(e)
             print(pipeline_string)
