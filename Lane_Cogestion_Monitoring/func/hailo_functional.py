@@ -440,9 +440,9 @@ class GStreamerDetectionApp(GStreamerApp):
         # BRANCH 1 AND TO SINK 0
         source_element += "tee name=t ! "
         source_element += QUEUE("bypass_queue", max_size_buffers=20)
-        source_element += QUEUE("queue_scale_bypass")
+        source_element += QUEUE("queue_scale_bypass", leaky="upstream")
         source_element += "videoscale n-threads=2 ! "
-        source_element += QUEUE("queue_src_convert_bypass")
+        source_element += QUEUE("queue_src_convert_bypass", leaky="upstream")
         source_element += f"videoconvert n-threads=3 name=src_convert_bypass qos=false ! video/x-raw, format={self.network_format_od}, width={self.network_width_od}, height={self.network_height_od}, pixel-aspect-ratio=1/1 ! "
         source_element += "hmux.sink_0 "
 
@@ -459,9 +459,10 @@ class GStreamerDetectionApp(GStreamerApp):
         #starting from the splitter 
         pipeline_string_OD = ( 
              f"splitter. ! " 
-            + QUEUE("queue_scale_od")
+            + QUEUE("queue_od", max_size_buffers=20)
+            + QUEUE("queue_scale_od", leaky="upstream")
             + "videoscale n-threads=2 ! "
-            + QUEUE("queue_src_convert_od")
+            + QUEUE("queue_src_convert_od", leaky="upstream")
             + f"videoconvert n-threads=3 name=src_convert_od qos=false ! video/x-raw, format={self.network_format_od}, width={self.network_width_od}, height={self.network_height_od}, pixel-aspect-ratio=1/1 ! "
             + QUEUE("queue_hailonet_od")
             + f"hailonet hef-path={self.od_hef_path} batch-size={self.batch_size} {self.od_thresholds_str} force-writable=true vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
@@ -475,9 +476,10 @@ class GStreamerDetectionApp(GStreamerApp):
         #starting from the splitter 
         pipeline_string_LD = (
             f"splitter. ! "
-            + QUEUE("queue_scale_ld")
+            + QUEUE("queue_ld", max_size_buffers=20)
+            + QUEUE("queue_scale_ld", leaky="upstream")
             + "videoscale n-threads=2 ! " 
-            + QUEUE("queue_src_convert_ld")
+            + QUEUE("queue_src_convert_ld", leaky="upstream")
             + f"videoconvert n-threads=3 name=src_convert_ld qos=false ! video/x-raw, format={self.network_format_ld}, width={self.network_width_ld}, height={self.network_height_ld}, pixel-aspect-ratio=1/1 ! "
             + QUEUE("queue_hailonet_ld")
             + f"hailonet hef-path={self.ld_hef_path} batch-size={self.ld_batch_size} force-writable=true vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
