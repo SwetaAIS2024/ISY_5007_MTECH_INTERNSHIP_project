@@ -162,6 +162,7 @@ class GStreamerApp:
         self.user_data = user_data
         self.video_sink = "xvimagesink"
 
+        #tappas path - /usr/lib/aarch64-linux-gnu/hailo/tappas/post_processes
         # For parallel inference, we need to set the HEF path for both lanes and objects
         self.ld_hef_path = self.options_menu.hef_path_ld
         self.od_hef_path = self.options_menu.hef_path_od
