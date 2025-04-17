@@ -529,7 +529,7 @@ class GStreamerDetectionApp(GStreamerApp):
             + QUEUE("queue_src_convert_od", max_size_buffers=3, leaky="no")
             + f"videoconvert n-threads=3 name=src_convert_od qos=false ! video/x-raw, format={self.network_format_od}, width={self.network_width_od}, height={self.network_height_od}, pixel-aspect-ratio=1/1 ! "
             + QUEUE("queue_hailonet_od", max_size_buffers=3, leaky="no")
-            + f"hailonet hef-path={self.od_hef_path} batch-size={self.od_batch_size} {self.od_thresholds_str} force-writable=true ! "
+            + f"hailonet hef-path={self.od_hef_path} batch-size={self.od_batch_size} {self.od_thresholds_str} force-writable=true vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
             + QUEUE("queue_hailofilter_od", max_size_buffers=3, leaky="no")
             + f"hailofilter so-path={self.default_postprocess_so_od} {self.labels_config} qos=false ! "
         )
@@ -541,7 +541,7 @@ class GStreamerDetectionApp(GStreamerApp):
             + QUEUE("queue_src_convert_ld", max_size_buffers=3, leaky="no")
             + f"videoconvert n-threads=3 name=src_convert_ld qos=false ! video/x-raw, format={self.network_format_ld}, width={self.network_width_ld}, height={self.network_height_ld}, pixel-aspect-ratio=1/1 ! "
             #+ QUEUE("queue_hailonet_ld", max_size_buffers=3, leaky="no")
-            #+ f"hailonet hef-path={self.ld_hef_path} batch-size={self.ld_batch_size} force-writable=true ! "
+            #+ f"hailonet hef-path={self.ld_hef_path} batch-size={self.ld_batch_size} force-writable=true vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! "
             #+ QUEUE("queue_hailofilter_ld", max_size_buffers=3,leaky="no")
             #+ f"hailopython module = {self.default_postprocess_so_ld} function=post_process_lane_detections qos=false ! "
         )   

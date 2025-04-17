@@ -1,0 +1,46 @@
+(venv_hailo_rpi5_examples) william-stengg@raspberrypi:~/Desktop/sweta_LCM/Lane_Cogestion_Monitoring $ hailortcli benchmark /home/william-stengg/Desktop/yolov8m.hef
+Starting Measurements...
+Measuring FPS in HW-only mode
+Network yolov8m/yolov8m: 100% | 404 | FPS: 26.93 | ETA: 00:00:00
+Measuring FPS (and Power on supported platforms) in streaming mode
+[HailoRT] [warning] Using the overcurrent protection dvm for power measurement will disable the overcurrent protection.
+If only taking one measurement, the protection will resume automatically.
+If doing continuous measurement, to enable overcurrent protection again you have to stop the power measurement on this dvm.
+Network yolov8m/yolov8m: 100% | 404 | FPS: 26.93 | ETA: 00:00:00
+Measuring HW Latency
+Network yolov8m/yolov8m: 100% | 401 | HW Latency: 33.22 ms | ETA: 00:00:00
+
+=======
+Summary
+=======
+FPS     (hw_only)                 = 26.9307
+        (streaming)               = 26.93
+Latency (hw)                      = 33.2151 ms
+Device 0000:01:00.0:
+  Power in streaming mode (average) = 1.61905 W
+                          (max)     = 1.63347 W
+
+
+
+                          
+(venv_hailo_rpi5_examples) william-stengg@raspberrypi:~/Desktop/sweta_LCM/Lane_Cogestion_Monitoring $ hailortcli benchmark /home/william-stengg/Desktop/Hailo-Application-Code-Examples/runtime/python/lane_detection/ufld_v2.hef
+Starting Measurements...
+Measuring FPS in HW-only mode
+Network ufld_v2/ufld_v2: 100% | 218 | FPS: 14.53 | ETA: 00:00:00
+Measuring FPS (and Power on supported platforms) in streaming mode
+[HailoRT] [warning] Using the overcurrent protection dvm for power measurement will disable the overcurrent protection.
+If only taking one measurement, the protection will resume automatically.
+If doing continuous measurement, to enable overcurrent protection again you have to stop the power measurement on this dvm.
+Network ufld_v2/ufld_v2: 100% | 218 | FPS: 14.53 | ETA: 00:00:00
+Measuring HW Latency
+Network ufld_v2/ufld_v2: 100% | 218 | HW Latency: 59.95 ms | ETA: 00:00:00
+
+=======
+Summary
+=======
+FPS     (hw_only)                 = 14.5322
+        (streaming)               = 14.5323
+Latency (hw)                      = 59.9466 ms
+Device 0000:01:00.0:
+  Power in streaming mode (average) = 0.845428 W
+                          (max)     = 0.853078 W
