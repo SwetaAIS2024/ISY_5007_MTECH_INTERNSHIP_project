@@ -30,7 +30,7 @@ output_vstream_info = hef.get_output_vstream_infos()[0]
 image_height, image_width, channels = input_vstream_info.shape
 
 
-image_path = "/home/william-stengg/Pictures/3_lane.png"
+image_path = "./3_lane.png"
 input_size = (640, 640)
 
 im = cv2.imread(image_path)

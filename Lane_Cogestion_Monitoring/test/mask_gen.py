@@ -46,14 +46,15 @@ print(f"Mask saved to {mask_output_file}")
 print("Original image resized shape:", original_image_resized.shape)
 print("Colored mask shape:", colored_mask.shape)
 
-# Overlay the mask on the original image
-alpha = 0.5  # Transparency factor for the mask
-overlay = cv2.addWeighted(original_image_resized, 1 - alpha, colored_mask, alpha, 0)
+# Ensure the mask is resized to match the original image dimensions
+if colored_mask.shape[:2] != original_image.shape[:2]:
+    colored_mask = cv2.resize(colored_mask, (original_image.shape[1], original_image.shape[0]))
 
-#Resize the overlay to match the original image dimensions
-overlay_resized = cv2.resize(overlay, (original_image.shape[1], original_image.shape[0]))
-
+# Create an overlay by blending the mask with the original image
+overlay = original_image.copy()
+non_zero_mask = (colored_mask != [0, 0, 0]).any(axis=2)  # Identify non-black pixels in the mask
+overlay[non_zero_mask] = cv2.addWeighted(original_image[non_zero_mask], 0.5, colored_mask[non_zero_mask], 0.5, 0)
 
 # Save the overlay image
-cv2.imwrite(overlay_output_file, overlay_resized)
+cv2.imwrite(overlay_output_file, overlay)
 print(f"Overlay saved to {overlay_output_file}")
