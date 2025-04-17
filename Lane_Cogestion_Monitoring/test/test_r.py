@@ -11,7 +11,7 @@ target = VDevice()
 
 # Loading compiled HEFs to device:
 model_name = 'yolov8m_seg'
-hef_path = "/home/william-stengg/Desktop/yolov8m_seg.hef"
+hef_path = "./yolov8m_seg.hef"
 hef = HEF(hef_path)
     
 # Configure network groups
