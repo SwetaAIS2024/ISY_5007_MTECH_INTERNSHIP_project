@@ -1,0 +1,2 @@
+ultralytics
+hailo_sdk_client

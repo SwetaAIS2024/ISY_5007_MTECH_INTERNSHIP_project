@@ -1,0 +1,14 @@
+2025-04-24 15:59:50,485 - WARNING - mo_config.py:124 - Reducing optimization level to 0 (the accuracy won't be optimized and compression won't be used) because there's less data than the recommended amount (1024), and there's no available GPU
+2025-04-24 15:59:50,486 - INFO - mo_script_parser.py:71 - Model received quantization params from the hn
+2025-04-24 16:01:06,281 - WARNING - mo_config.py:124 - Reducing optimization level to 0 (the accuracy won't be optimized and compression won't be used) because there's less data than the recommended amount (1024), and there's no available GPU
+2025-04-24 16:01:06,282 - INFO - mo_script_parser.py:71 - Model received quantization params from the hn
+2025-04-24 16:01:07,424 - INFO - algorithm_base.py:117 - Starting Mixed Precision
+2025-04-24 16:01:07,492 - INFO - algorithm_base.py:126 - Mixed Precision is done (completion time is 00:00:00.07)
+2025-04-24 16:01:07,636 - INFO - algorithm_base.py:113 - create_layer_norm skipped
+2025-04-24 16:01:07,641 - INFO - algorithm_base.py:117 - Starting Stats Collector
+2025-04-24 16:01:07,643 - INFO - stats_collection.py:62 - Using dataset with 64 entries for calibration
+2025-04-24 16:01:35,110 - INFO - algorithm_base.py:126 - Stats Collector is done (completion time is 00:00:27.47)
+2025-04-24 16:01:39,355 - INFO - algorithm_base.py:113 - Bias Correction skipped
+2025-04-24 16:01:39,364 - INFO - algorithm_base.py:113 - Adaround skipped
+2025-04-24 16:01:39,371 - INFO - algorithm_base.py:113 - Fine Tune skipped
+2025-04-24 16:01:39,416 - INFO - algorithm_base.py:113 - Layer Noise Analysis skipped
