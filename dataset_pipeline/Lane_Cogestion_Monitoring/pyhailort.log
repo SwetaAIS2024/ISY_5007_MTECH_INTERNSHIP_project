@@ -1,7 +1,0 @@
-2025-04-15 12:22:03,049 - INFO - base_utils.py:54 - (hailo) Running command 'parse-hef' with 'hailortcli'
-2025-04-15 12:24:57,842 - INFO - base_utils.py:54 - (hailo) Running command 'parse-hef' with 'hailortcli'
-2025-04-15 15:51:53,859 - INFO - base_utils.py:54 - (hailo) Running command 'parse-hef' with 'hailortcli'
-2025-04-15 15:52:14,903 - INFO - base_utils.py:54 - (hailo) Running command 'parse-hef' with 'hailortcli'
-2025-04-15 15:59:01,199 - INFO - base_utils.py:54 - (hailo) Running command 'parse-hef' with 'hailortcli'
-2025-04-17 16:37:55,491 - WARNING - pyhailort.py:1060 - Converting yolov8m_seg/input_layer1 numpy array to be C_CONTIGUOUS
-2025-04-17 16:41:05,587 - WARNING - pyhailort.py:1060 - Converting yolov8m_seg/input_layer1 numpy array to be C_CONTIGUOUS
