@@ -1,7 +1,8 @@
 import onnx
 from onnx import shape_inference
 
-onnx_model_path = "/home/rubesh/Desktop/sweta/Mtech_internship/Main_prj/Model_Conversion_Optimization/model_to_onnx_conv/yolov8n-seg_static_outputs_inferred_fixed.onnx"
+#onnx_model_path = "/home/rubesh/Desktop/sweta/Mtech_internship/Main_prj/Model_Conversion_Optimization/model_to_onnx_conv/yolov8n-seg_static_outputs_inferred_fixed.onnx"
+onnx_model_path = "/home/rubesh/Desktop/sweta/Mtech_internship/Main_prj/Model_Conversion_Optimization/model_to_onnx_conv/best.onnx"
 
 # Load the ONNX model
 model = onnx.load(onnx_model_path)
