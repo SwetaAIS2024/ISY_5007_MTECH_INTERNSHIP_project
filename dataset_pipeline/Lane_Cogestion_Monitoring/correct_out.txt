@@ -1,0 +1,15 @@
+
+latest implementation:
+hailomuxer name=hmux filesrc location=/home/william-stengg/Desktop/hailo-rpi5-examples/resources/video3.mp4 name=src_0 ! queue name=queue_dec264 max-size-buffers=5 max-size-bytes=0 max-size-time=0 leaky=no !  qtdemux ! h264parse ! avdec_h264 max-threads=2 !  video/x-raw, format=I420 ! tee name=t t. !queue name=queue_od max-size-buffers=3 max-size-bytes=0 max-size-time=0 leaky=no ! queue name=queue_scale_od max-size-buffers=3 max-size-bytes=0 max-size-time=0 leaky=no ! videoscale n-threads=2 ! queue name=queue_src_convert_od max-size-buffers=3 max-size-bytes=0 max-size-time=0 leaky=no ! videoconvert n-threads=3 name=src_convert_od qos=false ! video/x-raw, format=RGB, width=640, height=640, pixel-aspect-ratio=1/1 ! queue name=queue_hailonet_od max-size-buffers=3 max-size-bytes=0 max-size-time=0 leaky=no ! hailonet hef-path=/home/william-stengg/Desktop/yolov8m.hef batch-size=2 nms-score-threshold=0.3 nms-iou-threshold=0.45 output-format-type=HAILO_FORMAT_TYPE_FLOAT32 force-writable=true vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! queue name=queue_hailofilter_od max-size-buffers=3 max-size-bytes=0 max-size-time=0 leaky=no ! hailofilter so-path=/usr/lib/aarch64-linux-gnu/hailo/tappas/post_processes/libyolo_hailortpp_post.so  qos=false ! hmux.sink_0 t. !queue name=queue_ld max-size-buffers=3 max-size-bytes=0 max-size-time=0 leaky=no ! queue name=queue_scale_ld max-size-buffers=3 max-size-bytes=0 max-size-time=0 leaky=no ! videoscale n-threads=2 ! queue name=queue_src_convert_ld max-size-buffers=3 max-size-bytes=0 max-size-time=0 leaky=no ! videoconvert n-threads=3 name=src_convert_ld qos=false ! video/x-raw, format=RGB, width=800, height=320, pixel-aspect-ratio=1/1 ! queue name=queue_hailonet_ld max-size-buffers=3 max-size-bytes=0 max-size-time=0 leaky=no ! hailonet hef-path=/home/william-stengg/Desktop/Hailo-Application-Code-Examples/runtime/python/lane_detection/ufld_v2.hef batch-size=2 force-writable=true vdevice-group-id=1 scheduling-algorithm=HAILO_SCHEDULING_ALGORITHM_ROUND_ROBIN ! queue name=queue_hailofilter_ld max-size-buffers=3 max-size-bytes=0 max-size-time=0 leaky=no ! hmux.sink_1 hmux. ! queue name=queue_hailo_python max-size-buffers=5 max-size-bytes=0 max-size-time=0 leaky=no ! queue name=queue_user_callback max-size-buffers=5 max-size-bytes=0 max-size-time=0 leaky=no ! identity name=identity_callback ! queue name=queue_hailooverlay max-size-buffers=5 max-size-bytes=0 max-size-time=0 leaky=no ! hailooverlay ! queue name=queue_videoconvert max-size-buffers=5 max-size-bytes=0 max-size-time=0 leaky=no ! videoconvert n-threads=3 qos=false ! queue name=queue_hailo_display max-size-buffers=5 max-size-bytes=0 max-size-time=0 leaky=no ! fpsdisplaysink video-sink=xvimagesink name=hailo_display sync=true text-overlay=False signal-fps-measurements=true
+
+
+
+
+
+
+
+
+
+
+
+

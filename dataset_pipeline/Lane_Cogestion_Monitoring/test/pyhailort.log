@@ -1,0 +1,1 @@
+2025-04-17 17:26:50,232 - WARNING - pyhailort.py:1060 - Converting yolov8m_seg/input_layer1 numpy array to be C_CONTIGUOUS

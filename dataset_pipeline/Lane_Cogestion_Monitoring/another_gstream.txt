@@ -1,0 +1,33 @@
+text from this - https://github.com/nxp-imx-support/imx-lane-detection/blob/master/lane_detection.cpp 
+
+this is in cpp, lane detection and object detection using ufld and yolo resp.
+below is the gstream pipeline for both - parallel one 
+       
+       
+g_strdup_printf
+    ("filesrc location=%s ! 
+    qtdemux ! 
+    avdec_h264 ! imxvideoconvert_pxp ! video/x-raw,width=640, height=480 ! "
+    
+    
+    "tee name=t0 
+    t0. ! 
+    imxvideoconvert_pxp ! 
+    video/x-raw, width=800, height=288 ! queue max-size-buffers=2 leaky=2 ! 
+    videoconvert ! video/x-raw,format=RGB !"
+    " tensor_converter ! 
+    tensor_transform mode=arithmetic option=typecast:float32,mul:0.01735207,add:-2.017699 ! 
+    tensor_filter framework=tensorflow-lite model=\"/opt/gopoint-apps/downloads/lane_detection_vela.tflite\" accelerator=true:npu custom=Delegate:External,ExtDelegateLib:libethosu_delegate.so "
+    " silent=FALSE name=tensor_filter0 latency=1 ! 
+    tensor_sink name=tensor_sink0 t0. ! "
+    
+    
+    "tee name=t1  
+    t1. ! 
+    imxvideoconvert_pxp ! video/x-raw, width=300, height=300 ! queue max-size-buffers=2 leaky=2 ! videoconvert ! video/x-raw,format=RGB !  "
+    " tensor_converter ! tensor_filter framework=tensorflow-lite model=\"/opt/gopoint-apps/downloads/mobilenet_ssd_v2_coco_quant_postprocess_vela.tflite\" accelerator=true:npu custom=Delegate:External,ExtDelegateLib:libethosu_delegate.so "
+    " silent=FALSE name=tensor_filter1 latency=1 ! 
+    tensor_sink name=tensor_sink1 
+    t1. ! "
+    "imxvideoconvert_pxp ! cairooverlay name=tensor_res ! queue max-size-buffers=2 leaky=2 ! waylandsink ", s.video_name.c_str()
+    );
