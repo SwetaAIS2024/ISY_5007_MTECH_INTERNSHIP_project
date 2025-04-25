@@ -1,7 +1,8 @@
 import onnx
 
 # Load the ONNX model
-model_path = "/home/rubesh/Desktop/sweta/Mtech_internship/Main_prj/Model_Conversion_Optimization/model_to_onnx_conv/yolov8n-seg_static_outputs_inferred.onnx"
+#model_path = "/home/rubesh/Desktop/sweta/Mtech_internship/Main_prj/Model_Conversion_Optimization/model_to_onnx_conv/yolov8n-seg_static_outputs_inferred.onnx"
+model_path ="/home/rubesh/Desktop/sweta/Mtech_internship/Main_prj/Model_Conversion_Optimization/model_to_onnx_conv/best_inferred.onnx"
 model = onnx.load(model_path)
 
 # Fix dynamic shapes

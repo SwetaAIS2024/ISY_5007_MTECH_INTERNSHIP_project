@@ -28,7 +28,7 @@ class HailoModelProcessor:
         self.runner.save_har(self.hailo_model_har_name)
         print(f"Model parsed and saved as HAR: {self.hailo_model_har_name}")
 
-    def preprocess_images(self, images_path, output_height=224, output_width=224, resize_side=256):
+    def preprocess_images(self, images_path, output_height=640, output_width=640, resize_side=640):
         """Preprocess images for calibration."""
         print("Preprocessing images for calibration...")
         images_list = [img_name for img_name in os.listdir(images_path) if os.path.splitext(img_name)[1] == ".jpg"]
@@ -89,30 +89,33 @@ if __name__ == "__main__":
     # Initialize the processor
     processor = HailoModelProcessor(
         model_name="yolov8n-seg",
-        onnx_path="/home/rubesh/Desktop/sweta/Mtech_internship/Main_prj/Model_Conversion_Optimization/onnx_parse_compile_optimize/yolov8n-seg_static_outputs_inferred_fixed_inferred.onnx",
+        onnx_path="/home/rubesh/Desktop/sweta/Mtech_internship/Main_prj/Model_Conversion_Optimization/onnx_parse_compile_optimize/best_fixed.onnx",
+        #onnx_path= "/home/rubesh/Desktop/sweta/Mtech_internship/Main_prj/Model_Conversion_Optimization/onnx_parse_compile_optimize/yolov8n-seg_fixed.onnx",
         hw_arch="hailo8"
     )
 
-    # Step 1: Parse the ONNX model
+
+# this is for the best_fixed.onnx
+#onnx_path="/home/rubesh/Desktop/sweta/Mtech_internship/Main_prj/Model_Conversion_Optimization/onnx_parse_compile_optimize/best_fixed.onnx",
     # processor.parse_onnx_model(
-    #     start_node_names=["/model.0/conv/Conv"],
-    #     end_node_names=["/model.22/Concat_29"],
-    #     net_input_shapes={"/model.0/conv/Conv": [1, 3, 224, 224]}
+    #     start_node_names=["/model.0/conv/Conv"],  # Keep the same start node
+    #     end_node_names=["/model.22/Concat_4"],
+    #     net_input_shapes={"/model.0/conv/Conv": [1, 3, 640, 640]}
     # )
+
+# this is for the default model file
+# onnx_path= "/home/rubesh/Desktop/sweta/Mtech_internship/Main_prj/Model_Conversion_Optimization/onnx_parse_compile_optimize/yolov8n-seg_fixed.onnx",
 
     processor.parse_onnx_model(
         start_node_names=["/model.0/conv/Conv"],  # Keep the same start node
         end_node_names=[
-            "/model.22/cv4.0/cv4.0.2/Conv",
-            "/model.22/Concat_4",
-            "/model.22/cv4.1/cv4.1.2/Conv",
-            "/model.22/cv4.2/cv4.2.2/Conv",
-            "/model.22/Concat_5",
-            #"/model.22/Unsqueeze_15",
-            "/model.22/Concat_6"
-        ],
-    net_input_shapes={"/model.0/conv/Conv": [1, 3, 224, 224]}
+            #"/model.22/Concat_4" - concat layers do not work, hailo compiler does not support concat layers
+            "/model.22/cv3.2/cv3.2.2/Conv"
+            ],
+        net_input_shapes={"/model.0/conv/Conv": [1, 3, 640, 640]}
     )
+
+
     # Step 2: Preprocess images for calibration
     calib_dataset = processor.preprocess_images(images_path="/home/rubesh/Desktop/sweta/Mtech_internship/others/all_images_LTA")
 
