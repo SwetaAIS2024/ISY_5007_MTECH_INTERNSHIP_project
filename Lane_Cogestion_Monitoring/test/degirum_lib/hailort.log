@@ -1,0 +1,282 @@
+[2025-04-28 17:04:00.054] [15567] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:04:00.055] [15567] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:04:00.056] [15567] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:04:00.118] [15567] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:04:00.120] [15567] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:04:00.122] [15567] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:07:18.270] [15784] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:07:18.271] [15784] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:07:18.272] [15784] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:07:18.337] [15784] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:07:18.338] [15784] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:07:18.339] [15784] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:27:30.638] [16972] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:27:30.639] [16972] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:27:30.640] [16972] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:27:30.689] [16972] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:27:30.690] [16972] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:27:30.691] [16972] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:27:30.750] [16972] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:27:30.751] [16972] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:27:30.752] [16972] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:29:44.301] [17090] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:29:44.302] [17090] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:29:44.303] [17090] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:29:44.373] [17090] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:29:44.374] [17090] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:29:44.375] [17090] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:29:44.430] [17090] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:29:44.431] [17090] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:29:44.432] [17090] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:29:44.518] [17106] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:29:44.519] [17106] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:29:44.520] [17106] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:29:44.558] [17106] [HailoRT] [info] [vdevice.cpp:523] [create] Creating vdevice with params: device_count: 1, scheduling_algorithm: ROUND_ROBIN, multi_process_service: true
+[2025-04-28 17:29:45.649] [17106] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:29:45.650] [17106] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:29:45.671] [17106] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:29:45.671] [17106] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:29:45.718] [17106] [HailoRT] [info] [infer_model.cpp:436] [configure] Configuring network group 'yolov8n-seg' with params: batch size: 0, power mode: ULTRA_PERFORMANCE, latency: NONE
+[2025-04-28 17:29:45.719] [17106] [HailoRT] [info] [multi_io_elements.cpp:756] [create] Created (AsyncHwEl)
+[2025-04-28 17:29:45.719] [17106] [HailoRT] [info] [queue_elements.cpp:450] [create] Created (EntryPushQEl0yolov8n-seg/input_layer1 | timeout: 10s)
+[2025-04-28 17:29:45.720] [17106] [HailoRT] [info] [queue_elements.cpp:450] [create] Created (PushQEl0AsyncHwEl | timeout: 10s)
+[2025-04-28 17:29:45.720] [17106] [HailoRT] [info] [filter_elements.cpp:375] [create] Created (PostInferEl0AsyncHwEl | Reorder - src_order: FCR, src_shape: (20, 20, 8), dst_order: FCR, dst_shape: (20, 20, 1))
+[2025-04-28 17:29:45.720] [17106] [HailoRT] [info] [edge_elements.cpp:187] [create] Created (LastAsyncEl0PostInferEl0AsyncHwEl)
+[2025-04-28 17:29:45.720] [17106] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] EntryPushQEl0yolov8n-seg/input_layer1 | inputs: user | outputs: AsyncHwEl(running in thread_id: 17162)
+[2025-04-28 17:29:45.720] [17106] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] AsyncHwEl | inputs: EntryPushQEl0yolov8n-seg/input_layer1[0] | outputs: PushQEl0AsyncHwEl
+[2025-04-28 17:29:45.720] [17106] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] PushQEl0AsyncHwEl | inputs: AsyncHwEl[0] | outputs: PostInferEl0AsyncHwEl(running in thread_id: 17163)
+[2025-04-28 17:29:45.720] [17106] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] PostInferEl0AsyncHwEl | inputs: PushQEl0AsyncHwEl[0] | outputs: LastAsyncEl0PostInferEl0AsyncHwEl
+[2025-04-28 17:29:45.720] [17106] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] LastAsyncEl0PostInferEl0AsyncHwEl | inputs: PostInferEl0AsyncHwEl[0] | outputs: user
+[2025-04-28 17:29:45.720] [17106] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:29:45.720] [17106] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:29:45.833] [17090] [HailoRT] [info] [async_infer_runner.cpp:86] [shutdown] Pipeline was aborted. Shutting it down
+[2025-04-28 17:29:45.834] [17090] [HailoRT] [info] [queue_elements.cpp:570] [execute_deactivate] enqueue() in element PushQEl0AsyncHwEl was aborted, got status = HAILO_SHUTDOWN_EVENT_SIGNALED(57)
+[2025-04-28 17:29:45.834] [17090] [HailoRT] [info] [queue_elements.cpp:570] [execute_deactivate] enqueue() in element EntryPushQEl0yolov8n-seg/input_layer1 was aborted, got status = HAILO_SHUTDOWN_EVENT_SIGNALED(57)
+[2025-04-28 17:29:45.834] [17090] [HailoRT] [info] [queue_elements.cpp:46] [~BaseQueueElement] Queue element EntryPushQEl0yolov8n-seg/input_layer1 has 0 frames in his Queue on destruction
+[2025-04-28 17:29:45.834] [17090] [HailoRT] [info] [queue_elements.cpp:46] [~BaseQueueElement] Queue element PushQEl0AsyncHwEl has 0 frames in his Queue on destruction
+[2025-04-28 17:29:45.835] [17160] [HailoRT] [info] [vdevice.cpp:424] [listener_run_in_thread] Shutdown event was signaled in listener_run_in_thread
+[2025-04-28 17:39:49.433] [17539] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:39:49.434] [17539] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:39:49.435] [17539] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:39:49.493] [17539] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:39:49.494] [17539] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:39:49.495] [17539] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:39:49.546] [17539] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:39:49.547] [17539] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:39:49.548] [17539] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:40:31.562] [17616] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:40:31.563] [17616] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:40:31.564] [17616] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:40:31.629] [17616] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:40:31.630] [17616] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:40:31.631] [17616] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:40:31.678] [17616] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:40:31.679] [17616] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:40:31.680] [17616] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:40:31.750] [17636] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:40:31.751] [17636] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:40:31.752] [17636] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:40:31.782] [17636] [HailoRT] [info] [vdevice.cpp:523] [create] Creating vdevice with params: device_count: 1, scheduling_algorithm: ROUND_ROBIN, multi_process_service: true
+[2025-04-28 17:40:32.799] [17636] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:40:32.800] [17636] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:40:32.827] [17636] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:40:32.827] [17636] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:40:32.880] [17636] [HailoRT] [info] [infer_model.cpp:436] [configure] Configuring network group 'yolov8n-seg' with params: batch size: 0, power mode: ULTRA_PERFORMANCE, latency: NONE
+[2025-04-28 17:40:32.881] [17636] [HailoRT] [info] [multi_io_elements.cpp:756] [create] Created (AsyncHwEl)
+[2025-04-28 17:40:32.881] [17636] [HailoRT] [info] [queue_elements.cpp:450] [create] Created (EntryPushQEl0yolov8n-seg/input_layer1 | timeout: 10s)
+[2025-04-28 17:40:32.882] [17636] [HailoRT] [info] [queue_elements.cpp:450] [create] Created (PushQEl0AsyncHwEl | timeout: 10s)
+[2025-04-28 17:40:32.882] [17636] [HailoRT] [info] [filter_elements.cpp:375] [create] Created (PostInferEl0AsyncHwEl | Reorder - src_order: FCR, src_shape: (20, 20, 8), dst_order: FCR, dst_shape: (20, 20, 1))
+[2025-04-28 17:40:32.882] [17636] [HailoRT] [info] [edge_elements.cpp:187] [create] Created (LastAsyncEl0PostInferEl0AsyncHwEl)
+[2025-04-28 17:40:32.882] [17636] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] EntryPushQEl0yolov8n-seg/input_layer1 | inputs: user | outputs: AsyncHwEl(running in thread_id: 17683)
+[2025-04-28 17:40:32.882] [17636] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] AsyncHwEl | inputs: EntryPushQEl0yolov8n-seg/input_layer1[0] | outputs: PushQEl0AsyncHwEl
+[2025-04-28 17:40:32.882] [17636] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] PushQEl0AsyncHwEl | inputs: AsyncHwEl[0] | outputs: PostInferEl0AsyncHwEl(running in thread_id: 17684)
+[2025-04-28 17:40:32.882] [17636] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] PostInferEl0AsyncHwEl | inputs: PushQEl0AsyncHwEl[0] | outputs: LastAsyncEl0PostInferEl0AsyncHwEl
+[2025-04-28 17:40:32.882] [17636] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] LastAsyncEl0PostInferEl0AsyncHwEl | inputs: PostInferEl0AsyncHwEl[0] | outputs: user
+[2025-04-28 17:40:32.882] [17636] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:40:32.882] [17636] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:40:32.982] [17616] [HailoRT] [info] [async_infer_runner.cpp:86] [shutdown] Pipeline was aborted. Shutting it down
+[2025-04-28 17:40:32.983] [17616] [HailoRT] [info] [queue_elements.cpp:570] [execute_deactivate] enqueue() in element PushQEl0AsyncHwEl was aborted, got status = HAILO_SHUTDOWN_EVENT_SIGNALED(57)
+[2025-04-28 17:40:32.983] [17616] [HailoRT] [info] [queue_elements.cpp:570] [execute_deactivate] enqueue() in element EntryPushQEl0yolov8n-seg/input_layer1 was aborted, got status = HAILO_SHUTDOWN_EVENT_SIGNALED(57)
+[2025-04-28 17:40:32.983] [17616] [HailoRT] [info] [queue_elements.cpp:46] [~BaseQueueElement] Queue element EntryPushQEl0yolov8n-seg/input_layer1 has 0 frames in his Queue on destruction
+[2025-04-28 17:40:32.983] [17616] [HailoRT] [info] [queue_elements.cpp:46] [~BaseQueueElement] Queue element PushQEl0AsyncHwEl has 0 frames in his Queue on destruction
+[2025-04-28 17:40:32.983] [17681] [HailoRT] [info] [vdevice.cpp:424] [listener_run_in_thread] Shutdown event was signaled in listener_run_in_thread
+[2025-04-28 17:45:59.129] [17890] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:45:59.130] [17890] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:45:59.131] [17890] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:45:59.201] [17890] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:45:59.202] [17890] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:45:59.203] [17890] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:45:59.258] [17890] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:45:59.259] [17890] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:45:59.260] [17890] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:45:59.326] [17906] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:45:59.327] [17906] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:45:59.329] [17906] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:45:59.358] [17906] [HailoRT] [info] [vdevice.cpp:523] [create] Creating vdevice with params: device_count: 1, scheduling_algorithm: ROUND_ROBIN, multi_process_service: true
+[2025-04-28 17:46:00.374] [17906] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:46:00.375] [17906] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:46:00.395] [17906] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:46:00.395] [17906] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:46:00.437] [17906] [HailoRT] [info] [infer_model.cpp:436] [configure] Configuring network group 'yolov8n-seg' with params: batch size: 0, power mode: ULTRA_PERFORMANCE, latency: NONE
+[2025-04-28 17:46:00.437] [17906] [HailoRT] [info] [multi_io_elements.cpp:756] [create] Created (AsyncHwEl)
+[2025-04-28 17:46:00.437] [17906] [HailoRT] [info] [queue_elements.cpp:450] [create] Created (EntryPushQEl0yolov8n-seg/input_layer1 | timeout: 10s)
+[2025-04-28 17:46:00.438] [17906] [HailoRT] [info] [queue_elements.cpp:450] [create] Created (PushQEl0AsyncHwEl | timeout: 10s)
+[2025-04-28 17:46:00.438] [17906] [HailoRT] [info] [filter_elements.cpp:375] [create] Created (PostInferEl0AsyncHwEl | Reorder - src_order: FCR, src_shape: (20, 20, 8), dst_order: FCR, dst_shape: (20, 20, 1))
+[2025-04-28 17:46:00.438] [17906] [HailoRT] [info] [edge_elements.cpp:187] [create] Created (LastAsyncEl0PostInferEl0AsyncHwEl)
+[2025-04-28 17:46:00.438] [17906] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] EntryPushQEl0yolov8n-seg/input_layer1 | inputs: user | outputs: AsyncHwEl(running in thread_id: 17956)
+[2025-04-28 17:46:00.438] [17906] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] AsyncHwEl | inputs: EntryPushQEl0yolov8n-seg/input_layer1[0] | outputs: PushQEl0AsyncHwEl
+[2025-04-28 17:46:00.438] [17906] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] PushQEl0AsyncHwEl | inputs: AsyncHwEl[0] | outputs: PostInferEl0AsyncHwEl(running in thread_id: 17957)
+[2025-04-28 17:46:00.438] [17906] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] PostInferEl0AsyncHwEl | inputs: PushQEl0AsyncHwEl[0] | outputs: LastAsyncEl0PostInferEl0AsyncHwEl
+[2025-04-28 17:46:00.438] [17906] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] LastAsyncEl0PostInferEl0AsyncHwEl | inputs: PostInferEl0AsyncHwEl[0] | outputs: user
+[2025-04-28 17:46:00.438] [17906] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:46:00.438] [17906] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:46:00.537] [17890] [HailoRT] [info] [async_infer_runner.cpp:86] [shutdown] Pipeline was aborted. Shutting it down
+[2025-04-28 17:46:00.538] [17890] [HailoRT] [info] [queue_elements.cpp:570] [execute_deactivate] enqueue() in element PushQEl0AsyncHwEl was aborted, got status = HAILO_SHUTDOWN_EVENT_SIGNALED(57)
+[2025-04-28 17:46:00.538] [17890] [HailoRT] [info] [queue_elements.cpp:570] [execute_deactivate] enqueue() in element EntryPushQEl0yolov8n-seg/input_layer1 was aborted, got status = HAILO_SHUTDOWN_EVENT_SIGNALED(57)
+[2025-04-28 17:46:00.538] [17890] [HailoRT] [info] [queue_elements.cpp:46] [~BaseQueueElement] Queue element EntryPushQEl0yolov8n-seg/input_layer1 has 0 frames in his Queue on destruction
+[2025-04-28 17:46:00.538] [17890] [HailoRT] [info] [queue_elements.cpp:46] [~BaseQueueElement] Queue element PushQEl0AsyncHwEl has 0 frames in his Queue on destruction
+[2025-04-28 17:46:00.539] [17954] [HailoRT] [info] [vdevice.cpp:424] [listener_run_in_thread] Shutdown event was signaled in listener_run_in_thread
+[2025-04-28 17:46:39.094] [18012] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:46:39.095] [18012] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:46:39.096] [18012] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:46:39.161] [18012] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:46:39.162] [18012] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:46:39.163] [18012] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:46:39.210] [18012] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:46:39.211] [18012] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:46:39.212] [18012] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:46:39.285] [18034] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:46:39.287] [18034] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:46:39.288] [18034] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:46:39.322] [18034] [HailoRT] [info] [vdevice.cpp:523] [create] Creating vdevice with params: device_count: 1, scheduling_algorithm: ROUND_ROBIN, multi_process_service: true
+[2025-04-28 17:46:40.339] [18034] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:46:40.340] [18034] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:46:40.360] [18034] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:46:40.360] [18034] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:46:40.407] [18034] [HailoRT] [info] [infer_model.cpp:436] [configure] Configuring network group 'yolov8n-seg' with params: batch size: 0, power mode: ULTRA_PERFORMANCE, latency: NONE
+[2025-04-28 17:46:40.408] [18034] [HailoRT] [info] [multi_io_elements.cpp:756] [create] Created (AsyncHwEl)
+[2025-04-28 17:46:40.408] [18034] [HailoRT] [info] [queue_elements.cpp:450] [create] Created (EntryPushQEl0yolov8n-seg/input_layer1 | timeout: 10s)
+[2025-04-28 17:46:40.409] [18034] [HailoRT] [info] [queue_elements.cpp:450] [create] Created (PushQEl0AsyncHwEl | timeout: 10s)
+[2025-04-28 17:46:40.409] [18034] [HailoRT] [info] [filter_elements.cpp:375] [create] Created (PostInferEl0AsyncHwEl | Reorder - src_order: FCR, src_shape: (20, 20, 8), dst_order: FCR, dst_shape: (20, 20, 1))
+[2025-04-28 17:46:40.409] [18034] [HailoRT] [info] [edge_elements.cpp:187] [create] Created (LastAsyncEl0PostInferEl0AsyncHwEl)
+[2025-04-28 17:46:40.409] [18034] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] EntryPushQEl0yolov8n-seg/input_layer1 | inputs: user | outputs: AsyncHwEl(running in thread_id: 18083)
+[2025-04-28 17:46:40.409] [18034] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] AsyncHwEl | inputs: EntryPushQEl0yolov8n-seg/input_layer1[0] | outputs: PushQEl0AsyncHwEl
+[2025-04-28 17:46:40.409] [18034] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] PushQEl0AsyncHwEl | inputs: AsyncHwEl[0] | outputs: PostInferEl0AsyncHwEl(running in thread_id: 18084)
+[2025-04-28 17:46:40.409] [18034] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] PostInferEl0AsyncHwEl | inputs: PushQEl0AsyncHwEl[0] | outputs: LastAsyncEl0PostInferEl0AsyncHwEl
+[2025-04-28 17:46:40.409] [18034] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] LastAsyncEl0PostInferEl0AsyncHwEl | inputs: PostInferEl0AsyncHwEl[0] | outputs: user
+[2025-04-28 17:46:40.409] [18034] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:46:40.409] [18034] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:46:40.518] [18012] [HailoRT] [info] [async_infer_runner.cpp:86] [shutdown] Pipeline was aborted. Shutting it down
+[2025-04-28 17:46:40.519] [18012] [HailoRT] [info] [queue_elements.cpp:570] [execute_deactivate] enqueue() in element PushQEl0AsyncHwEl was aborted, got status = HAILO_SHUTDOWN_EVENT_SIGNALED(57)
+[2025-04-28 17:46:40.519] [18012] [HailoRT] [info] [queue_elements.cpp:570] [execute_deactivate] enqueue() in element EntryPushQEl0yolov8n-seg/input_layer1 was aborted, got status = HAILO_SHUTDOWN_EVENT_SIGNALED(57)
+[2025-04-28 17:46:40.519] [18012] [HailoRT] [info] [queue_elements.cpp:46] [~BaseQueueElement] Queue element EntryPushQEl0yolov8n-seg/input_layer1 has 0 frames in his Queue on destruction
+[2025-04-28 17:46:40.519] [18012] [HailoRT] [info] [queue_elements.cpp:46] [~BaseQueueElement] Queue element PushQEl0AsyncHwEl has 0 frames in his Queue on destruction
+[2025-04-28 17:46:40.519] [18081] [HailoRT] [info] [vdevice.cpp:424] [listener_run_in_thread] Shutdown event was signaled in listener_run_in_thread
+[2025-04-28 17:48:51.000] [18174] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:48:51.002] [18174] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:48:51.003] [18174] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:48:51.066] [18174] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:48:51.067] [18174] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:48:51.068] [18174] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:48:51.122] [18174] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:48:51.125] [18174] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:48:51.127] [18174] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:48:51.222] [18191] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:48:51.224] [18191] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:48:51.226] [18191] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:48:51.262] [18191] [HailoRT] [info] [vdevice.cpp:523] [create] Creating vdevice with params: device_count: 1, scheduling_algorithm: ROUND_ROBIN, multi_process_service: true
+[2025-04-28 17:48:52.284] [18191] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:48:52.285] [18191] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:48:52.312] [18191] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:48:52.312] [18191] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:48:52.368] [18191] [HailoRT] [info] [infer_model.cpp:436] [configure] Configuring network group 'yolov8n-seg' with params: batch size: 0, power mode: ULTRA_PERFORMANCE, latency: NONE
+[2025-04-28 17:48:52.370] [18191] [HailoRT] [info] [multi_io_elements.cpp:756] [create] Created (AsyncHwEl)
+[2025-04-28 17:48:52.370] [18191] [HailoRT] [info] [queue_elements.cpp:450] [create] Created (EntryPushQEl0yolov8n-seg/input_layer1 | timeout: 10s)
+[2025-04-28 17:48:52.371] [18191] [HailoRT] [info] [queue_elements.cpp:450] [create] Created (PushQEl0AsyncHwEl | timeout: 10s)
+[2025-04-28 17:48:52.371] [18191] [HailoRT] [info] [filter_elements.cpp:375] [create] Created (PostInferEl0AsyncHwEl | Reorder - src_order: FCR, src_shape: (20, 20, 8), dst_order: FCR, dst_shape: (20, 20, 1))
+[2025-04-28 17:48:52.371] [18191] [HailoRT] [info] [edge_elements.cpp:187] [create] Created (LastAsyncEl0PostInferEl0AsyncHwEl)
+[2025-04-28 17:48:52.371] [18191] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] EntryPushQEl0yolov8n-seg/input_layer1 | inputs: user | outputs: AsyncHwEl(running in thread_id: 18240)
+[2025-04-28 17:48:52.371] [18191] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] AsyncHwEl | inputs: EntryPushQEl0yolov8n-seg/input_layer1[0] | outputs: PushQEl0AsyncHwEl
+[2025-04-28 17:48:52.372] [18191] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] PushQEl0AsyncHwEl | inputs: AsyncHwEl[0] | outputs: PostInferEl0AsyncHwEl(running in thread_id: 18241)
+[2025-04-28 17:48:52.372] [18191] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] PostInferEl0AsyncHwEl | inputs: PushQEl0AsyncHwEl[0] | outputs: LastAsyncEl0PostInferEl0AsyncHwEl
+[2025-04-28 17:48:52.372] [18191] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] LastAsyncEl0PostInferEl0AsyncHwEl | inputs: PostInferEl0AsyncHwEl[0] | outputs: user
+[2025-04-28 17:48:52.372] [18191] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:48:52.372] [18191] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:48:52.495] [18174] [HailoRT] [info] [async_infer_runner.cpp:86] [shutdown] Pipeline was aborted. Shutting it down
+[2025-04-28 17:48:52.496] [18174] [HailoRT] [info] [queue_elements.cpp:570] [execute_deactivate] enqueue() in element PushQEl0AsyncHwEl was aborted, got status = HAILO_SHUTDOWN_EVENT_SIGNALED(57)
+[2025-04-28 17:48:52.496] [18174] [HailoRT] [info] [queue_elements.cpp:570] [execute_deactivate] enqueue() in element EntryPushQEl0yolov8n-seg/input_layer1 was aborted, got status = HAILO_SHUTDOWN_EVENT_SIGNALED(57)
+[2025-04-28 17:48:52.496] [18174] [HailoRT] [info] [queue_elements.cpp:46] [~BaseQueueElement] Queue element EntryPushQEl0yolov8n-seg/input_layer1 has 0 frames in his Queue on destruction
+[2025-04-28 17:48:52.496] [18174] [HailoRT] [info] [queue_elements.cpp:46] [~BaseQueueElement] Queue element PushQEl0AsyncHwEl has 0 frames in his Queue on destruction
+[2025-04-28 17:48:52.497] [18238] [HailoRT] [info] [vdevice.cpp:424] [listener_run_in_thread] Shutdown event was signaled in listener_run_in_thread
+[2025-04-28 17:51:50.270] [18435] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:51:50.271] [18435] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:51:50.272] [18435] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:51:50.337] [18435] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:51:50.338] [18435] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:51:50.339] [18435] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:51:50.386] [18435] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:51:50.387] [18435] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:51:50.388] [18435] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:51:50.454] [18452] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:51:50.456] [18452] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:51:50.457] [18452] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:51:50.490] [18452] [HailoRT] [info] [vdevice.cpp:523] [create] Creating vdevice with params: device_count: 1, scheduling_algorithm: ROUND_ROBIN, multi_process_service: true
+[2025-04-28 17:51:51.508] [18452] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:51:51.509] [18452] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:51:51.537] [18452] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:51:51.537] [18452] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:51:51.584] [18452] [HailoRT] [info] [infer_model.cpp:436] [configure] Configuring network group 'yolov8n-seg' with params: batch size: 0, power mode: ULTRA_PERFORMANCE, latency: NONE
+[2025-04-28 17:51:51.585] [18452] [HailoRT] [info] [multi_io_elements.cpp:756] [create] Created (AsyncHwEl)
+[2025-04-28 17:51:51.585] [18452] [HailoRT] [info] [queue_elements.cpp:450] [create] Created (EntryPushQEl0yolov8n-seg/input_layer1 | timeout: 10s)
+[2025-04-28 17:51:51.586] [18452] [HailoRT] [info] [queue_elements.cpp:450] [create] Created (PushQEl0AsyncHwEl | timeout: 10s)
+[2025-04-28 17:51:51.586] [18452] [HailoRT] [info] [filter_elements.cpp:375] [create] Created (PostInferEl0AsyncHwEl | Reorder - src_order: FCR, src_shape: (20, 20, 8), dst_order: FCR, dst_shape: (20, 20, 1))
+[2025-04-28 17:51:51.586] [18452] [HailoRT] [info] [edge_elements.cpp:187] [create] Created (LastAsyncEl0PostInferEl0AsyncHwEl)
+[2025-04-28 17:51:51.586] [18452] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] EntryPushQEl0yolov8n-seg/input_layer1 | inputs: user | outputs: AsyncHwEl(running in thread_id: 18501)
+[2025-04-28 17:51:51.586] [18452] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] AsyncHwEl | inputs: EntryPushQEl0yolov8n-seg/input_layer1[0] | outputs: PushQEl0AsyncHwEl
+[2025-04-28 17:51:51.586] [18452] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] PushQEl0AsyncHwEl | inputs: AsyncHwEl[0] | outputs: PostInferEl0AsyncHwEl(running in thread_id: 18502)
+[2025-04-28 17:51:51.586] [18452] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] PostInferEl0AsyncHwEl | inputs: PushQEl0AsyncHwEl[0] | outputs: LastAsyncEl0PostInferEl0AsyncHwEl
+[2025-04-28 17:51:51.586] [18452] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] LastAsyncEl0PostInferEl0AsyncHwEl | inputs: PostInferEl0AsyncHwEl[0] | outputs: user
+[2025-04-28 17:51:51.586] [18452] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:51:51.586] [18452] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:51:51.703] [18435] [HailoRT] [info] [async_infer_runner.cpp:86] [shutdown] Pipeline was aborted. Shutting it down
+[2025-04-28 17:51:51.705] [18435] [HailoRT] [info] [queue_elements.cpp:570] [execute_deactivate] enqueue() in element PushQEl0AsyncHwEl was aborted, got status = HAILO_SHUTDOWN_EVENT_SIGNALED(57)
+[2025-04-28 17:51:51.705] [18435] [HailoRT] [info] [queue_elements.cpp:570] [execute_deactivate] enqueue() in element EntryPushQEl0yolov8n-seg/input_layer1 was aborted, got status = HAILO_SHUTDOWN_EVENT_SIGNALED(57)
+[2025-04-28 17:51:51.705] [18435] [HailoRT] [info] [queue_elements.cpp:46] [~BaseQueueElement] Queue element EntryPushQEl0yolov8n-seg/input_layer1 has 0 frames in his Queue on destruction
+[2025-04-28 17:51:51.705] [18435] [HailoRT] [info] [queue_elements.cpp:46] [~BaseQueueElement] Queue element PushQEl0AsyncHwEl has 0 frames in his Queue on destruction
+[2025-04-28 17:51:51.705] [18499] [HailoRT] [info] [vdevice.cpp:424] [listener_run_in_thread] Shutdown event was signaled in listener_run_in_thread
+[2025-04-28 17:52:27.944] [18532] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:52:27.945] [18532] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:52:27.946] [18532] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:52:28.018] [18532] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:52:28.019] [18532] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:52:28.020] [18532] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:52:28.066] [18532] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:52:28.067] [18532] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:52:28.068] [18532] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:52:28.141] [18549] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:52:28.143] [18549] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:52:28.144] [18549] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:52:28.194] [18549] [HailoRT] [info] [vdevice.cpp:523] [create] Creating vdevice with params: device_count: 1, scheduling_algorithm: ROUND_ROBIN, multi_process_service: true
+[2025-04-28 17:52:29.211] [18549] [HailoRT] [info] [device.cpp:49] [Device] OS Version: Linux 6.6.31+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.6.31-1+rpt1 (2024-05-29) aarch64
+[2025-04-28 17:52:29.213] [18549] [HailoRT] [info] [control.cpp:108] [control__parse_identify_results] firmware_version is: 4.20.0
+[2025-04-28 17:52:29.240] [18549] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:52:29.240] [18549] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:52:29.287] [18549] [HailoRT] [info] [infer_model.cpp:436] [configure] Configuring network group 'yolov8n-seg' with params: batch size: 0, power mode: ULTRA_PERFORMANCE, latency: NONE
+[2025-04-28 17:52:29.288] [18549] [HailoRT] [info] [multi_io_elements.cpp:756] [create] Created (AsyncHwEl)
+[2025-04-28 17:52:29.289] [18549] [HailoRT] [info] [queue_elements.cpp:450] [create] Created (EntryPushQEl0yolov8n-seg/input_layer1 | timeout: 10s)
+[2025-04-28 17:52:29.290] [18549] [HailoRT] [info] [queue_elements.cpp:450] [create] Created (PushQEl0AsyncHwEl | timeout: 10s)
+[2025-04-28 17:52:29.290] [18549] [HailoRT] [info] [filter_elements.cpp:375] [create] Created (PostInferEl0AsyncHwEl | Reorder - src_order: FCR, src_shape: (20, 20, 8), dst_order: FCR, dst_shape: (20, 20, 1))
+[2025-04-28 17:52:29.290] [18549] [HailoRT] [info] [edge_elements.cpp:187] [create] Created (LastAsyncEl0PostInferEl0AsyncHwEl)
+[2025-04-28 17:52:29.290] [18549] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] EntryPushQEl0yolov8n-seg/input_layer1 | inputs: user | outputs: AsyncHwEl(running in thread_id: 18598)
+[2025-04-28 17:52:29.290] [18549] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] AsyncHwEl | inputs: EntryPushQEl0yolov8n-seg/input_layer1[0] | outputs: PushQEl0AsyncHwEl
+[2025-04-28 17:52:29.290] [18549] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] PushQEl0AsyncHwEl | inputs: AsyncHwEl[0] | outputs: PostInferEl0AsyncHwEl(running in thread_id: 18599)
+[2025-04-28 17:52:29.290] [18549] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] PostInferEl0AsyncHwEl | inputs: PushQEl0AsyncHwEl[0] | outputs: LastAsyncEl0PostInferEl0AsyncHwEl
+[2025-04-28 17:52:29.290] [18549] [HailoRT] [info] [pipeline.cpp:891] [print_deep_description] LastAsyncEl0PostInferEl0AsyncHwEl | inputs: PostInferEl0AsyncHwEl[0] | outputs: user
+[2025-04-28 17:52:29.290] [18549] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:52:29.290] [18549] [HailoRT] [info] [hef.cpp:1929] [get_network_group_and_network_name] No name was given. Addressing all networks of default network_group: yolov8n-seg
+[2025-04-28 17:52:29.404] [18532] [HailoRT] [info] [async_infer_runner.cpp:86] [shutdown] Pipeline was aborted. Shutting it down
+[2025-04-28 17:52:29.404] [18532] [HailoRT] [info] [queue_elements.cpp:570] [execute_deactivate] enqueue() in element PushQEl0AsyncHwEl was aborted, got status = HAILO_SHUTDOWN_EVENT_SIGNALED(57)
+[2025-04-28 17:52:29.404] [18532] [HailoRT] [info] [queue_elements.cpp:570] [execute_deactivate] enqueue() in element EntryPushQEl0yolov8n-seg/input_layer1 was aborted, got status = HAILO_SHUTDOWN_EVENT_SIGNALED(57)
+[2025-04-28 17:52:29.404] [18532] [HailoRT] [info] [queue_elements.cpp:46] [~BaseQueueElement] Queue element EntryPushQEl0yolov8n-seg/input_layer1 has 0 frames in his Queue on destruction
+[2025-04-28 17:52:29.405] [18532] [HailoRT] [info] [queue_elements.cpp:46] [~BaseQueueElement] Queue element PushQEl0AsyncHwEl has 0 frames in his Queue on destruction
+[2025-04-28 17:52:29.405] [18596] [HailoRT] [info] [vdevice.cpp:424] [listener_run_in_thread] Shutdown event was signaled in listener_run_in_thread

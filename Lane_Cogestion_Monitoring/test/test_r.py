@@ -10,8 +10,12 @@ import cv2
 target = VDevice()
 
 # Loading compiled HEFs to device:
-model_name = 'yolov8m_seg'
-hef_path = "./yolov8m_seg.hef"
+# model_name = 'yolov8m_seg'
+# hef_path = "./yolov8m_seg.hef"
+
+model_name = 'yolov8n_seg'
+hef_path = "./yolov8n_seg.hef"
+
 hef = HEF(hef_path)
     
 # Configure network groups
@@ -65,7 +69,7 @@ with InferVStreams(network_group, input_vstreams_params, output_vstreams_params)
 
         # Perform inference
         infer_results = infer_pipeline.infer(input_data)
-
+        
         # Save output shape to a file
         output_shape = infer_results[output_vstream_info.name].shape
         with open(output_shape_file, "w") as f:
