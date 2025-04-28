@@ -214,7 +214,7 @@ def app_callback(pad, info, user_data: user_app_callback_class):
                 distance = abs(coordinate_start - coordinate_end)
                 time = len(user_data.coordinates[tracker_id]) / user_data.fps
                 speed = distance / time * 3.6
-                labels.append(f"{current_class_label} {int(speed)} km/h")
+                labels.append(f"{current_class_label}, {int(distance)} km, {int(speed)} km/h")
     else:
         labels = []
 
