@@ -1,0 +1,33 @@
+{
+    "ConfigVersion": 6,
+    "Checksum": "3570dfd61d8166a699e1e90628271c5d22363febcb2a3ac7b3349c6880ad4b6f",
+    "DEVICE": [
+        {
+            "DeviceType": "HAILO8",
+            "RuntimeAgent": "HAILORT",
+            "SupportedDeviceTypes": "HAILORT/HAILO8L,HAILORT/HAILO8",
+            "ThreadPackSize": 6
+        }
+    ],
+    "PRE_PROCESS": [
+        {
+            "InputN": 1,
+            "InputH": 640,
+            "InputW": 640,
+            "InputC": 3,
+            "InputQuantEn": true
+        }
+    ],
+    "MODEL_PARAMETERS": [
+        {
+            "ModelPath": "yolov8n_seg.hef"
+        }
+    ],
+    "POST_PROCESS": [
+        {
+            "OutputPostprocessType": "DetectionYoloV8",
+            "OutputNumClasses": 1,
+            "LabelsPath": "labels_coco.json"
+        }
+    ]
+}

@@ -33,9 +33,13 @@ print(f"Shape of the input tensor : {input_tensor.shape}")
 
 
 inference_result = model(input_image_uint8)
-
+print("Inference result:", inference_result.results)
+print("Inference result type:", type(inference_result))
+print("Inference result attributes:", dir(inference_result))
 # Display the segmentation output
+cv2.imwrite("Segmentation_Output.png", inference_result.image_overlay)
 cv2.imshow("Segmentation Output", inference_result.image_overlay)
+
 
 # Wait until the user presses 'x' or 'q' to close the window
 while True:
