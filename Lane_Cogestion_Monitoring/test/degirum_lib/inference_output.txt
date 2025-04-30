@@ -442,3 +442,8 @@ from netron app
 /model.22/cv4.2/cv4.2.2/Conv -  float32[1,32,20,20]
 
 /model.22/cv2.1/cv2.1.2/Conv -  float32[1,64,40,40]
+/model.22/cv3.1/cv3.1.2/Conv -  float32[1,1,40,40]
+
+/model.22/cv2.2/cv2.2.2/Conv -  float32[1,64,20,20]
+/model.22/cv3.2/cv3.2.2/Conv -  float32[1,1,20,20]
+
