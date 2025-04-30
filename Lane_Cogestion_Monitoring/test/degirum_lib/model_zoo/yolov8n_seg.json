@@ -23,17 +23,9 @@
         }
     ],
 
-    "outputs_size": [
-        1
-    ],
-
-    "outputs_name": [
-        "yolov8n-seg/conv48"
-    ],
-
     "POST_PROCESS": [
         {
-            "OutputPostprocessType": "None",
+            "OutputPostprocessType": "SegmentationYoloV8",
             "OutputNumClasses": 1,
             "LabelsPath": "labels_coco.json"
         }
