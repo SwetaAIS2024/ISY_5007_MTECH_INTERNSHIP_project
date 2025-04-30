@@ -21,7 +21,7 @@ model = dg.load_model(
     token=""
 )
 
-input_image_path = '/home/william-stengg/Desktop/sweta_LCM/Lane_Cogestion_Monitoring/test/degirum_lib/3_lane.png'
+input_image_path = '/home/william-stengg/Desktop/sweta_LCM/Lane_Cogestion_Monitoring/test/degirum_lib/test_5.png'
 input_image = cv2.imread(input_image_path)
 input_image_resized = cv2.resize(input_image, (640, 640))
 input_image_uint8 = input_image_resized.astype(np.uint8)
@@ -37,7 +37,7 @@ print("Inference result:", inference_result.results)
 print("Inference result type:", type(inference_result))
 print("Inference result attributes:", dir(inference_result))
 # Display the segmentation output
-cv2.imwrite("Segmentation_Output.png", inference_result.image_overlay)
+cv2.imwrite("Segmentation_Output_test_5.png", inference_result.image_overlay)
 cv2.imshow("Segmentation Output", inference_result.image_overlay)
 
 
