@@ -88,9 +88,8 @@ class HailoModelProcessor:
 if __name__ == "__main__":
     # Initialize the processor
     processor = HailoModelProcessor(
-        model_name="yolov8n-seg",
-        onnx_path="/home/rubesh/Desktop/sweta/Mtech_internship/Main_prj/Model_Conversion_Optimization/onnx_parse_compile_optimize/best_fixed.onnx",
-        #onnx_path= "/home/rubesh/Desktop/sweta/Mtech_internship/Main_prj/Model_Conversion_Optimization/onnx_parse_compile_optimize/yolov8n-seg_fixed.onnx",
+        model_name="yolov8n_seg",
+        onnx_path="/home/rubesh/Desktop/sweta/Mtech_internship/another_repo/Model_Conversion_Optimization/onnx_parse_compile_optimize/best_fixed.onnx",
         hw_arch="hailo8"
     )
 
@@ -100,19 +99,19 @@ if __name__ == "__main__":
         start_node_names=["/model.0/conv/Conv"],  # Keep the same start node
         end_node_names=[
 
-            "/model.22/proto/cv3/conv/Conv"#  float32[1,32,160,160]
-            "/model.22/cv2.0/cv2.0.2/Conv" #  float32[1,64,80,80]
-            "/model.22/cv3.0/cv3.0.2/Conv" #  float32[1,1,80,80]
+            "/model.22/proto/cv3/conv/Conv",#  float32[1,32,160,160]
+            "/model.22/cv2.0/cv2.0.2/Conv", #  float32[1,64,80,80]
+            "/model.22/cv3.0/cv3.0.2/Conv", #  float32[1,1,80,80]
 
-            "/model.22/cv4.0/cv4.0.2/Conv" #  float32[1,32,80,80]
-            "/model.22/cv4.1/cv4.1.2/Conv" #  float32[1,32,40,40]
-            "/model.22/cv4.2/cv4.2.2/Conv" #  float32[1,32,20,20]
+            "/model.22/cv4.0/cv4.0.2/Conv", #  float32[1,32,80,80]
+            "/model.22/cv4.1/cv4.1.2/Conv", #  float32[1,32,40,40]
+            "/model.22/cv4.2/cv4.2.2/Conv", #  float32[1,32,20,20]
 
-            "/model.22/cv2.1/cv2.1.2/Conv" #  float32[1,64,40,40]
-            "/model.22/cv3.1/cv3.1.2/Conv" #  float32[1,1,40,40]
+            "/model.22/cv2.1/cv2.1.2/Conv", #  float32[1,64,40,40]
+            "/model.22/cv3.1/cv3.1.2/Conv", #  float32[1,1,40,40]
 
-            "/model.22/cv2.2/cv2.2.2/Conv" #  float32[1,64,20,20]
-            "/model.22/cv3.2/cv3.2.2/Conv" #  float32[1,1,20,20]
+            "/model.22/cv2.2/cv2.2.2/Conv", #  float32[1,64,20,20]
+            "/model.22/cv3.2/cv3.2.2/Conv", #  float32[1,1,20,20]
             
             ],
         net_input_shapes={"/model.0/conv/Conv": [1, 3, 640, 640]}
