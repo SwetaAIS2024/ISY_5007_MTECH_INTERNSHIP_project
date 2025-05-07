@@ -160,16 +160,20 @@ def app_callback(pad, info, user_data: user_app_callback_class):
     # Get caps to retrieve frame size and format
     format, width, height = get_caps_from_pad(pad)
 
-    # Get video frame (if enabled)
-    frame = None
-    if user_data.use_frame and format is not None and width is not None and height is not None:
-        frame = get_numpy_from_buffer(buffer, format, width, height)
-        # Convert to BGR for annotation (supervision expects BGR)
-        if format == "RGB":
-            # Already in RGB, just convert to BGR
-            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        # For NV12/YUYV, you'd need proper color conversion to BGR.
+    # Extract the frame using the helper method
+    frame = user_data.extract_frame(buffer, pad)
 
+    # # Get video frame (if enabled)
+    # frame = None
+    # if user_data.use_frame and format is not None and width is not None and height is not None:
+    #     frame = get_numpy_from_buffer(buffer, format, width, height)
+    #     # Convert to BGR for annotation (supervision expects BGR)
+    #     if format == "RGB":
+    #         # Already in RGB, just convert to BGR
+    #         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+    #     # For NV12/YUYV, you'd need proper color conversion to BGR.
+
+    
     
     # Extract detections from hailo ROI
     roi = hailo.get_roi_from_buffer(buffer)
