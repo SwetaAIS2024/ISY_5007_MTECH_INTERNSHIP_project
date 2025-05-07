@@ -16,13 +16,16 @@ import hailo
 import supervision as sv
 from collections import defaultdict, deque
 # from utils import HailoAsyncInference
-from func.hailo_rpi_common import (
+from Lane_Cogestion_Monitoring.utils.hailo_rpi_common import (
     QUEUE,
     get_caps_from_pad,
     get_numpy_from_buffer,
     GStreamerApp,
     app_callback_class,
+
 )
+
+from Lane_Cogestion_Monitoring.utils.zone_annotation import annotate_zones
 
 
 # ---------------------- ADDITIONAL CODE FOR SPEED ESTIMATION ------------------------------------
@@ -77,11 +80,51 @@ class user_app_callback_class(app_callback_class):
         self.traffic_changed = True # To store the binary mask based on the ODs
         self.SOURCE = None # To store the polygon points
         self.TARGET = None # To store the target points
-        self.lane_data = None # To store the lane data
+
+        self.lane_polygons = self._initialize_lanes(video_source) # To store the lane data
 
     def new_function(self):  # Just to keep original example
         return "The meaning of life is: "
+    
+    def extract_frame(self, buffer, pad):
+        format, width, height = get_caps_from_pad(pad)
+        if not self.use_frame or format is None or width is None or height is None:
+            return None
+        
+        frame = get_numpy_from_buffer(buffer, format, width, height)
 
+        if format == "RGB":
+            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        
+        return frame
+    
+    def _initialize_lanes(self, video_source: str = None) -> Dict[str, np.ndarray]:
+        """ Initialize thelane polygons either from the annoatations or from the defaults. """
+        if video_source:
+            return self._get_annotated_lanes(video_source)
+        else:
+            return self._get_default_lanes()
+    
+    def _get_annotated_lanes(self, video_source: str) -> Dict[str, np.ndarray]:
+        frame = self._get_first_frame(video_source)
+        if frame:
+            normalized_polygons = annotate_zones(frame)
+            lane_polygons = {f"lane_{i+1}": np.array(polygon) for i, polygon in enumerate(normalized_polygons)}
+            return lane_polygons
+        else:
+            print("Failed to get the first frame for lane annotation.")
+            return {}
+    
+    def _get_first_frame(self, source:str) -> np.ndarray:
+        cap = cv2.VideoCapture(source)
+        if not cap.isOpened():
+            print("Error in opening the video source")
+            return None
+        else:
+            ret, frame = cap.read()
+            cap.release()
+            return frame if ret else None
+        
 # -----------------------------------------------------------------------------------------------
 # User-defined callback function
 # -----------------------------------------------------------------------------------------------
@@ -277,6 +320,7 @@ class GStreamerDetectionApp(GStreamerApp):
         ld_nms_score_threshold = 0.3
         ld_nms_iou_threshold = 0.45
         
+        self.lane_polygons = user_data.lane_polygons
 
         '''
         original_width, original_height = 3840, 2160
@@ -356,48 +400,62 @@ class GStreamerDetectionApp(GStreamerApp):
         user_data.confidence_threshold = 0.4
         user_data.iou_threshold = 0.7
         
-        # Polygon zone and view transformer
-        user_data.polygon_zone = sv.PolygonZone(polygon=SOURCE)
-        user_data.view_transformer = ViewTransformer(source=SOURCE, target=TARGET)
+        # Initialize lane-specific data
+        user_data.lane_polygons = self.lane_polygons  # Assume `self.lane_polygons` contains normalized polygons for all lanes
+       
 
-        # ByteTrack initialization
-        user_data.byte_track = sv.ByteTrack(frame_rate=user_data.fps, track_activation_threshold=user_data.confidence_threshold)
-        
-        user_data.coordinates = defaultdict(lambda: deque(maxlen=int(user_data.fps))) # store past positions
+        # Initialize ByteTrack for each lane
+        user_data.byte_tracks = {
+            lane_name: sv.ByteTrack(frame_rate=user_data.fps, track_activation_threshold=user_data.confidence_threshold)
+            for lane_name in user_data.lane_polygons
+        }
 
-        # Annotators
-        thickness = sv.calculate_optimal_line_thickness(resolution_wh=(self.network_width, self.network_height))
-        text_scale = sv.calculate_optimal_text_scale(resolution_wh=(self.network_width, self.network_height))
-        
-        user_data.box_annotator = sv.BoundingBoxAnnotator(
-                thickness=1,
-                color=sv.ColorPalette(colors=[sv.Color(r=0,g=255,b=0)])
-                )
-        
-        user_data.label_annotator = sv.LabelAnnotator(
-            text_scale=text_scale,
-            text_thickness=thickness,
-            text_position=sv.Position.BOTTOM_CENTER,
-        )
-        
-        # Override default annotation label
-         
-        user_data.label_annotator = sv.LabelAnnotator(
-                text_scale=0.4,
-                text_thickness=1,
-                text_padding=4,
-                color=sv.ColorPalette(colors=[sv.Color(r=0,g=255,b=0)]),
-                text_color=sv.Color.BLACK,
-                text_position=sv.Position.BOTTOM_CENTER,
-                )
-        
+        # Initialize annotators for each lane
+        user_data.annotators = {}
+        for lane_name in user_data.lane_polygons:
+            thickness = sv.calculate_optimal_line_thickness(resolution_wh=(self.network_width, self.network_height))
+            text_scale = sv.calculate_optimal_text_scale(resolution_wh=(self.network_width, self.network_height))
+            
+            user_data.annotators[lane_name] = {
+                "box_annotator": sv.BoundingBoxAnnotator(
+                    thickness=1,
+                    color=sv.ColorPalette(colors=[sv.Color(r=0, g=255, b=0)])
+                ),
+                "label_annotator": sv.LabelAnnotator(
+                    text_scale=text_scale,
+                    text_thickness=thickness,
+                    text_position=sv.Position.BOTTOM_CENTER,
+                ),
+                "trace_annotator": sv.TraceAnnotator(
+                    thickness=thickness,
+                    color=sv.ColorPalette(colors=[sv.Color(r=0, g=255, b=0)]),
+                    trace_length=user_data.fps * 1.5,
+                    position=sv.Position.BOTTOM_CENTER,
+                ),
+            }
 
-        user_data.trace_annotator = sv.TraceAnnotator(
-            thickness=thickness,
-            color=sv.ColorPalette(colors=[sv.Color(r=0,g=255,b=0)]),
-            trace_length=user_data.fps * 1.5,
-            position=sv.Position.BOTTOM_CENTER,
-        )
+        # Process each lane independently
+        for lane_name, polygon in user_data.lane_polygons.items():
+            # Denormalize polygon points to pixel coordinates
+            pixel_polygon = (polygon * [self.network_width, self.network_height]).astype(int)
+
+            # Create a mask for the lane
+            mask = np.zeros((self.network_height, self.network_width), dtype=np.uint8)
+            cv2.fillPoly(mask, [pixel_polygon], 255)
+
+            # Extract lane-specific region
+            lane_frame = cv2.bitwise_and(frame, frame, mask=mask)
+
+            # Process lane-specific detections
+            detections = user_data.byte_tracks[lane_name].update(lane_frame)
+
+            # Annotate the lane-specific frame
+            lane_frame = user_data.annotators[lane_name]["box_annotator"].annotate(scene=lane_frame, detections=detections)
+            lane_frame = user_data.annotators[lane_name]["label_annotator"].annotate(scene=lane_frame, detections=detections)
+            lane_frame = user_data.annotators[lane_name]["trace_annotator"].annotate(scene=lane_frame, detections=detections)
+
+            # Display the lane-specific frame (optional)
+            cv2.imshow(f"{lane_name} - Lane View", lane_frame)
         
         self.create_pipeline()
 
