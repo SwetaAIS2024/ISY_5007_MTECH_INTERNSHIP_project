@@ -98,14 +98,14 @@ class user_app_callback_class(app_callback_class):
         
         return frame
     
-    def _initialize_lanes(self, video_source: str = None) -> Dict[str, np.ndarray]:
+    def _initialize_lanes(self, video_source: str = None) -> dict[str, np.ndarray]:
         """ Initialize thelane polygons either from the annoatations or from the defaults. """
         if video_source:
             return self._get_annotated_lanes(video_source)
         else:
             return self._get_default_lanes()
     
-    def _get_annotated_lanes(self, video_source: str) -> Dict[str, np.ndarray]:
+    def _get_annotated_lanes(self, video_source: str) -> dict[str, np.ndarray]:
         frame = self._get_first_frame(video_source)
         if frame:
             normalized_polygons = annotate_zones(frame)
@@ -160,55 +160,33 @@ def app_callback(pad, info, user_data: user_app_callback_class):
     # Get caps to retrieve frame size and format
     format, width, height = get_caps_from_pad(pad)
 
-    # Extract the frame using the helper method
+        # Extract the frame using the helper method
     frame = user_data.extract_frame(buffer, pad)
 
-    # # Get video frame (if enabled)
-    # frame = None
-    # if user_data.use_frame and format is not None and width is not None and height is not None:
-    #     frame = get_numpy_from_buffer(buffer, format, width, height)
-    #     # Convert to BGR for annotation (supervision expects BGR)
-    #     if format == "RGB":
-    #         # Already in RGB, just convert to BGR
-    #         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-    #     # For NV12/YUYV, you'd need proper color conversion to BGR.
-
-    
-    
     # Extract detections from hailo ROI
     roi = hailo.get_roi_from_buffer(buffer)
     hailo_detections = roi.get_objects_typed(hailo.HAILO_DETECTION)
 
     # Convert hailo detections to supervision.Detections
-    # hailo bbox format: let's assume it's xywh or xyxy as needed.
-    # According to Hailo docs, bbox might be (x_min, y_min, width, height). We need xyxy:
-    xyxy = [] # [[xmin, ymin, xmax, ymax], ...] distances are in pixels, diagonal distance
+    xyxy = []  # [[xmin, ymin, xmax, ymax], ...]
     confidences = []
     class_ids = []
     class_labels = []
 
     for d in hailo_detections:
-        #print(f"hailo detections:{d.get_label()}") # debugging print
         label = d.get_label()
         bbox = d.get_bbox()  # (x, y, w, h)
         confidence = d.get_confidence()
 
-        #x, y, w, h = bbox
-        #xmin = x
-        #ymin = y
-        #xmax = x + w
-        #ymax = y + h
-        xmin = bbox.xmin() * width
-        ymin = bbox.ymin() * height
-        xmax = bbox.xmax() * width
-        ymax = bbox.ymax() * height
+        xmin = bbox.xmin() * frame.shape[1]
+        ymin = bbox.ymin() * frame.shape[0]
+        xmax = bbox.xmax() * frame.shape[1]
+        ymax = bbox.ymax() * frame.shape[0]
 
         xyxy.append([xmin, ymin, xmax, ymax])
         confidences.append(confidence)
-        # If needed, map label to class_id. If no classes known, you can set class_id=0 or map from a label dictionary
-        class_ids.append(0)  # or a mapping if you have multiple classes
+        class_ids.append(0)  # Default class ID
         class_labels.append(label)
-
 
     if len(xyxy) > 0:
         detections = sv.Detections(
@@ -219,75 +197,85 @@ def app_callback(pad, info, user_data: user_app_callback_class):
     else:
         detections = sv.Detections.empty()
 
+    # Apply confidence threshold
     mask = detections.confidence > user_data.confidence_threshold
     detections = detections[mask]
     class_labels = [class_labels[i] for i in np.where(mask)[0]]
 
-    # Filter by polygon zone
-    if user_data.polygon_zone is not None:
+    # Process each lane independently
+    for lane_name, polygon in user_data.lane_polygons.items():
+        # Denormalize polygon points to pixel coordinates
+        pixel_polygon = (polygon * [frame.shape[1], frame.shape[0]]).astype(int)
+
+        # Create a mask for the lane
+        mask = np.zeros(frame.shape[:2], dtype=np.uint8)
+        cv2.fillPoly(mask, [pixel_polygon], 255)
+
+        # Filter detections for the current lane
         if len(detections) > 0:
             try:
-                inside_mask = user_data.polygon_zone.trigger(detections)
-                detections = detections[inside_mask]
-                class_labels = [class_labels[i] for i in np.where(inside_mask)[0]]
-            except:
-                pass
+                lane_zone = sv.PolygonZone(polygon=pixel_polygon)
+                inside_mask = lane_zone.trigger(detections)
+                lane_detections = detections[inside_mask]
+                lane_class_labels = [class_labels[i] for i in np.where(inside_mask)[0]]
+            except Exception as e:
+                print(f"Error filtering detections for lane {lane_name}: {e}")
+                lane_detections = sv.Detections.empty()
+                lane_class_labels = []
+        else:
+            lane_detections = sv.Detections.empty()
+            lane_class_labels = []
 
-    # Run NMS
-    detections = detections.with_nms(threshold=user_data.iou_threshold)
+        # Run NMS for the current lane
+        lane_detections = lane_detections.with_nms(threshold=user_data.iou_threshold)
 
-    # Track detections with ByteTrack
-    detections = user_data.byte_track.update_with_detections(detections=detections)
+        # Track detections with ByteTrack for the current lane
+        lane_detections = user_data.byte_tracks[lane_name].update_with_detections(detections=lane_detections)
 
-    # Speed estimation
-    # Transform points (anchor = bottom_center)
-    if len(detections) > 0:
-        points = detections.get_anchors_coordinates(anchor=sv.Position.BOTTOM_CENTER)
-        points = user_data.view_transformer.transform_points(points=points).astype(int)
+        # Speed estimation for the current lane
+        if len(lane_detections) > 0:
+            points = lane_detections.get_anchors_coordinates(anchor=sv.Position.BOTTOM_CENTER)
+            points = user_data.view_transformer.transform_points(points=points).astype(int)
 
-        for tracker_id, [_, y] in zip(detections.tracker_id, points):
-            user_data.coordinates[tracker_id].append(y)
+            for tracker_id, [_, y] in zip(lane_detections.tracker_id, points):
+                user_data.coordinates[tracker_id].append(y)
 
-        # Prepare labels with speed info
-        labels = []
-        for i, tracker_id in enumerate(detections.tracker_id):
-            current_class_label = class_labels[i]
-            if len(user_data.coordinates[tracker_id]) < user_data.fps / 2:
-                #labels.append(f"{tracker_id} {current_class_label}")
-                labels.append(f"{current_class_label}")
-            else:
-                coordinate_start = user_data.coordinates[tracker_id][-1]
-                coordinate_end = user_data.coordinates[tracker_id][0]
-                distance = abs(coordinate_start - coordinate_end)
-                time = len(user_data.coordinates[tracker_id]) / user_data.fps
-                speed = distance / time * 3.6
-                labels.append(f"{current_class_label}, {int(distance)} km, {int(speed)} km/h")
-    else:
-        labels = []
+            # Prepare labels with speed info
+            lane_labels = []
+            for i, tracker_id in enumerate(lane_detections.tracker_id):
+                current_class_label = lane_class_labels[i]
+                if len(user_data.coordinates[tracker_id]) < user_data.fps / 2:
+                    lane_labels.append(f"{current_class_label}")
+                else:
+                    coordinate_start = user_data.coordinates[tracker_id][-1]
+                    coordinate_end = user_data.coordinates[tracker_id][0]
+                    distance = abs(coordinate_start - coordinate_end)
+                    time = len(user_data.coordinates[tracker_id]) / user_data.fps
+                    speed = distance / time * 3.6
+                    lane_labels.append(f"{current_class_label}, {int(distance)} km, {int(speed)} km/h")
+        else:
+            lane_labels = []
 
-    # Annotate frame
-    if user_data.use_frame and frame is not None:
-        # Trace, boxes, labels
-        annotated_frame = frame.copy()
-        annotated_frame = user_data.trace_annotator.annotate(scene=annotated_frame, detections=detections)
-        annotated_frame = user_data.box_annotator.annotate(scene=annotated_frame, detections=detections)
-        annotated_frame = user_data.label_annotator.annotate(scene=annotated_frame, detections=detections, labels=labels)
+        # Annotate the lane-specific frame
+        lane_frame = cv2.bitwise_and(frame, frame, mask=mask)
+        lane_frame = user_data.annotators[lane_name]["box_annotator"].annotate(scene=lane_frame, detections=lane_detections)
+        lane_frame = user_data.annotators[lane_name]["label_annotator"].annotate(scene=lane_frame, detections=lane_detections, labels=lane_labels)
+        lane_frame = user_data.annotators[lane_name]["trace_annotator"].annotate(scene=lane_frame, detections=lane_detections)
 
-        # Show detection count or additional info if you wish
-        cv2.putText(annotated_frame, f"Detections: {len(detections)}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        # Display the lane-specific frame (optional)
+        cv2.imshow(f"{lane_name} - Lane View", lane_frame)
 
-        polygon_points = SOURCE.astype(int)
-        
-        cv2.polylines(
-                annotated_frame,
-                [polygon_points], # polylines need a list of array of points
-                isClosed=True,
-                color=(0,0,255), # red color
-                thickness=1
-                )
-        
-        # Push annotated frame to user_data frame queue
-        user_data.set_frame(annotated_frame)
+    # Annotate the main frame with all lane-specific annotations
+    annotated_frame = frame.copy()
+    annotated_frame = user_data.trace_annotator.annotate(scene=annotated_frame, detections=detections)
+    annotated_frame = user_data.box_annotator.annotate(scene=annotated_frame, detections=detections)
+    annotated_frame = user_data.label_annotator.annotate(scene=annotated_frame, detections=detections, labels=class_labels)
+
+    # Show detection count or additional info if you wish
+    cv2.putText(annotated_frame, f"Detections: {len(detections)}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+
+    # Push annotated frame to user_data frame queue
+    user_data.set_frame(annotated_frame)
 
     return Gst.PadProbeReturn.OK
 
