@@ -74,8 +74,10 @@ def get_caps_from_pad(pad: Gst.Pad):
             format = structure.get_value('format')
             width = structure.get_value('width')
             height = structure.get_value('height')
+            print(f"Caps extracted: format={format}, width={width}, height={height}")
             return format, width, height
     else:
+        print("Caps are None")
         return None, None, None
 
 # This function is used to display the user data frame

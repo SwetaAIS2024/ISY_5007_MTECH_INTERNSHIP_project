@@ -91,13 +91,19 @@ class user_app_callback_class(app_callback_class):
     def extract_frame(self, buffer, pad): 
         format, width, height = get_caps_from_pad(pad)
         if not self.use_frame or format is None or width is None or height is None:
+            print(f"Invalid frame parameters: use_frame={self.use_frame}, format={format}, width={width}, height={height}")
             return None
         
         frame = get_numpy_from_buffer(buffer, format, width, height)
 
+        if frame is None:
+            print("Failed to extract frame from buffer.")
+            return None
+
         if format == "RGB":
             frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         
+        print(f"Extracted frame with shape: {frame.shape}")
         return frame
     
     def _initialize_lanes(self, video_source: str = None) -> dict[str, np.ndarray]:
@@ -183,7 +189,8 @@ def app_callback(pad, info, user_data: user_app_callback_class):
         print("Extracted frame is None.")
         return Gst.PadProbeReturn.OK
     
-    #user_data.set_frame(frame)
+    user_data.set_frame(frame)
+    print("Frame sucessfully stored in user_data")
 
     # Extract detections from hailo ROI
     roi = hailo.get_roi_from_buffer(buffer)
