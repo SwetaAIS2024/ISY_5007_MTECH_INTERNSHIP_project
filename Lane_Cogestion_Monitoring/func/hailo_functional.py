@@ -80,13 +80,14 @@ class user_app_callback_class(app_callback_class):
         self.traffic_changed = True # To store the binary mask based on the ODs
         self.SOURCE = None # To store the polygon points
         self.TARGET = None # To store the target points
+        self.current_frame = None
 
-        self.lane_polygons = self._initialize_lanes(video_source) # To store the lane data
+        self.all_lane_polygons = self._initialize_lanes(video_source) # To store the lane data
 
     def new_function(self):  # Just to keep original example
         return "The meaning of life is: "
     
-    def extract_frame(self, buffer, pad):
+    def extract_frame(self, buffer, pad): 
         format, width, height = get_caps_from_pad(pad)
         if not self.use_frame or format is None or width is None or height is None:
             return None
@@ -108,8 +109,17 @@ class user_app_callback_class(app_callback_class):
     def _get_annotated_lanes(self, video_source: str) -> dict[str, np.ndarray]:
         frame = self._get_first_frame(video_source)
         if frame:
-            normalized_polygons = annotate_zones(frame)
-            lane_polygons = {f"lane_{i+1}": np.array(polygon) for i, polygon in enumerate(normalized_polygons)}
+            print("Getting the super lane zone for each lane...")
+            super_lane_zone_polygons = annotate_zones(frame)
+            print("Getting the queue zone for each lane...")
+            queue_lane_zone_polygons = annotate_zones(frame)
+
+            lane_polygons = {}
+            for i, (super_lane_zone_polygons, queue_lane_zone_polygons) in enumerate(zip(super_lane_zone_polygons, queue_lane_zone_polygons)):
+                lane_polygons[f"lane_{i + 1}"] = {
+                    "super_lane_polygon": np.array(super_lane_zone_polygons),
+                    "queue_zone_polygon": np.array(queue_lane_zone_polygons),
+                }
             return lane_polygons
         else:
             print("Failed to get the first frame for lane annotation.")
@@ -124,6 +134,12 @@ class user_app_callback_class(app_callback_class):
             ret, frame = cap.read()
             cap.release()
             return frame if ret else None
+    
+    def set_frame(self, frame):
+        self.current_frame = frame
+
+    def get_frame(self):
+        return self.current_frame
         
 # -----------------------------------------------------------------------------------------------
 # User-defined callback function
@@ -158,10 +174,14 @@ def app_callback(pad, info, user_data: user_app_callback_class):
     user_data.increment()
 
     # Get caps to retrieve frame size and format
-    format, width, height = get_caps_from_pad(pad)
+    #format, width, height = get_caps_from_pad(pad)
 
-        # Extract the frame using the helper method
+    # Extract the frame using the helper method
     frame = user_data.extract_frame(buffer, pad)
+    if frame is None:
+        return Gst.PadProbeReturn.OK
+    
+    user_data.set_frame(frame)
 
     # Extract detections from hailo ROI
     roi = hailo.get_roi_from_buffer(buffer)
@@ -203,79 +223,83 @@ def app_callback(pad, info, user_data: user_app_callback_class):
     class_labels = [class_labels[i] for i in np.where(mask)[0]]
 
     # Process each lane independently
-    for lane_name, polygon in user_data.lane_polygons.items():
-        # Denormalize polygon points to pixel coordinates
-        pixel_polygon = (polygon * [frame.shape[1], frame.shape[0]]).astype(int)
+    for lane_name, polygon in user_data.all_lane_polygons.items():
+        super_lane_polygon = polygon["super_lane_polygon"]
+        queue_zone_polygon = polygon["queue_zone_polygon"]
+        
+        # Denormalize super lane polygon points to pixel coordinates
+        pixel_super_lane_polygon = (super_lane_polygon * [frame.shape[1], frame.shape[0]]).astype(int)
 
-        # Create a mask for the lane
-        mask = np.zeros(frame.shape[:2], dtype=np.uint8)
-        cv2.fillPoly(mask, [pixel_polygon], 255)
+        # Create a mask for the super lane
+        super_lane_mask = np.zeros(frame.shape[:2], dtype=np.uint8)
+        cv2.fillPoly(super_lane_mask, [pixel_super_lane_polygon], 255)
 
-        # Filter detections for the current lane
+        # Filter detections for the super lane
         if len(detections) > 0:
             try:
-                lane_zone = sv.PolygonZone(polygon=pixel_polygon)
-                inside_mask = lane_zone.trigger(detections)
-                lane_detections = detections[inside_mask]
-                lane_class_labels = [class_labels[i] for i in np.where(inside_mask)[0]]
+                super_lane_zone = sv.PolygonZone(polygon=pixel_super_lane_polygon)
+                inside_mask = super_lane_zone.trigger(detections)
+                super_lane_detections = detections[inside_mask]
+                super_lane_class_labels = [class_labels[i] for i in np.where(inside_mask)[0]]
             except Exception as e:
-                print(f"Error filtering detections for lane {lane_name}: {e}")
-                lane_detections = sv.Detections.empty()
-                lane_class_labels = []
+                print(f"Error filtering detections for super lane {lane_name}: {e}")
+                super_lane_detections = sv.Detections.empty()
+                super_lane_class_labels = []
         else:
-            lane_detections = sv.Detections.empty()
-            lane_class_labels = []
+            super_lane_detections = sv.Detections.empty()
+            super_lane_class_labels = []
 
-        # Run NMS for the current lane
-        lane_detections = lane_detections.with_nms(threshold=user_data.iou_threshold)
+        # Run NMS for the super lane
+        super_lane_detections = super_lane_detections.with_nms(threshold=user_data.iou_threshold)
 
-        # Track detections with ByteTrack for the current lane
-        lane_detections = user_data.byte_tracks[lane_name].update_with_detections(detections=lane_detections)
+        # Track detections with ByteTrack for the super lane
+        super_lane_detections = user_data.byte_tracks[lane_name].update_with_detections(detections=super_lane_detections)
 
-        # Speed estimation for the current lane
-        if len(lane_detections) > 0:
-            points = lane_detections.get_anchors_coordinates(anchor=sv.Position.BOTTOM_CENTER)
-            points = user_data.view_transformer.transform_points(points=points).astype(int)
+        # Annotate the super lane on the main frame
+        cv2.polylines(
+            frame,
+            [pixel_super_lane_polygon],
+            isClosed=True,
+            color=(0, 255, 0),  # Green color for super lane
+            thickness=2
+        )
 
-            for tracker_id, [_, y] in zip(lane_detections.tracker_id, points):
-                user_data.coordinates[tracker_id].append(y)
+        # Process the queue zone for the current lane
+        pixel_queue_zone_polygon = (queue_zone_polygon * [frame.shape[1], frame.shape[0]]).astype(int)
 
-            # Prepare labels with speed info
-            lane_labels = []
-            for i, tracker_id in enumerate(lane_detections.tracker_id):
-                current_class_label = lane_class_labels[i]
-                if len(user_data.coordinates[tracker_id]) < user_data.fps / 2:
-                    lane_labels.append(f"{current_class_label}")
-                else:
-                    coordinate_start = user_data.coordinates[tracker_id][-1]
-                    coordinate_end = user_data.coordinates[tracker_id][0]
-                    distance = abs(coordinate_start - coordinate_end)
-                    time = len(user_data.coordinates[tracker_id]) / user_data.fps
-                    speed = distance / time * 3.6
-                    lane_labels.append(f"{current_class_label}, {int(distance)} km, {int(speed)} km/h")
+        # Create a mask for the queue zone
+        queue_zone_mask = np.zeros(frame.shape[:2], dtype=np.uint8)
+        cv2.fillPoly(queue_zone_mask, [pixel_queue_zone_polygon], 255)
+
+        # Filter detections for the queue zone
+        if len(detections) > 0:
+            try:
+                queue_zone = sv.PolygonZone(polygon=pixel_queue_zone_polygon)
+                queue_inside_mask = queue_zone.trigger(detections)
+                queue_detections = detections[queue_inside_mask]
+                queue_class_labels = [class_labels[i] for i in np.where(queue_inside_mask)[0]]
+            except Exception as e:
+                print(f"Error filtering detections for queue zone in lane {lane_name}: {e}")
+                queue_detections = sv.Detections.empty()
+                queue_class_labels = []
         else:
-            lane_labels = []
+            queue_detections = sv.Detections.empty()
+            queue_class_labels = []
 
-        # Annotate the lane-specific frame
-        lane_frame = cv2.bitwise_and(frame, frame, mask=mask)
-        lane_frame = user_data.annotators[lane_name]["box_annotator"].annotate(scene=lane_frame, detections=lane_detections)
-        lane_frame = user_data.annotators[lane_name]["label_annotator"].annotate(scene=lane_frame, detections=lane_detections, labels=lane_labels)
-        lane_frame = user_data.annotators[lane_name]["trace_annotator"].annotate(scene=lane_frame, detections=lane_detections)
+        # Process queue zone detections (e.g., counting vehicles)
+        if len(queue_detections) > 0:
+            print(f"Queue Zone in {lane_name}: {len(queue_detections)} vehicles detected.")
 
-        # Display the lane-specific frame (optional)
-        cv2.imshow(f"{lane_name} - Lane View", lane_frame)
+        # Annotate the queue zone on the main frame
+        cv2.polylines(
+            frame,
+            [pixel_queue_zone_polygon],
+            isClosed=True,
+            color=(255, 0, 0),  # Blue color for queue zone
+            thickness=2
+        )
 
-    # Annotate the main frame with all lane-specific annotations
-    annotated_frame = frame.copy()
-    annotated_frame = user_data.trace_annotator.annotate(scene=annotated_frame, detections=detections)
-    annotated_frame = user_data.box_annotator.annotate(scene=annotated_frame, detections=detections)
-    annotated_frame = user_data.label_annotator.annotate(scene=annotated_frame, detections=detections, labels=class_labels)
-
-    # Show detection count or additional info if you wish
-    cv2.putText(annotated_frame, f"Detections: {len(detections)}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-
-    # Push annotated frame to user_data frame queue
-    user_data.set_frame(annotated_frame)
+    user_data.set_frame(frame)
 
     return Gst.PadProbeReturn.OK
 
@@ -286,6 +310,9 @@ class GStreamerDetectionApp(GStreamerApp):
     def __init__(self, args, user_data):
         super().__init__(args, user_data)
 
+        self.app_callback = app_callback
+        #self.app_callback_od = od_callback
+        #self.app_callback_ld = ld_callback
         self.ld_hef_path = args.hef_path_ld
         self.od_hef_path = args.hef_path_od
 
@@ -312,7 +339,8 @@ class GStreamerDetectionApp(GStreamerApp):
         ld_nms_score_threshold = 0.3
         ld_nms_iou_threshold = 0.45
         
-        self.lane_polygons = user_data.lane_polygons
+        self.all_lane_polygons = user_data.all_lane_polygons
+        frame = user_data.get_frame()
 
         '''
         original_width, original_height = 3840, 2160
@@ -367,9 +395,7 @@ class GStreamerDetectionApp(GStreamerApp):
             # Default postprocess
             self.default_postprocess_so = os.path.join(self.postprocess_dir_od, 'libyolo_hailortpp_post.so')
 
-        self.app_callback = app_callback
-        #self.app_callback_od = od_callback
-        #self.app_callback_ld = ld_callback
+        
 
         self.od_thresholds_str = (
             f"nms-score-threshold={od_nms_score_threshold} "
@@ -393,18 +419,17 @@ class GStreamerDetectionApp(GStreamerApp):
         user_data.iou_threshold = 0.7
         
         # Initialize lane-specific data
-        user_data.lane_polygons = self.lane_polygons  # Assume `self.lane_polygons` contains normalized polygons for all lanes
-       
+        user_data.all_lane_polygons = self.all_lane_polygons  # Assume `self.lane_polygons` contains normalized polygons for all lanes
 
         # Initialize ByteTrack for each lane
         user_data.byte_tracks = {
             lane_name: sv.ByteTrack(frame_rate=user_data.fps, track_activation_threshold=user_data.confidence_threshold)
-            for lane_name in user_data.lane_polygons
+            for lane_name in user_data.all_lane_polygons
         }
 
         # Initialize annotators for each lane
         user_data.annotators = {}
-        for lane_name in user_data.lane_polygons:
+        for lane_name in user_data.all_lane_polygons:
             thickness = sv.calculate_optimal_line_thickness(resolution_wh=(self.network_width, self.network_height))
             text_scale = sv.calculate_optimal_text_scale(resolution_wh=(self.network_width, self.network_height))
             
@@ -426,8 +451,11 @@ class GStreamerDetectionApp(GStreamerApp):
                 ),
             }
 
+        # Initialize speed tracking data for each lane
+        user_data.coordinates = {lane_name: defaultdict(list) for lane_name in user_data.all_lane_polygons}
+
         # Process each lane independently
-        for lane_name, polygon in user_data.lane_polygons.items():
+        for lane_name, polygon in user_data.all_lane_polygons.items():
             # Denormalize polygon points to pixel coordinates
             pixel_polygon = (polygon * [self.network_width, self.network_height]).astype(int)
 
@@ -441,13 +469,38 @@ class GStreamerDetectionApp(GStreamerApp):
             # Process lane-specific detections
             detections = user_data.byte_tracks[lane_name].update(lane_frame)
 
+            # Speed tracking for each detection
+            lane_labels = []
+            if len(detections) > 0:
+                # Get bottom-center points of bounding boxes
+                points = detections.get_anchors_coordinates(anchor=sv.Position.BOTTOM_CENTER)
+                points = user_data.view_transformer.transform_points(points=points).astype(int)
+
+                # Update coordinates for speed tracking
+                for tracker_id, [_, y] in zip(detections.tracker_id, points):
+                    user_data.coordinates[lane_name][tracker_id].append(y)
+
+                # Calculate speed for each tracked object
+                for i, tracker_id in enumerate(detections.tracker_id):
+                    current_class_label = detections.class_id[i]
+                    if len(user_data.coordinates[lane_name][tracker_id]) < user_data.fps / 2:
+                        lane_labels.append(f"{current_class_label}")
+                    else:
+                        coordinate_start = user_data.coordinates[lane_name][tracker_id][-1]
+                        coordinate_end = user_data.coordinates[lane_name][tracker_id][0]
+                        distance = abs(coordinate_start - coordinate_end)
+                        time = len(user_data.coordinates[lane_name][tracker_id]) / user_data.fps
+                        speed = distance / time * 3.6  # Convert to km/h
+                        lane_labels.append(f"{current_class_label}, {int(speed)} km/h")
+
             # Annotate the lane-specific frame
             lane_frame = user_data.annotators[lane_name]["box_annotator"].annotate(scene=lane_frame, detections=detections)
-            lane_frame = user_data.annotators[lane_name]["label_annotator"].annotate(scene=lane_frame, detections=detections)
+            lane_frame = user_data.annotators[lane_name]["label_annotator"].annotate(scene=lane_frame, detections=detections, labels=lane_labels)
             lane_frame = user_data.annotators[lane_name]["trace_annotator"].annotate(scene=lane_frame, detections=detections)
 
             # Display the lane-specific frame (optional)
             cv2.imshow(f"{lane_name} - Lane View", lane_frame)
+        
         
         self.create_pipeline()
 
