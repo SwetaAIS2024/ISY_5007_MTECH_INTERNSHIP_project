@@ -6,11 +6,11 @@ from func.hailo_functional import (
     GStreamerDetectionApp,
 )
 
-from func.hailo_rpi_common import get_default_parser
+from utils.hailo_rpi_common import get_default_parser
 
 
 if __name__ == "__main__":
-    user_data = user_app_callback_class()
+    
     parser = get_default_parser()
     parser.add_argument(
         "--network",
@@ -42,6 +42,6 @@ if __name__ == "__main__":
     )
     
     args = parser.parse_args()
-
+    user_data = user_app_callback_class(args)
     app = GStreamerDetectionApp(args, user_data)
     app.run()

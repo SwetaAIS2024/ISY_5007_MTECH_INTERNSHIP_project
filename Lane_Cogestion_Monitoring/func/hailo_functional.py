@@ -16,7 +16,7 @@ import hailo
 import supervision as sv
 from collections import defaultdict, deque
 # from utils import HailoAsyncInference
-from Lane_Cogestion_Monitoring.utils.hailo_rpi_common import (
+from utils.hailo_rpi_common import (
     QUEUE,
     get_caps_from_pad,
     get_numpy_from_buffer,
@@ -25,7 +25,7 @@ from Lane_Cogestion_Monitoring.utils.hailo_rpi_common import (
 
 )
 
-from Lane_Cogestion_Monitoring.utils.zone_annotation import annotate_zones
+from utils.zone_annotation import annotate_zones
 
 
 # ---------------------- ADDITIONAL CODE FOR SPEED ESTIMATION ------------------------------------
@@ -61,7 +61,7 @@ class ViewTransformer:
 # User-defined class to be used in the callback function
 # -----------------------------------------------------------------------------------------------
 class user_app_callback_class(app_callback_class):
-    def __init__(self):
+    def __init__(self, args):
         super().__init__()
         # Additional fields for speed estimation
         self.coordinates = None
@@ -82,6 +82,7 @@ class user_app_callback_class(app_callback_class):
         self.TARGET = None # To store the target points
         self.current_frame = None
 
+        video_source = args.input
         self.all_lane_polygons = self._initialize_lanes(video_source) # To store the lane data
 
     def new_function(self):  # Just to keep original example
@@ -108,7 +109,7 @@ class user_app_callback_class(app_callback_class):
     
     def _get_annotated_lanes(self, video_source: str) -> dict[str, np.ndarray]:
         frame = self._get_first_frame(video_source)
-        if frame:
+        if frame is not None and frame.size > 0:
             print("Getting the super lane zone for each lane...")
             super_lane_zone_polygons = annotate_zones(frame)
             print("Getting the queue zone for each lane...")
@@ -179,9 +180,10 @@ def app_callback(pad, info, user_data: user_app_callback_class):
     # Extract the frame using the helper method
     frame = user_data.extract_frame(buffer, pad)
     if frame is None:
+        print("Extracted frame is None.")
         return Gst.PadProbeReturn.OK
     
-    user_data.set_frame(frame)
+    #user_data.set_frame(frame)
 
     # Extract detections from hailo ROI
     roi = hailo.get_roi_from_buffer(buffer)
@@ -300,6 +302,7 @@ def app_callback(pad, info, user_data: user_app_callback_class):
         )
 
     user_data.set_frame(frame)
+    print("Frame sucessfully stored in user_data")
 
     return Gst.PadProbeReturn.OK
 
@@ -341,7 +344,12 @@ class GStreamerDetectionApp(GStreamerApp):
         
         self.all_lane_polygons = user_data.all_lane_polygons
         frame = user_data.get_frame()
-
+        if frame is None:
+            print("Frame is None. Skipping...")
+            return
+        
+        frame_height, frame_width = frame.shape[:2]
+        
         '''
         original_width, original_height = 3840, 2160
         new_width, new_height = 640, 640 # now input size directly from the model
@@ -434,7 +442,7 @@ class GStreamerDetectionApp(GStreamerApp):
             text_scale = sv.calculate_optimal_text_scale(resolution_wh=(self.network_width, self.network_height))
             
             user_data.annotators[lane_name] = {
-                "box_annotator": sv.BoundingBoxAnnotator(
+                "box_annotator": sv.BoxAnnotator(
                     thickness=1,
                     color=sv.ColorPalette(colors=[sv.Color(r=0, g=255, b=0)])
                 ),
@@ -455,12 +463,15 @@ class GStreamerDetectionApp(GStreamerApp):
         user_data.coordinates = {lane_name: defaultdict(list) for lane_name in user_data.all_lane_polygons}
 
         # Process each lane independently
-        for lane_name, polygon in user_data.all_lane_polygons.items():
+        for lane_name, polygons in user_data.all_lane_polygons.items():
+            
+            super_lane_polygon = polygons["super_lane_polygon"]
             # Denormalize polygon points to pixel coordinates
-            pixel_polygon = (polygon * [self.network_width, self.network_height]).astype(int)
+            pixel_polygon = (super_lane_polygon * [self.network_width, self.network_height]).astype(int)
 
             # Create a mask for the lane
-            mask = np.zeros((self.network_height, self.network_width), dtype=np.uint8)
+            #mask = np.zeros((self.network_height, self.network_width), dtype=np.uint8)
+            mask = np.zeros((frame_height, frame_width), dtype=np.uint8)
             cv2.fillPoly(mask, [pixel_polygon], 255)
 
             # Extract lane-specific region

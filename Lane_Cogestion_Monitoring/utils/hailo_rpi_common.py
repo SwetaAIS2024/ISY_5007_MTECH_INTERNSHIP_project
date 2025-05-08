@@ -37,15 +37,15 @@ class app_callback_class:
     def get_count(self):
         return self.frame_count 
 
-    def set_frame(self, frame):
-        if not self.frame_queue.full():
-            self.frame_queue.put(frame)
+    # def set_frame(self, frame):
+    #     if not self.frame_queue.full():
+    #         self.frame_queue.put(frame)
         
-    def get_frame(self):
-        if not self.frame_queue.empty():
-            return self.frame_queue.get()
-        else:
-            return None
+    # def get_frame(self):
+    #     if not self.frame_queue.empty():
+    #         return self.frame_queue.get()
+    #     else:
+    #         return None
 
 # -----------------------------------------------------------------------------------------------
 # Common functions
