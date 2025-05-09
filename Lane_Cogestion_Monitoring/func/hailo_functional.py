@@ -350,7 +350,7 @@ class GStreamerDetectionApp(GStreamerApp):
         ld_nms_iou_threshold = 0.45
         
         self.all_lane_polygons = user_data.all_lane_polygons
-        frame = user_data.get_frame()
+        frame = self.app_callback.get_frame()
         if frame is None:
             print("Frame is None. Skipping...")
             return
