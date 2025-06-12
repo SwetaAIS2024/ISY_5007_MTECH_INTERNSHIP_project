@@ -299,14 +299,33 @@ def app_callback(pad, info, user_data: user_app_callback_class):
         if len(queue_detections) > 0:
             print(f"Queue Zone in {lane_name}: {len(queue_detections)} vehicles detected.")
 
-        # Annotate the queue zone on the main frame
-        cv2.polylines(
-            frame,
-            [pixel_queue_zone_polygon],
-            isClosed=True,
-            color=(255, 0, 0),  # Blue color for queue zone
-            thickness=2
-        )
+        # --- Queue length calculation logic ---
+        QUEUE_LENGTH_THRESHOLD = 3  # Minimum vehicles to trigger queue length calculation
+        if len(queue_detections) >= QUEUE_LENGTH_THRESHOLD:
+            # Calculate queue length using bottom-center points of bounding boxes
+            queue_points = queue_detections.get_anchors_coordinates(anchor=sv.Position.BOTTOM_CENTER)
+            # Optionally, transform to real-world coordinates if needed
+            # queue_points = user_data.view_transformer.transform_points(points=queue_points)
+            if len(queue_points) > 0:
+                # Sort by y (vertical) position (assuming y increases downwards)
+                sorted_points = sorted(queue_points, key=lambda pt: pt[1])
+                # Queue length: distance from first to last vehicle in the queue (vertical axis)
+                queue_length_pixels = abs(sorted_points[-1][1] - sorted_points[0][1])
+                print(f"[Queue Length] Lane {lane_name}: {queue_length_pixels:.1f} pixels (vehicles: {len(queue_detections)})")
+                # --- Draw queue length on frame ---
+                # Use centroid of queue zone polygon as text position
+                centroid = np.mean(pixel_queue_zone_polygon, axis=0).astype(int)
+                text = f"Queue: {queue_length_pixels:.0f}px ({len(queue_detections)} veh)"
+                cv2.putText(
+                    frame,
+                    text,
+                    tuple(centroid),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    1.0,  # font scale
+                    (0, 0, 255),  # red color
+                    2,  # thickness
+                    cv2.LINE_AA
+                )
 
     user_data.set_frame(frame)
     print("Frame sucessfully stored in user_data")
@@ -714,4 +733,4 @@ class GStreamerDetectionApp(GStreamerApp):
         
         print(pipeline_string_sequential)
         return pipeline_string_sequential
-    
+
