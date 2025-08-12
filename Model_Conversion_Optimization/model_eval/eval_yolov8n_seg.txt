@@ -1,0 +1,68 @@
+hailomz eval yolov8n_seg                                                                                                  
+<Hailo Model Zoo INFO> Start run for network yolov8n_seg ...
+<Hailo Model Zoo INFO> Initializing the runner...
+<Hailo Model Zoo INFO> Chosen target is full_precision
+[info] Translation started on ONNX model yolov8n_seg
+[info] Restored ONNX model yolov8n_seg (completion time: 00:00:00.05)
+[info] Extracted ONNXRuntime meta-data for Hailo model (completion time: 00:00:00.34)
+[info] Start nodes mapped from original model: 'images': 'yolov8n_seg/input_layer1'.
+[info] End nodes mapped from original model: '/model.22/cv2.2/cv2.2.2/Conv', '/model.22/cv3.2/cv3.2.2/Conv', '/model.22/cv4.2/cv4.2.2/Conv', '/model.22/cv2.1/cv2.1.2/Conv', '/model.22/cv3.1/cv3.1.2/Conv', '/model.22/cv4.1/cv4.1.2/Conv', '/model.22/cv2.0/cv2.0.2/Conv', '/model.22/cv3.0/cv3.0.2/Conv', '/model.22/cv4.0/cv4.0.2/Conv', '/model.22/proto/cv3/act/Mul'.
+[info] Translation completed on ONNX model yolov8n_seg (completion time: 00:00:01.05)
+[info] Saved HAR to: /home/rubesh/Desktop/sweta/Mtech_internship/another_repo/Model_Conversion_Optimization/onnx_parse_compile_optimize/yolov8n_seg.har
+<Hailo Model Zoo INFO> Preparing calibration data...
+[info] Loading model script commands to yolov8n_seg from /home/rubesh/Desktop/dfc_3_27/hailo_model_zoo/hailo_model_zoo/cfg/alls/generic/yolov8n_seg.alls
+<Hailo Model Zoo INFO> Initializing the dataset ...
+<Hailo Model Zoo INFO> Running inference...
+Processed: 5000images [1:41:54,  1.22s/images]
+creating index...
+index created!
+loading annotations into memory...
+Done (t=0.28s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.60s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *segm*
+DONE (t=43.25s).
+Accumulating evaluation results...
+DONE (t=9.16s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.303
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.489
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.318
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.122
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.334
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.459
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.273
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.439
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.474
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.254
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.533
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.674
+Loading and preparing results...
+Converting ndarray to lists...
+(930935, 7)
+0/930935
+DONE (t=4.15s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=38.98s).
+Accumulating evaluation results...
+DONE (t=9.09s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.365
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.519
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.395
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.179
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.402
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.519
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.312
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.531
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.585
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.366
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.648
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.768
+<Hailo Model Zoo INFO> Done 5000 images mask AP=30.317 mask AP50=48.938
