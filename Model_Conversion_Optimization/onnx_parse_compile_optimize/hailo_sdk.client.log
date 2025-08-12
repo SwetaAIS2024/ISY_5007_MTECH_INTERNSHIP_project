@@ -33,3 +33,26 @@
 2025-04-30 15:10:51,218 - IMPORTANT - sdk_backend.py:897 - Starting Model Optimization
 2025-04-30 15:11:36,803 - IMPORTANT - sdk_backend.py:915 - Model Optimization is done
 2025-04-30 15:11:37,295 - INFO - client_runner.py:1442 - Saved HAR to: /home/rubesh/Desktop/sweta/Mtech_internship/another_repo/Model_Conversion_Optimization/onnx_parse_compile_optimize/yolov8n_seg_quantized_model.har
+2025-08-12 10:13:40,585 - INFO - parser.py:96 - Translation started on ONNX model yolov8n_seg
+2025-08-12 10:13:40,633 - INFO - parser.py:124 - Restored ONNX model yolov8n_seg (completion time: 00:00:00.05)
+2025-08-12 10:13:40,930 - INFO - parser.py:147 - Extracted ONNXRuntime meta-data for Hailo model (completion time: 00:00:00.34)
+2025-08-12 10:13:41,576 - INFO - parser.py:269 - Start nodes mapped from original model: 'images': 'yolov8n_seg/input_layer1'.
+2025-08-12 10:13:41,576 - INFO - parser.py:270 - End nodes mapped from original model: '/model.22/cv2.2/cv2.2.2/Conv', '/model.22/cv3.2/cv3.2.2/Conv', '/model.22/cv4.2/cv4.2.2/Conv', '/model.22/cv2.1/cv2.1.2/Conv', '/model.22/cv3.1/cv3.1.2/Conv', '/model.22/cv4.1/cv4.1.2/Conv', '/model.22/cv2.0/cv2.0.2/Conv', '/model.22/cv3.0/cv3.0.2/Conv', '/model.22/cv4.0/cv4.0.2/Conv', '/model.22/proto/cv3/act/Mul'.
+2025-08-12 10:13:41,634 - INFO - parser.py:217 - Translation completed on ONNX model yolov8n_seg (completion time: 00:00:01.05)
+2025-08-12 10:13:42,655 - INFO - client_runner.py:1442 - Saved HAR to: /home/rubesh/Desktop/sweta/Mtech_internship/another_repo/Model_Conversion_Optimization/onnx_parse_compile_optimize/yolov8n_seg.har
+2025-08-12 10:13:43,268 - INFO - client_runner.py:386 - Loading model script commands to yolov8n_seg from /home/rubesh/Desktop/dfc_3_27/hailo_model_zoo/hailo_model_zoo/cfg/alls/generic/yolov8n_seg.alls
+2025-08-12 12:02:25,671 - INFO - client_runner.py:1103 - Running profile for yolov8n_seg in state hailo_model
+2025-08-12 12:07:02,506 - INFO - parser.py:96 - Translation started on ONNX model yolov8s
+2025-08-12 12:07:02,637 - INFO - parser.py:124 - Restored ONNX model yolov8s (completion time: 00:00:00.13)
+2025-08-12 12:07:03,040 - INFO - parser.py:147 - Extracted ONNXRuntime meta-data for Hailo model (completion time: 00:00:00.53)
+2025-08-12 12:07:03,619 - INFO - onnx_translator.py:1802 - NMS structure of yolov8 (or equivalent architecture) was detected.
+2025-08-12 12:07:03,619 - INFO - onnx_translator.py:1804 - In order to use HailoRT post-processing capabilities, these end node names should be used: /model.22/cv2.0/cv2.0.2/Conv /model.22/cv3.0/cv3.0.2/Conv /model.22/cv2.1/cv2.1.2/Conv /model.22/cv3.1/cv3.1.2/Conv /model.22/cv2.2/cv2.2.2/Conv /model.22/cv3.2/cv3.2.2/Conv.
+2025-08-12 12:07:03,688 - INFO - parser.py:269 - Start nodes mapped from original model: 'images': 'yolov8s/input_layer1'.
+2025-08-12 12:07:03,688 - INFO - parser.py:270 - End nodes mapped from original model: '/model.22/cv2.0/cv2.0.2/Conv', '/model.22/cv3.0/cv3.0.2/Conv', '/model.22/cv2.1/cv2.1.2/Conv', '/model.22/cv3.1/cv3.1.2/Conv', '/model.22/cv2.2/cv2.2.2/Conv', '/model.22/cv3.2/cv3.2.2/Conv'.
+2025-08-12 12:07:03,738 - INFO - parser.py:217 - Translation completed on ONNX model yolov8s (completion time: 00:00:01.23)
+2025-08-12 12:07:04,860 - INFO - client_runner.py:1442 - Saved HAR to: /home/rubesh/Desktop/sweta/Mtech_internship/another_repo/Model_Conversion_Optimization/onnx_parse_compile_optimize/yolov8s.har
+2025-08-12 12:07:05,400 - INFO - client_runner.py:386 - Loading model script commands to yolov8s from /home/rubesh/Desktop/dfc_3_27/hailo_model_zoo/hailo_model_zoo/cfg/alls/generic/yolov8s.alls
+2025-08-12 12:07:05,809 - INFO - nms_postprocess_command.py:574 - The layer yolov8s/conv41 was detected as reg_layer.
+2025-08-12 12:07:05,810 - INFO - nms_postprocess_command.py:574 - The layer yolov8s/conv52 was detected as reg_layer.
+2025-08-12 12:07:05,810 - INFO - nms_postprocess_command.py:574 - The layer yolov8s/conv62 was detected as reg_layer.
+2025-08-12 12:07:08,538 - INFO - client_runner.py:772 - Setting NMS score threshold to 0.001

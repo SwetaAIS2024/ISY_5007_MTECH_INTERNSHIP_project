@@ -1,0 +1,9 @@
+
+┌──(dfc_3_27)(rubesh㉿kali)-[~/Desktop/sweta/Mtech_internship/another_repo/Model_Conversion_Optimization/onnx_parse_compile_optimize]
+└─$ hailomz profile yolov8n_seg --har /home/rubesh/Desktop/sweta/Mtech_internship/another_repo/Model_Conversion_Optimization/onnx_parse_compile_optimize/yolov8n_seg.har
+<Hailo Model Zoo DEPRECATION_WARNING> 'profile' command is deprecated and will be removed in future release. Please use 'hailo profiler' tool instead.                                                                              
+<Hailo Model Zoo INFO> Start run for network yolov8n_seg ...
+<Hailo Model Zoo INFO> Initializing the hailo8 runner...
+[info] Running profile for yolov8n_seg in state hailo_model
+<Hailo Model Zoo INFO> Profiler report generated in yolov8n_seg.html
+
