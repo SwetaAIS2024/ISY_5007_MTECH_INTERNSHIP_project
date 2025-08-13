@@ -1,0 +1,85 @@
+┌──(dfc_3_27)(rubesh㉿kali)-[~/Desktop/dfc_3_27]
+└─$ hailomz eval yolov8n_seg --target emulator 
+<Hailo Model Zoo INFO> Start run for network yolov8n_seg ...
+<Hailo Model Zoo INFO> Initializing the runner...
+<Hailo Model Zoo INFO> Chosen target is emulator
+[info] Translation started on ONNX model yolov8n_seg
+[info] Restored ONNX model yolov8n_seg (completion time: 00:00:00.05)
+[info] Extracted ONNXRuntime meta-data for Hailo model (completion time: 00:00:00.33)
+[info] Start nodes mapped from original model: 'images': 'yolov8n_seg/input_layer1'.
+[info] End nodes mapped from original model: '/model.22/cv2.2/cv2.2.2/Conv', '/model.22/cv3.2/cv3.2.2/Conv', '/model.22/cv4.2/cv4.2.2/Conv', '/model.22/cv2.1/cv2.1.2/Conv', '/model.22/cv3.1/cv3.1.2/Conv', '/model.22/cv4.1/cv4.1.2/Conv', '/model.22/cv2.0/cv2.0.2/Conv', '/model.22/cv3.0/cv3.0.2/Conv', '/model.22/cv4.0/cv4.0.2/Conv', '/model.22/proto/cv3/act/Mul'.
+[info] Translation completed on ONNX model yolov8n_seg (completion time: 00:00:01.04)
+[info] Saved HAR to: /home/rubesh/Desktop/dfc_3_27/yolov8n_seg.har
+<Hailo Model Zoo INFO> Preparing calibration data...
+[info] Loading model script commands to yolov8n_seg from /home/rubesh/Desktop/dfc_3_27/hailo_model_zoo/hailo_model_zoo/cfg/alls/generic/yolov8n_seg.alls
+[info] Starting Model Optimization
+[warning] Reducing optimization level to 0 (the accuracy won't be optimized and compression won't be used) because there's no available GPU
+[info] Model received quantization params from the hn
+[info] Starting Mixed Precision
+[info] Mixed Precision is done (completion time is 00:00:00.07)
+[info] create_layer_norm skipped
+[info] Starting Stats Collector
+[info] Using dataset with 64 entries for calibration
+Calibration: 100%|███████████████████████████████| 64/64 [00:33<00:00,  1.89entries/s]
+[info] Stats Collector is done (completion time is 00:00:35.34)
+[info] Bias Correction skipped
+[info] Adaround skipped
+[info] Fine Tune skipped
+[info] Layer Noise Analysis skipped
+[info] Model Optimization is done
+[info] Saved HAR to: /home/rubesh/Desktop/dfc_3_27/yolov8n_seg.har
+<Hailo Model Zoo INFO> Initializing the dataset ...
+<Hailo Model Zoo INFO> Running inference...
+Processed: 5000images [1:57:06,  1.41s/images]
+creating index...
+index created!
+loading annotations into memory...
+Done (t=0.32s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.30s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *segm*
+DONE (t=30.41s).
+Accumulating evaluation results...
+DONE (t=4.85s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.292
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.471
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.306
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.114
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.324
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.442
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.265
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.417
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.444
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.227
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.500
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.632
+Loading and preparing results...
+Converting ndarray to lists...
+(411798, 7)
+0/411798
+DONE (t=1.41s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=27.37s).
+Accumulating evaluation results...
+DONE (t=4.79s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.349
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.500
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.380
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.164
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.387
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.496
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.301
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.501
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.543
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.322
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.602
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.716
+<Hailo Model Zoo INFO> Done 5000 images mask AP=29.232 mask AP50=47.137
